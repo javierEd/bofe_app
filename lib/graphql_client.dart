@@ -1,0 +1,37 @@
+import 'package:flutter/widgets.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+
+import 'package:toolbox/identity_client.dart';
+
+import 'config.dart';
+
+extension GraphQLClientExt on GraphQLClient {
+  static GraphQLClient setup() => GraphQLClient(
+    link: AuthLink(getToken: () => IdentityClient.bearer)
+        .concat(
+          ErrorLink(
+            onException: (request, forward, exception) {
+              if (exception is ServerException && exception.statusCode == 401) {
+                IdentityClient.checkAuthorization();
+
+                throw exception;
+              }
+
+              return forward(request);
+            },
+          ),
+        )
+        .concat(HttpLink(Config.boardsApiUrl.replace(path: '/graphql').toString())),
+    cache: GraphQLCache(store: HiveStore()),
+    defaultPolicies: DefaultPolicies(
+      query: Policies(fetch: FetchPolicy.networkOnly),
+      mutate: Policies(fetch: FetchPolicy.networkOnly),
+      watchQuery: Policies(fetch: FetchPolicy.cacheAndNetwork),
+    ),
+    queryRequestTimeout: const Duration(minutes: 1),
+  );
+}
+
+extension BuildContextExt on BuildContext {
+  ValueNotifier<GraphQLClient> get graphQLClient => GraphQLProvider.of(this);
+}
