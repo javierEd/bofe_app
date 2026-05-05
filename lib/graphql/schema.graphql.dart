@@ -155,6 +155,109 @@ class _CopyWithStubImpl$Input$BoardParams<TRes>
   }) => _res;
 }
 
+class Input$ListParams {
+  factory Input$ListParams({required String boardId, required String name}) =>
+      Input$ListParams._({r'boardId': boardId, r'name': name});
+
+  Input$ListParams._(this._$data);
+
+  factory Input$ListParams.fromJson(Map<String, dynamic> data) {
+    final result$data = <String, dynamic>{};
+    final l$boardId = data['boardId'];
+    result$data['boardId'] = (l$boardId as String);
+    final l$name = data['name'];
+    result$data['name'] = (l$name as String);
+    return Input$ListParams._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  String get boardId => (_$data['boardId'] as String);
+
+  String get name => (_$data['name'] as String);
+
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    final l$boardId = boardId;
+    result$data['boardId'] = l$boardId;
+    final l$name = name;
+    result$data['name'] = l$name;
+    return result$data;
+  }
+
+  CopyWith$Input$ListParams<Input$ListParams> get copyWith =>
+      CopyWith$Input$ListParams(this, (i) => i);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other is! Input$ListParams || runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$boardId = boardId;
+    final lOther$boardId = other.boardId;
+    if (l$boardId != lOther$boardId) {
+      return false;
+    }
+    final l$name = name;
+    final lOther$name = other.name;
+    if (l$name != lOther$name) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$boardId = boardId;
+    final l$name = name;
+    return Object.hashAll([l$boardId, l$name]);
+  }
+}
+
+abstract class CopyWith$Input$ListParams<TRes> {
+  factory CopyWith$Input$ListParams(
+    Input$ListParams instance,
+    TRes Function(Input$ListParams) then,
+  ) = _CopyWithImpl$Input$ListParams;
+
+  factory CopyWith$Input$ListParams.stub(TRes res) =
+      _CopyWithStubImpl$Input$ListParams;
+
+  TRes call({String? boardId, String? name});
+}
+
+class _CopyWithImpl$Input$ListParams<TRes>
+    implements CopyWith$Input$ListParams<TRes> {
+  _CopyWithImpl$Input$ListParams(this._instance, this._then);
+
+  final Input$ListParams _instance;
+
+  final TRes Function(Input$ListParams) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({Object? boardId = _undefined, Object? name = _undefined}) => _then(
+    Input$ListParams._({
+      ..._instance._$data,
+      if (boardId != _undefined && boardId != null)
+        'boardId': (boardId as String),
+      if (name != _undefined && name != null) 'name': (name as String),
+    }),
+  );
+}
+
+class _CopyWithStubImpl$Input$ListParams<TRes>
+    implements CopyWith$Input$ListParams<TRes> {
+  _CopyWithStubImpl$Input$ListParams(this._res);
+
+  TRes _res;
+
+  call({String? boardId, String? name}) => _res;
+}
+
 enum Enum$BoardVisibility {
   PRIVATE,
   USERS,

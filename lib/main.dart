@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -20,6 +21,17 @@ void main() async {
   runApp(App(graphQLClient: graphQLClient));
 }
 
+class MobileLikeScrollBehavior extends MaterialScrollBehavior {
+  const MobileLikeScrollBehavior();
+
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+    PointerDeviceKind.trackpad,
+  };
+}
+
 class App extends StatelessWidget {
   const App({super.key, required this.graphQLClient});
 
@@ -33,6 +45,7 @@ class App extends StatelessWidget {
         client: ValueNotifier(graphQLClient),
         child: MaterialApp.router(
           title: 'Boards',
+          scrollBehavior: const MobileLikeScrollBehavior(),
           themeMode: ThemeMode.dark,
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: colorPrimary, brightness: Brightness.dark),

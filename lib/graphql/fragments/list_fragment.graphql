@@ -1,0 +1,6 @@
+fragment ListFragment on ListObject {
+    id
+    name
+    createdAt
+    updatedAt
+}

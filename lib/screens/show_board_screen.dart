@@ -1,6 +1,8 @@
+import 'package:boards/graphql/queries/board_lists.graphql.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../components/new_list_dialog.dart';
 import '../components/screen_title.dart';
 import '../constants.dart';
 import '../graphql/queries/board.graphql.dart';
@@ -47,7 +49,53 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> {
               backgroundColor: Colors.transparent,
               leading: BackButton(onPressed: () => context.goNamed(routeNameHome)),
             ),
-            body: SizedBox(),
+            body: SizedBox(
+              height: double.infinity,
+              child: Query$BoardLists$Widget(
+                options: Options$Query$BoardLists(variables: Variables$Query$BoardLists(idOrSlug: widget.slug)),
+                builder: (result, {fetchMore, refetch}) {
+                  final lists = result.parsedData?.board?.lists.nodes;
+
+                  if (lists == null) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  return SingleChildScrollView(
+                    padding: const EdgeInsets.all(12),
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 12,
+                      children:
+                          lists
+                              .map<Widget>(
+                                (list) => Container(
+                                  width: 320,
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: Text(list.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                ),
+                              )
+                              .toList() +
+                          [
+                            SizedBox(
+                              width: 320,
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  showNewListDialog(context, boardId: board.id).then((_) => refetch?.call());
+                                },
+                                child: Text('NEW LIST'),
+                              ),
+                            ),
+                          ],
+                    ),
+                  );
+                },
+              ),
+            ),
           ),
         );
       },

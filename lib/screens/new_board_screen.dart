@@ -57,7 +57,9 @@ class _NewBoardScreenState extends State<NewBoardScreen> {
       if (result.parsedData?.createBoard != null) {
         showSnackBarAlert(context, 'Board created successfully');
 
-        context.goNamed(routeNameHome);
+        final board = result.parsedData!.createBoard;
+
+        context.goNamed(routeNameShowBoard, pathParameters: {keySlug: board.slug});
       } else {
         showSnackBarAlert(context, errors?.message ?? 'Failed to create board');
 

@@ -4,6 +4,8 @@ type BoardObject {
 	name: String!
 	slug: String!
 	description: String!
+	visibility: BoardVisibility!
+	lists(after: UUID, first: Int): ListObjectConnection!
 	createdAt: DateTime!
 	updatedAt: DateTime
 }
@@ -74,8 +76,51 @@ type InfoObject {
 	version: String!
 }
 
+type ListObject {
+	id: ID!
+	name: String!
+	position: Int!
+	createdAt: DateTime!
+	updatedAt: DateTime
+}
+
+type ListObjectConnection {
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+	"""
+	A list of edges.
+	"""
+	edges: [ListObjectEdge!]!
+	"""
+	A list of nodes.
+	"""
+	nodes: [ListObject!]!
+}
+
+"""
+An edge in a connection.
+"""
+type ListObjectEdge {
+	"""
+	The item at the end of the edge
+	"""
+	node: ListObject!
+	"""
+	A cursor for use in pagination
+	"""
+	cursor: String!
+}
+
+input ListParams {
+	boardId: UUID!
+	name: String!
+}
+
 type MutationRoot {
 	createBoard(params: BoardParams!): BoardObject!
+	createList(params: ListParams!): ListObject!
 }
 
 """
