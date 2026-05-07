@@ -5,6 +5,7 @@ class Fragment$ListFragment {
   Fragment$ListFragment({
     required this.id,
     required this.name,
+    required this.position,
     required this.createdAt,
     this.updatedAt,
     this.$__typename = 'ListObject',
@@ -13,12 +14,14 @@ class Fragment$ListFragment {
   factory Fragment$ListFragment.fromJson(Map<String, dynamic> json) {
     final l$id = json['id'];
     final l$name = json['name'];
+    final l$position = json['position'];
     final l$createdAt = json['createdAt'];
     final l$updatedAt = json['updatedAt'];
     final l$$__typename = json['__typename'];
     return Fragment$ListFragment(
       id: (l$id as String),
       name: (l$name as String),
+      position: (l$position as int),
       createdAt: DateTime.parse((l$createdAt as String)),
       updatedAt: l$updatedAt == null
           ? null
@@ -30,6 +33,8 @@ class Fragment$ListFragment {
   final String id;
 
   final String name;
+
+  final int position;
 
   final DateTime createdAt;
 
@@ -43,6 +48,8 @@ class Fragment$ListFragment {
     _resultData['id'] = l$id;
     final l$name = name;
     _resultData['name'] = l$name;
+    final l$position = position;
+    _resultData['position'] = l$position;
     final l$createdAt = createdAt;
     _resultData['createdAt'] = l$createdAt.toIso8601String();
     final l$updatedAt = updatedAt;
@@ -56,12 +63,14 @@ class Fragment$ListFragment {
   int get hashCode {
     final l$id = id;
     final l$name = name;
+    final l$position = position;
     final l$createdAt = createdAt;
     final l$updatedAt = updatedAt;
     final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
       l$name,
+      l$position,
       l$createdAt,
       l$updatedAt,
       l$$__typename,
@@ -84,6 +93,11 @@ class Fragment$ListFragment {
     final l$name = name;
     final lOther$name = other.name;
     if (l$name != lOther$name) {
+      return false;
+    }
+    final l$position = position;
+    final lOther$position = other.position;
+    if (l$position != lOther$position) {
       return false;
     }
     final l$createdAt = createdAt;
@@ -122,6 +136,7 @@ abstract class CopyWith$Fragment$ListFragment<TRes> {
   TRes call({
     String? id,
     String? name,
+    int? position,
     DateTime? createdAt,
     DateTime? updatedAt,
     String? $__typename,
@@ -141,6 +156,7 @@ class _CopyWithImpl$Fragment$ListFragment<TRes>
   TRes call({
     Object? id = _undefined,
     Object? name = _undefined,
+    Object? position = _undefined,
     Object? createdAt = _undefined,
     Object? updatedAt = _undefined,
     Object? $__typename = _undefined,
@@ -150,6 +166,9 @@ class _CopyWithImpl$Fragment$ListFragment<TRes>
       name: name == _undefined || name == null
           ? _instance.name
           : (name as String),
+      position: position == _undefined || position == null
+          ? _instance.position
+          : (position as int),
       createdAt: createdAt == _undefined || createdAt == null
           ? _instance.createdAt
           : (createdAt as DateTime),
@@ -172,6 +191,7 @@ class _CopyWithStubImpl$Fragment$ListFragment<TRes>
   call({
     String? id,
     String? name,
+    int? position,
     DateTime? createdAt,
     DateTime? updatedAt,
     String? $__typename,
@@ -195,6 +215,13 @@ const fragmentDefinitionListFragment = FragmentDefinitionNode(
       ),
       FieldNode(
         name: NameNode(value: 'name'),
+        alias: null,
+        arguments: [],
+        directives: [],
+        selectionSet: null,
+      ),
+      FieldNode(
+        name: NameNode(value: 'position'),
         alias: null,
         arguments: [],
         directives: [],

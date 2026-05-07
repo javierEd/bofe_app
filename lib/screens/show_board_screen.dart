@@ -1,24 +1,27 @@
-import 'package:boards/graphql/queries/board_lists.graphql.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../components/list_item.dart';
 import '../components/new_list_dialog.dart';
 import '../components/screen_title.dart';
 import '../constants.dart';
 import '../graphql/queries/board.graphql.dart';
+import '../graphql/queries/board_lists.graphql.dart';
 import '../screens/not_found_screen.dart';
 
 class ShowBoardScreen extends StatefulWidget {
-  const ShowBoardScreen({super.key, this.username, required this.slug});
-
   final String? username;
+
   final String slug;
+  const ShowBoardScreen({super.key, this.username, required this.slug});
 
   @override
   State<ShowBoardScreen> createState() => _ShowBoardScreenState();
 }
 
 class _ShowBoardScreenState extends State<ShowBoardScreen> {
+  String? _draggingListId;
+
   @override
   Widget build(BuildContext context) {
     return Query$Board$Widget(
@@ -65,32 +68,57 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 12,
+                      spacing: _draggingListId == null ? 12 : 0,
                       children:
                           lists
-                              .map<Widget>(
-                                (list) => Container(
-                                  width: 320,
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.grey),
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: Text(list.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                ),
+                              .map(
+                                (list) => board.isEditable
+                                    ? [
+                                        ListItemDragTarget(
+                                          position: list.position,
+                                          isVisible: _draggingListId != null && _draggingListId != list.id,
+                                          onAccept: () async {
+                                            await refetch?.call();
+                                          },
+                                        ),
+                                        DraggableListItem(
+                                          list: list,
+                                          onDragOutside: () {
+                                            setState(() {
+                                              _draggingListId = list.id;
+                                            });
+                                          },
+                                          onDragEnded: () {
+                                            setState(() {
+                                              _draggingListId = null;
+                                            });
+                                          },
+                                        ),
+                                      ]
+                                    : [ListItem(list: list)],
                               )
+                              .expand((item) => item)
                               .toList() +
-                          [
-                            SizedBox(
-                              width: 320,
-                              child: OutlinedButton(
-                                onPressed: () {
-                                  showNewListDialog(context, boardId: board.id).then((_) => refetch?.call());
-                                },
-                                child: Text('NEW LIST'),
-                              ),
-                            ),
-                          ],
+                          (board.isEditable
+                              ? [
+                                  ListItemDragTarget(
+                                    position: (lists.lastOrNull?.position ?? 0) + 1,
+                                    isVisible: _draggingListId != null,
+                                    onAccept: () async {
+                                      await refetch?.call();
+                                    },
+                                  ),
+                                  SizedBox(
+                                    width: 320,
+                                    child: OutlinedButton(
+                                      onPressed: () {
+                                        showNewListDialog(context, boardId: board.id).then((_) => refetch?.call());
+                                      },
+                                      child: Text('NEW LIST'),
+                                    ),
+                                  ),
+                                ]
+                              : []),
                     ),
                   );
                 },

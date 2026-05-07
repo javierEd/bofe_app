@@ -1,6 +1,7 @@
 fragment ListFragment on ListObject {
     id
     name
+    position
     createdAt
     updatedAt
 }

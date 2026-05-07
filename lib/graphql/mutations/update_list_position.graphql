@@ -1,0 +1,5 @@
+mutation UpdateListPosition($id: UUID!, $position: Int!) {
+    updateListPosition(id: $id, position: $position) {
+        ...ListFragment
+    }
+}

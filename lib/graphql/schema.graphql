@@ -6,6 +6,7 @@ type BoardObject {
 	description: String!
 	visibility: BoardVisibility!
 	lists(after: UUID, first: Int): ListObjectConnection!
+	isEditable: Boolean!
 	createdAt: DateTime!
 	updatedAt: DateTime
 }
@@ -121,6 +122,7 @@ input ListParams {
 type MutationRoot {
 	createBoard(params: BoardParams!): BoardObject!
 	createList(params: ListParams!): ListObject!
+	updateListPosition(id: UUID!, position: Int!): ListObject!
 }
 
 """

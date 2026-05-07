@@ -7,6 +7,7 @@ class Fragment$BoardFragment {
     required this.name,
     required this.slug,
     required this.description,
+    required this.isEditable,
     required this.createdAt,
     this.updatedAt,
     this.$__typename = 'BoardObject',
@@ -17,6 +18,7 @@ class Fragment$BoardFragment {
     final l$name = json['name'];
     final l$slug = json['slug'];
     final l$description = json['description'];
+    final l$isEditable = json['isEditable'];
     final l$createdAt = json['createdAt'];
     final l$updatedAt = json['updatedAt'];
     final l$$__typename = json['__typename'];
@@ -25,6 +27,7 @@ class Fragment$BoardFragment {
       name: (l$name as String),
       slug: (l$slug as String),
       description: (l$description as String),
+      isEditable: (l$isEditable as bool),
       createdAt: DateTime.parse((l$createdAt as String)),
       updatedAt: l$updatedAt == null
           ? null
@@ -40,6 +43,8 @@ class Fragment$BoardFragment {
   final String slug;
 
   final String description;
+
+  final bool isEditable;
 
   final DateTime createdAt;
 
@@ -57,6 +62,8 @@ class Fragment$BoardFragment {
     _resultData['slug'] = l$slug;
     final l$description = description;
     _resultData['description'] = l$description;
+    final l$isEditable = isEditable;
+    _resultData['isEditable'] = l$isEditable;
     final l$createdAt = createdAt;
     _resultData['createdAt'] = l$createdAt.toIso8601String();
     final l$updatedAt = updatedAt;
@@ -72,6 +79,7 @@ class Fragment$BoardFragment {
     final l$name = name;
     final l$slug = slug;
     final l$description = description;
+    final l$isEditable = isEditable;
     final l$createdAt = createdAt;
     final l$updatedAt = updatedAt;
     final l$$__typename = $__typename;
@@ -80,6 +88,7 @@ class Fragment$BoardFragment {
       l$name,
       l$slug,
       l$description,
+      l$isEditable,
       l$createdAt,
       l$updatedAt,
       l$$__typename,
@@ -112,6 +121,11 @@ class Fragment$BoardFragment {
     final l$description = description;
     final lOther$description = other.description;
     if (l$description != lOther$description) {
+      return false;
+    }
+    final l$isEditable = isEditable;
+    final lOther$isEditable = other.isEditable;
+    if (l$isEditable != lOther$isEditable) {
       return false;
     }
     final l$createdAt = createdAt;
@@ -152,6 +166,7 @@ abstract class CopyWith$Fragment$BoardFragment<TRes> {
     String? name,
     String? slug,
     String? description,
+    bool? isEditable,
     DateTime? createdAt,
     DateTime? updatedAt,
     String? $__typename,
@@ -173,6 +188,7 @@ class _CopyWithImpl$Fragment$BoardFragment<TRes>
     Object? name = _undefined,
     Object? slug = _undefined,
     Object? description = _undefined,
+    Object? isEditable = _undefined,
     Object? createdAt = _undefined,
     Object? updatedAt = _undefined,
     Object? $__typename = _undefined,
@@ -188,6 +204,9 @@ class _CopyWithImpl$Fragment$BoardFragment<TRes>
       description: description == _undefined || description == null
           ? _instance.description
           : (description as String),
+      isEditable: isEditable == _undefined || isEditable == null
+          ? _instance.isEditable
+          : (isEditable as bool),
       createdAt: createdAt == _undefined || createdAt == null
           ? _instance.createdAt
           : (createdAt as DateTime),
@@ -212,6 +231,7 @@ class _CopyWithStubImpl$Fragment$BoardFragment<TRes>
     String? name,
     String? slug,
     String? description,
+    bool? isEditable,
     DateTime? createdAt,
     DateTime? updatedAt,
     String? $__typename,
@@ -249,6 +269,13 @@ const fragmentDefinitionBoardFragment = FragmentDefinitionNode(
       ),
       FieldNode(
         name: NameNode(value: 'description'),
+        alias: null,
+        arguments: [],
+        directives: [],
+        selectionSet: null,
+      ),
+      FieldNode(
+        name: NameNode(value: 'isEditable'),
         alias: null,
         arguments: [],
         directives: [],

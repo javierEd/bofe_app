@@ -3,6 +3,7 @@ fragment BoardFragment on BoardObject {
     name
     slug
     description
+    isEditable
     createdAt
     updatedAt
 }
