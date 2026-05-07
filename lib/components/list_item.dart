@@ -7,7 +7,10 @@ import 'package:toolbox/components.dart';
 import '../components/loading_dialog.dart';
 import '../graphql/fragments/list_fragment.graphql.dart';
 import '../graphql/mutations/update_list_position.graphql.dart';
+import '../graphql/queries/list_cards.graphql.dart';
 import '../graphql_client.dart';
+import 'card_item.dart';
+import 'new_card_dialog.dart';
 
 class DraggableListItem extends StatefulWidget {
   const DraggableListItem({super.key, required this.list, required this.onDragOutside, required this.onDragEnded});
@@ -26,9 +29,12 @@ class _DraggableListItemState extends State<DraggableListItem> {
 
   @override
   Widget build(BuildContext context) {
-    return Draggable(
+    return LongPressDraggable(
       data: widget.list,
-      feedback: Opacity(opacity: 0.75, child: ListItem(list: widget.list)),
+      feedback: Material(
+        color: Colors.transparent,
+        child: Opacity(opacity: 0.75, child: ListItem(list: widget.list, isEditable: true)),
+      ),
       childWhenDragging: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         width: _isOutside ? 0 : 320,
@@ -60,15 +66,23 @@ class _DraggableListItemState extends State<DraggableListItem> {
         });
         widget.onDragEnded();
       },
-      child: ListItem(list: widget.list),
+      child: ListItem(list: widget.list, isEditable: true),
     );
   }
 }
 
-class ListItem extends StatelessWidget {
-  const ListItem({super.key, required this.list});
+class ListItem extends StatefulWidget {
+  const ListItem({super.key, required this.list, required this.isEditable});
 
   final Fragment$ListFragment list;
+  final bool isEditable;
+
+  @override
+  State<ListItem> createState() => _ListItemState();
+}
+
+class _ListItemState extends State<ListItem> {
+  String? _draggingCardId;
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +93,70 @@ class ListItem extends StatelessWidget {
         border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Text(list.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+      child: Query$ListCards$Widget(
+        options: Options$Query$ListCards(variables: Variables$Query$ListCards(id: widget.list.id)),
+        builder: (result, {fetchMore, refetch}) {
+          final cards = result.parsedData?.list?.cards.nodes;
+
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 12,
+            children:
+                <Widget>[Text(widget.list.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))] +
+                (cards
+                        ?.map(
+                          (card) => widget.isEditable
+                              ? [
+                                  CardItemDragTarget(
+                                    position: card.position,
+                                    isVisible: _draggingCardId != null && _draggingCardId != card.id,
+                                    onAccept: () async {
+                                      await refetch?.call();
+                                    },
+                                  ),
+                                  DraggableCardItem(
+                                    card: card,
+                                    onDragOutside: () {
+                                      setState(() {
+                                        _draggingCardId = card.id;
+                                      });
+                                    },
+                                    onDragEnded: () {
+                                      setState(() {
+                                        _draggingCardId = null;
+                                      });
+                                    },
+                                  ),
+                                ]
+                              : [CardItem(card: card)],
+                        )
+                        .expand((item) => item)
+                        .toList() ??
+                    []) +
+                (widget.isEditable
+                    ? [
+                        CardItemDragTarget(
+                          position: (cards?.lastOrNull?.position ?? 0) + 1,
+                          isVisible: _draggingCardId != null,
+                          onAccept: () async {
+                            await refetch?.call();
+                          },
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton(
+                            onPressed: () {
+                              showNewCardDialog(context, listId: widget.list.id).then((_) => refetch?.call());
+                            },
+                            child: Text('NEW CARD'),
+                          ),
+                        ),
+                      ]
+                    : []),
+          );
+        },
+      ),
     );
   }
 }
@@ -99,7 +176,7 @@ class ListItemDragTarget extends StatelessWidget {
         builder: (context, accepted, rejected) {
           return AnimatedContainer(
             duration: const Duration(milliseconds: 250),
-            margin: const EdgeInsets.symmetric(horizontal: 24),
+            margin: const EdgeInsets.symmetric(horizontal: 12),
             width: accepted.isNotEmpty ? 320 : 16,
             decoration: BoxDecoration(
               color: accepted.isNotEmpty ? Colors.white30 : Colors.white24,

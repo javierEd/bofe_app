@@ -5,7 +5,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:toolbox/identity_client.dart';
 
 import '../components/account_button.dart';
-import '../components/board_card.dart';
+import '../components/board_item.dart';
 import '../components/screen_title.dart';
 import '../constants.dart';
 import '../graphql/queries/current_user_boards.graphql.dart';
@@ -37,7 +37,7 @@ class HomeScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 final board = user?.boards.nodes[index];
 
-                return BoardCard(
+                return BoardItem(
                   board: board!,
                   onTap: () => context.goNamed(routeNameShowBoard, pathParameters: {keySlug: board.slug}),
                 );

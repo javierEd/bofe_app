@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../graphql/fragments/board_fragment.graphql.dart';
 
-class BoardCard extends StatelessWidget {
-  const BoardCard({super.key, required this.board, this.onTap});
+class BoardItem extends StatelessWidget {
+  const BoardItem({super.key, required this.board, this.onTap});
 
   final Fragment$BoardFragment board;
   final Function()? onTap;

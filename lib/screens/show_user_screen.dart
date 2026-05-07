@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
-import '../components/board_card.dart';
+import '../components/board_item.dart';
 import '../components/screen_title.dart';
 import '../constants.dart';
 import '../graphql/queries/user.graphql.dart';
@@ -75,7 +75,7 @@ class _ShowUserScreenState extends State<ShowUserScreen> {
           delegate: SliverChildListDelegate(
             user?.boards.nodes
                     .map(
-                      (board) => BoardCard(
+                      (board) => BoardItem(
                         board: board,
                         onTap: () => context.goNamed(
                           routeNameShowUserBoard,

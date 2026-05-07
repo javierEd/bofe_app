@@ -62,14 +62,14 @@ class _NewListFormState extends State<_NewListForm> {
 
         context.pop();
       } else {
-        showSnackBarAlert(context, errors?.message ?? 'Failed to create board');
+        showSnackBarAlert(context, errors?.message ?? 'Failed to create list');
 
         setState(() {
           _errorName = errors?.extensions?['params']['name']?['message'];
         });
       }
     } else {
-      showSnackBarAlert(context, 'Failed to create board');
+      showSnackBarAlert(context, 'Failed to create list');
     }
 
     loadingDialog.close();

@@ -1,0 +1,7 @@
+fragment CardFragment on CardObject {
+    id
+    content
+    position
+    createdAt
+    updatedAt
+}

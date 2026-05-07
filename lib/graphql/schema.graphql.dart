@@ -155,6 +155,111 @@ class _CopyWithStubImpl$Input$BoardParams<TRes>
   }) => _res;
 }
 
+class Input$CardParams {
+  factory Input$CardParams({required String listId, required String content}) =>
+      Input$CardParams._({r'listId': listId, r'content': content});
+
+  Input$CardParams._(this._$data);
+
+  factory Input$CardParams.fromJson(Map<String, dynamic> data) {
+    final result$data = <String, dynamic>{};
+    final l$listId = data['listId'];
+    result$data['listId'] = (l$listId as String);
+    final l$content = data['content'];
+    result$data['content'] = (l$content as String);
+    return Input$CardParams._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  String get listId => (_$data['listId'] as String);
+
+  String get content => (_$data['content'] as String);
+
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    final l$listId = listId;
+    result$data['listId'] = l$listId;
+    final l$content = content;
+    result$data['content'] = l$content;
+    return result$data;
+  }
+
+  CopyWith$Input$CardParams<Input$CardParams> get copyWith =>
+      CopyWith$Input$CardParams(this, (i) => i);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other is! Input$CardParams || runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$listId = listId;
+    final lOther$listId = other.listId;
+    if (l$listId != lOther$listId) {
+      return false;
+    }
+    final l$content = content;
+    final lOther$content = other.content;
+    if (l$content != lOther$content) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$listId = listId;
+    final l$content = content;
+    return Object.hashAll([l$listId, l$content]);
+  }
+}
+
+abstract class CopyWith$Input$CardParams<TRes> {
+  factory CopyWith$Input$CardParams(
+    Input$CardParams instance,
+    TRes Function(Input$CardParams) then,
+  ) = _CopyWithImpl$Input$CardParams;
+
+  factory CopyWith$Input$CardParams.stub(TRes res) =
+      _CopyWithStubImpl$Input$CardParams;
+
+  TRes call({String? listId, String? content});
+}
+
+class _CopyWithImpl$Input$CardParams<TRes>
+    implements CopyWith$Input$CardParams<TRes> {
+  _CopyWithImpl$Input$CardParams(this._instance, this._then);
+
+  final Input$CardParams _instance;
+
+  final TRes Function(Input$CardParams) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({Object? listId = _undefined, Object? content = _undefined}) =>
+      _then(
+        Input$CardParams._({
+          ..._instance._$data,
+          if (listId != _undefined && listId != null)
+            'listId': (listId as String),
+          if (content != _undefined && content != null)
+            'content': (content as String),
+        }),
+      );
+}
+
+class _CopyWithStubImpl$Input$CardParams<TRes>
+    implements CopyWith$Input$CardParams<TRes> {
+  _CopyWithStubImpl$Input$CardParams(this._res);
+
+  TRes _res;
+
+  call({String? listId, String? content}) => _res;
+}
+
 class Input$ListParams {
   factory Input$ListParams({required String boardId, required String name}) =>
       Input$ListParams._({r'boardId': boardId, r'name': name});

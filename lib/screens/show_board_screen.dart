@@ -95,7 +95,7 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> {
                                           },
                                         ),
                                       ]
-                                    : [ListItem(list: list)],
+                                    : [ListItem(list: list, isEditable: false)],
                               )
                               .expand((item) => item)
                               .toList() +

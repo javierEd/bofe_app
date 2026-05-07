@@ -53,6 +53,48 @@ enum BoardVisibility {
 	PUBLIC
 }
 
+type CardObject {
+	id: ID!
+	content: String!
+	position: Int!
+	createdAt: DateTime!
+	updatedAt: DateTime
+}
+
+type CardObjectConnection {
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+	"""
+	A list of edges.
+	"""
+	edges: [CardObjectEdge!]!
+	"""
+	A list of nodes.
+	"""
+	nodes: [CardObject!]!
+}
+
+"""
+An edge in a connection.
+"""
+type CardObjectEdge {
+	"""
+	The item at the end of the edge
+	"""
+	node: CardObject!
+	"""
+	A cursor for use in pagination
+	"""
+	cursor: String!
+}
+
+input CardParams {
+	listId: UUID!
+	content: String!
+}
+
 """
 Implement the DateTime<Utc> scalar
 
@@ -81,6 +123,7 @@ type ListObject {
 	id: ID!
 	name: String!
 	position: Int!
+	cards(after: UUID, first: Int): CardObjectConnection!
 	createdAt: DateTime!
 	updatedAt: DateTime
 }
@@ -121,7 +164,9 @@ input ListParams {
 
 type MutationRoot {
 	createBoard(params: BoardParams!): BoardObject!
+	createCard(params: CardParams!): CardObject!
 	createList(params: ListParams!): ListObject!
+	updateCardPosition(id: UUID!, position: Int!): CardObject!
 	updateListPosition(id: UUID!, position: Int!): ListObject!
 }
 
@@ -152,6 +197,7 @@ type QueryRoot {
 	boards(after: UUID, first: Int): BoardObjectConnection!
 	currentUser: UserObject
 	info: InfoObject!
+	list(id: ID!): ListObject
 	user(username: String!): UserObject
 }
 
