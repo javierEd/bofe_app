@@ -13,11 +13,22 @@ import 'card_item.dart';
 import 'new_card_dialog.dart';
 
 class DraggableListItem extends StatefulWidget {
-  const DraggableListItem({super.key, required this.list, required this.onDragOutside, required this.onDragEnded});
+  const DraggableListItem({
+    super.key,
+    required this.list,
+    required this.showCardItemDragTargets,
+    required this.onDragOutside,
+    required this.onDragEnded,
+    required this.onCardDragOutside,
+    required this.onCardDragEnded,
+  });
 
   final Fragment$ListFragment list;
+  final bool showCardItemDragTargets;
   final Function() onDragOutside;
   final Function() onDragEnded;
+  final Function() onCardDragOutside;
+  final Function() onCardDragEnded;
 
   @override
   State<DraggableListItem> createState() => _DraggableListItemState();
@@ -33,7 +44,10 @@ class _DraggableListItemState extends State<DraggableListItem> {
       data: widget.list,
       feedback: Material(
         color: Colors.transparent,
-        child: Opacity(opacity: 0.75, child: ListItem(list: widget.list, isEditable: true)),
+        child: Opacity(
+          opacity: 0.75,
+          child: ListItem(list: widget.list, isEditable: true, showCardItemDragTargets: false),
+        ),
       ),
       childWhenDragging: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
@@ -66,16 +80,32 @@ class _DraggableListItemState extends State<DraggableListItem> {
         });
         widget.onDragEnded();
       },
-      child: ListItem(list: widget.list, isEditable: true),
+      child: ListItem(
+        list: widget.list,
+        isEditable: true,
+        showCardItemDragTargets: widget.showCardItemDragTargets,
+        onCardDragOutside: widget.onCardDragOutside,
+        onCardDragEnded: widget.onCardDragEnded,
+      ),
     );
   }
 }
 
 class ListItem extends StatefulWidget {
-  const ListItem({super.key, required this.list, required this.isEditable});
+  const ListItem({
+    super.key,
+    required this.list,
+    required this.isEditable,
+    required this.showCardItemDragTargets,
+    this.onCardDragOutside,
+    this.onCardDragEnded,
+  });
 
   final Fragment$ListFragment list;
   final bool isEditable;
+  final bool showCardItemDragTargets;
+  final Function()? onCardDragOutside;
+  final Function()? onCardDragEnded;
 
   @override
   State<ListItem> createState() => _ListItemState();
@@ -109,8 +139,9 @@ class _ListItemState extends State<ListItem> {
                           (card) => widget.isEditable
                               ? [
                                   CardItemDragTarget(
+                                    listId: widget.list.id,
                                     position: card.position,
-                                    isVisible: _draggingCardId != null && _draggingCardId != card.id,
+                                    isVisible: widget.showCardItemDragTargets && _draggingCardId != card.id,
                                     onAccept: () async {
                                       await refetch?.call();
                                     },
@@ -121,11 +152,14 @@ class _ListItemState extends State<ListItem> {
                                       setState(() {
                                         _draggingCardId = card.id;
                                       });
+                                      widget.onCardDragOutside?.call();
                                     },
                                     onDragEnded: () {
+                                      refetch?.call();
                                       setState(() {
                                         _draggingCardId = null;
                                       });
+                                      widget.onCardDragEnded?.call();
                                     },
                                   ),
                                 ]
@@ -137,8 +171,9 @@ class _ListItemState extends State<ListItem> {
                 (widget.isEditable
                     ? [
                         CardItemDragTarget(
-                          position: (cards?.lastOrNull?.position ?? 0) + 1,
-                          isVisible: _draggingCardId != null,
+                          listId: widget.list.id,
+                          position: cards?.lastOrNull?.position != null ? cards!.lastOrNull!.position + 1 : 0,
+                          isVisible: widget.showCardItemDragTargets,
                           onAccept: () async {
                             await refetch?.call();
                           },

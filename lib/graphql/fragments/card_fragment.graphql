@@ -1,5 +1,6 @@
 fragment CardFragment on CardObject {
     id
+    listId
     content
     position
     createdAt

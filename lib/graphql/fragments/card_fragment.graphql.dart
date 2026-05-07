@@ -4,6 +4,7 @@ import 'package:graphql/client.dart' as graphql;
 class Fragment$CardFragment {
   Fragment$CardFragment({
     required this.id,
+    required this.listId,
     required this.content,
     required this.position,
     required this.createdAt,
@@ -13,6 +14,7 @@ class Fragment$CardFragment {
 
   factory Fragment$CardFragment.fromJson(Map<String, dynamic> json) {
     final l$id = json['id'];
+    final l$listId = json['listId'];
     final l$content = json['content'];
     final l$position = json['position'];
     final l$createdAt = json['createdAt'];
@@ -20,6 +22,7 @@ class Fragment$CardFragment {
     final l$$__typename = json['__typename'];
     return Fragment$CardFragment(
       id: (l$id as String),
+      listId: (l$listId as String),
       content: (l$content as String),
       position: (l$position as int),
       createdAt: DateTime.parse((l$createdAt as String)),
@@ -31,6 +34,8 @@ class Fragment$CardFragment {
   }
 
   final String id;
+
+  final String listId;
 
   final String content;
 
@@ -46,6 +51,8 @@ class Fragment$CardFragment {
     final _resultData = <String, dynamic>{};
     final l$id = id;
     _resultData['id'] = l$id;
+    final l$listId = listId;
+    _resultData['listId'] = l$listId;
     final l$content = content;
     _resultData['content'] = l$content;
     final l$position = position;
@@ -62,6 +69,7 @@ class Fragment$CardFragment {
   @override
   int get hashCode {
     final l$id = id;
+    final l$listId = listId;
     final l$content = content;
     final l$position = position;
     final l$createdAt = createdAt;
@@ -69,6 +77,7 @@ class Fragment$CardFragment {
     final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
+      l$listId,
       l$content,
       l$position,
       l$createdAt,
@@ -88,6 +97,11 @@ class Fragment$CardFragment {
     final l$id = id;
     final lOther$id = other.id;
     if (l$id != lOther$id) {
+      return false;
+    }
+    final l$listId = listId;
+    final lOther$listId = other.listId;
+    if (l$listId != lOther$listId) {
       return false;
     }
     final l$content = content;
@@ -135,6 +149,7 @@ abstract class CopyWith$Fragment$CardFragment<TRes> {
 
   TRes call({
     String? id,
+    String? listId,
     String? content,
     int? position,
     DateTime? createdAt,
@@ -155,6 +170,7 @@ class _CopyWithImpl$Fragment$CardFragment<TRes>
 
   TRes call({
     Object? id = _undefined,
+    Object? listId = _undefined,
     Object? content = _undefined,
     Object? position = _undefined,
     Object? createdAt = _undefined,
@@ -163,6 +179,9 @@ class _CopyWithImpl$Fragment$CardFragment<TRes>
   }) => _then(
     Fragment$CardFragment(
       id: id == _undefined || id == null ? _instance.id : (id as String),
+      listId: listId == _undefined || listId == null
+          ? _instance.listId
+          : (listId as String),
       content: content == _undefined || content == null
           ? _instance.content
           : (content as String),
@@ -190,6 +209,7 @@ class _CopyWithStubImpl$Fragment$CardFragment<TRes>
 
   call({
     String? id,
+    String? listId,
     String? content,
     int? position,
     DateTime? createdAt,
@@ -208,6 +228,13 @@ const fragmentDefinitionCardFragment = FragmentDefinitionNode(
     selections: [
       FieldNode(
         name: NameNode(value: 'id'),
+        alias: null,
+        arguments: [],
+        directives: [],
+        selectionSet: null,
+      ),
+      FieldNode(
+        name: NameNode(value: 'listId'),
         alias: null,
         arguments: [],
         directives: [],

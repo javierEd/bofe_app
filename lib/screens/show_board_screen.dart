@@ -21,6 +21,7 @@ class ShowBoardScreen extends StatefulWidget {
 
 class _ShowBoardScreenState extends State<ShowBoardScreen> {
   String? _draggingListId;
+  bool _draggingCard = false;
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +84,7 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> {
                                         ),
                                         DraggableListItem(
                                           list: list,
+                                          showCardItemDragTargets: _draggingCard,
                                           onDragOutside: () {
                                             setState(() {
                                               _draggingListId = list.id;
@@ -93,16 +95,26 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> {
                                               _draggingListId = null;
                                             });
                                           },
+                                          onCardDragOutside: () {
+                                            setState(() {
+                                              _draggingCard = true;
+                                            });
+                                          },
+                                          onCardDragEnded: () {
+                                            setState(() {
+                                              _draggingCard = false;
+                                            });
+                                          },
                                         ),
                                       ]
-                                    : [ListItem(list: list, isEditable: false)],
+                                    : [ListItem(list: list, isEditable: false, showCardItemDragTargets: false)],
                               )
                               .expand((item) => item)
                               .toList() +
                           (board.isEditable
                               ? [
                                   ListItemDragTarget(
-                                    position: (lists.lastOrNull?.position ?? 0) + 1,
+                                    position: lists.lastOrNull?.position != null ? lists.lastOrNull!.position + 1 : 0,
                                     isVisible: _draggingListId != null,
                                     onAccept: () async {
                                       await refetch?.call();

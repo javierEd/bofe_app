@@ -55,6 +55,7 @@ enum BoardVisibility {
 
 type CardObject {
 	id: ID!
+	listId: UUID!
 	content: String!
 	position: Int!
 	createdAt: DateTime!
@@ -166,6 +167,7 @@ type MutationRoot {
 	createBoard(params: BoardParams!): BoardObject!
 	createCard(params: CardParams!): CardObject!
 	createList(params: ListParams!): ListObject!
+	updateCardList(id: UUID!, listId: UUID!, position: Int!): CardObject!
 	updateCardPosition(id: UUID!, position: Int!): CardObject!
 	updateListPosition(id: UUID!, position: Int!): ListObject!
 }
