@@ -1,10 +1,25 @@
 import 'package:flutter/material.dart';
 
-import '../components/login_button.dart';
+import '../components/login_buttons.dart';
+import '../components/snackbar_alert.dart';
 import '../session.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
+
+  Future<void> _attemptToLogout(BuildContext context) async {
+    final result = await Session.attemptToLogout(context);
+
+    if (!context.mounted) {
+      return;
+    }
+
+    final errors = result.exception?.graphqlErrors.first;
+
+    if (errors != null) {
+      showSnackBarAlert(context, errors.message);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +47,7 @@ class SettingsScreen extends StatelessWidget {
                                   child: const Text('Cancel'),
                                   onPressed: () => Navigator.of(context).pop(),
                                 ),
-                                FilledButton(child: const Text('Confirm'), onPressed: () {}),
+                                FilledButton(child: const Text('Confirm'), onPressed: () => _attemptToLogout(context)),
                               ],
                             ),
                           );
@@ -41,7 +56,7 @@ class SettingsScreen extends StatelessWidget {
                         label: const Text('Logout'),
                       ),
                     )
-                  : const LoginButton(),
+                  : const LoginButtons(),
             ],
           ),
         ),

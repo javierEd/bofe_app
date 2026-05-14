@@ -6,11 +6,14 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'constants.dart';
 import 'graphql_client.dart';
 import 'router.dart';
+import 'session.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await initHiveForFlutter();
+
+  await Session.init();
 
   final graphQLClient = GraphQLClientExt.setup();
 
