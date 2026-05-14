@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:graphql/src/core/query_result.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:restart_app/restart_app.dart';
 
 import 'constants.dart';
