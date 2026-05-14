@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import 'constants.dart';
 import 'screens/home_screen.dart';
+import 'screens/login_screen.dart';
 import 'screens/new_board_screen.dart';
 import 'screens/not_found_screen.dart';
 import 'screens/register_screen.dart';
@@ -52,6 +53,7 @@ extension GoRouterExt on GoRouter {
               return ShowBoardScreen(key: ValueKey(slug), slug: slug);
             },
           ),
+          GoRoute(name: routeNameLogin, path: 'login', builder: (context, state) => LoginScreen()),
           GoRoute(name: routeNameSettings, path: 'settings', builder: (context, state) => SettingsScreen()),
           GoRoute(
             name: routeNameRegister,

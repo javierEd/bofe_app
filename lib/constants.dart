@@ -11,10 +11,12 @@ const colorTranslucent = Color(0x22000000);
 
 const headerXAppToken = 'X-App-Token';
 
-const keyUsername = 'username';
+const keySession = 'session';
 const keySlug = 'slug';
+const keyUsername = 'username';
 
 const routeNameHome = 'home';
+const routeNameLogin = 'login';
 const routeNameNewBoard = 'new_board';
 const routeNameRegister = 'register';
 const routeNameSettings = 'settings';

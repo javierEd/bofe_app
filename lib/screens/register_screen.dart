@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:world_info_plus/world_info_plus.dart';
 
 import '../components/date_field.dart';
@@ -9,10 +8,10 @@ import '../components/password_input_field.dart';
 import '../components/screen_title.dart';
 import '../components/snackbar_alert.dart';
 import '../components/text_input_field.dart';
-import '../constants.dart';
 import '../graphql/schema.graphql.dart';
 import '../graphql_client.dart';
 import '../graphql/mutations/create_user.graphql.dart';
+import '../session.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -72,9 +71,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       final errors = result.exception?.graphqlErrors.first;
 
       if (result.parsedData?.createUser != null) {
-        showSnackBarAlert(context, 'User created successfully');
-
-        context.goNamed(routeNameHome);
+        await Session.attemptToLogin(context, usernameOrEmail: _username, password: _password);
       } else {
         showSnackBarAlert(context, errors?.message ?? 'Failed to create user');
 
@@ -82,9 +79,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
           _errorUsername = errors?.extensions?['params']['username']?['message'];
           _errorEmail = errors?.extensions?['params']['email']?['message'];
           _errorPassword = errors?.extensions?['params']['password']?['message'];
-          _errorFullName = errors?.extensions?['params']['full_name']?['message'];
+          _errorFullName = errors?.extensions?['params']['fullName']?['message'];
           _errorBirthdate = errors?.extensions?['params']['birthdate']?['message'];
-          _errorCountryCode = errors?.extensions?['params']['country_code']?['message'];
+          _errorCountryCode = errors?.extensions?['params']['countryCode']?['message'];
         });
       }
     } else {

@@ -6,7 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../graphql/fragments/user_fragment.graphql.dart';
 import '../constants.dart';
 import 'current_user.dart';
-import 'login_button.dart';
+import 'login_buttons.dart';
 
 class AccountButton extends StatelessWidget {
   const AccountButton({super.key});
@@ -46,7 +46,7 @@ class AccountButton extends StatelessWidget {
                         ),
                       ],
                     )
-                  : const LoginButton(),
+                  : const LoginButtons(),
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(

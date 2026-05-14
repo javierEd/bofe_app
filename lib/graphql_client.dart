@@ -12,6 +12,8 @@ extension GraphQLClientExt on GraphQLClient {
           ErrorLink(
             onException: (request, forward, exception) {
               if (exception is ServerException && exception.statusCode == 401) {
+                Session.onUnauthorized();
+
                 throw exception;
               }
 
