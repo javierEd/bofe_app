@@ -1,21 +1,22 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 import 'constants.dart';
 import 'graphql_client.dart';
 import 'router.dart';
-import 'session.dart';
+import 'session_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await initHiveForFlutter();
 
-  await Session.init();
+  await SessionManager.init();
 
   final graphQLClient = GraphQLClientExt.setup();
+
+  await SessionManager.attemptToRefresh(graphQLClient);
 
   runApp(App(graphQLClient: graphQLClient));
 }
@@ -48,15 +49,10 @@ class App extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: colorPrimary, brightness: Brightness.dark),
           useMaterial3: true,
-          textTheme: TextTheme(
-            bodyLarge: GoogleFonts.amiko(fontSize: 18, fontWeight: FontWeight.w400, color: Colors.white),
-            bodyMedium: GoogleFonts.amiko(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white),
-            bodySmall: GoogleFonts.amiko(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.white),
-          ),
           filledButtonTheme: FilledButtonThemeData(
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.all(20),
-              textStyle: GoogleFonts.amiko(fontSize: 14, fontWeight: FontWeight.w700),
+              textStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
               backgroundColor: colorPrimary,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             ),
@@ -64,7 +60,7 @@ class App extends StatelessWidget {
           outlinedButtonTheme: OutlinedButtonThemeData(
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.all(20),
-              textStyle: GoogleFonts.amiko(fontSize: 14, fontWeight: FontWeight.w700),
+              textStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             ),
           ),
@@ -72,7 +68,7 @@ class App extends StatelessWidget {
             style: TextButton.styleFrom(
               iconAlignment: IconAlignment.start,
               padding: const EdgeInsets.all(20),
-              textStyle: GoogleFonts.amiko(fontSize: 14, fontWeight: FontWeight.w700),
+              textStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             ),
           ),
@@ -85,7 +81,7 @@ class App extends StatelessWidget {
             backgroundColor: Colors.transparent,
             checkmarkColor: Colors.black,
             deleteIconColor: Colors.black,
-            labelStyle: GoogleFonts.amiko(
+            labelStyle: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: WidgetStateColor.resolveWith((state) {

@@ -79,57 +79,59 @@ class _NewBoardScreenState extends State<NewBoardScreen> {
         appBar: AppBar(title: Text('New board')),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(12),
-          child: FormContainer(
-            formKey: _formNewBoard,
-            onSubmit: _attemptToCreateBoard,
-            fields: [
-              TextInputField(
-                labelText: 'Name',
-                errorText: _errorName,
-                required: true,
-                maxLines: 1,
-                onChanged: (value) {
-                  _slugController.text =
-                      value
-                          ?.replaceFirst(RegExp(r'[^a-zA-Z0-9]+$'), '')
-                          .replaceAll(RegExp(r'[^a-zA-Z0-9]+'), '-')
-                          .toLowerCase() ??
-                      '';
-                },
-                onSaved: (value) {
-                  _name = value ?? '';
-                },
-              ),
-              TextInputField(
-                controller: _slugController,
-                labelText: 'Slug',
-                errorText: _errorSlug,
-                required: true,
-                maxLines: 1,
-                onSaved: (value) {
-                  _slug = value ?? '';
-                },
-              ),
-              TextInputField(
-                labelText: 'Description',
-                maxLines: 4,
-                onSaved: (value) {
-                  _description = value ?? '';
-                },
-              ),
-              DropdownField(
-                labelText: 'Visibility',
-                initialValue: _visibility,
-                items: [
-                  DropdownMenuItem(value: Enum$BoardVisibility.PRIVATE, child: Text('Private')),
-                  DropdownMenuItem(value: Enum$BoardVisibility.USERS, child: Text('Only users')),
-                  DropdownMenuItem(value: Enum$BoardVisibility.PUBLIC, child: Text('Public')),
-                ],
-                onChanged: (value) {
-                  _visibility = value!;
-                },
-              ),
-            ],
+          child: Center(
+            child: FormContainer(
+              formKey: _formNewBoard,
+              onSubmit: _attemptToCreateBoard,
+              fields: [
+                TextInputField(
+                  labelText: 'Name',
+                  errorText: _errorName,
+                  required: true,
+                  maxLines: 1,
+                  onChanged: (value) {
+                    _slugController.text =
+                        value
+                            ?.replaceFirst(RegExp(r'[^a-zA-Z0-9]+$'), '')
+                            .replaceAll(RegExp(r'[^a-zA-Z0-9]+'), '-')
+                            .toLowerCase() ??
+                        '';
+                  },
+                  onSaved: (value) {
+                    _name = value ?? '';
+                  },
+                ),
+                TextInputField(
+                  controller: _slugController,
+                  labelText: 'Slug',
+                  errorText: _errorSlug,
+                  required: true,
+                  maxLines: 1,
+                  onSaved: (value) {
+                    _slug = value ?? '';
+                  },
+                ),
+                TextInputField(
+                  labelText: 'Description',
+                  maxLines: 4,
+                  onSaved: (value) {
+                    _description = value ?? '';
+                  },
+                ),
+                DropdownField(
+                  labelText: 'Visibility',
+                  initialValue: _visibility,
+                  items: [
+                    DropdownMenuItem(value: Enum$BoardVisibility.PRIVATE, child: Text('Private')),
+                    DropdownMenuItem(value: Enum$BoardVisibility.USERS, child: Text('Only users')),
+                    DropdownMenuItem(value: Enum$BoardVisibility.PUBLIC, child: Text('Public')),
+                  ],
+                  onChanged: (value) {
+                    _visibility = value!;
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

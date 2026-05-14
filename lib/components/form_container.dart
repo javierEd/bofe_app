@@ -22,32 +22,31 @@ class FormContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        padding: padding,
-        width: width ?? 640,
-        child: Form(
-          key: formKey,
-          child: Column(
-            spacing: 12,
-            children:
-                fields +
-                [
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton(
-                      onPressed: () async {
-                        final loadingDialog = showLoadingDialog(context);
+    return Container(
+      padding: padding,
+      width: width ?? 640,
+      child: Form(
+        key: formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 12,
+          children:
+              fields +
+              [
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: () async {
+                      final loadingDialog = showLoadingDialog(context);
 
-                        await onSubmit();
+                      await onSubmit();
 
-                        loadingDialog.close();
-                      },
-                      child: Text('SUBMIT'),
-                    ),
+                      loadingDialog.close();
+                    },
+                    child: Text('SUBMIT'),
                   ),
-                ],
-          ),
+                ),
+              ],
         ),
       ),
     );

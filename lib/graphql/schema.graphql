@@ -413,6 +413,7 @@ type MutationRoot {
 	deleteCard(id: UUID!): Boolean!
 	deleteList(id: UUID!): Boolean!
 	finishSession: Boolean!
+	refreshSession: SessionObject!
 	updateBoard(id: UUID!, params: BoardParams!): BoardObject!
 	updateCardList(id: UUID!, listId: UUID!, position: Int!): CardObject!
 	updateCardPosition(id: UUID!, position: Int!): CardObject!

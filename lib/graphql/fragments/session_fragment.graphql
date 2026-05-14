@@ -1,0 +1,7 @@
+fragment SessionFragment on SessionObject {
+    id
+    token
+    expiresAt
+    createdAt
+    updatedAt
+}

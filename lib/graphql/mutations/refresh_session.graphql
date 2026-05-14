@@ -1,0 +1,5 @@
+mutation RefreshSession {
+    refreshSession {
+        ...SessionFragment
+    }
+}

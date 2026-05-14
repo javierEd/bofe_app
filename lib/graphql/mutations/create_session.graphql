@@ -1,9 +1,5 @@
 mutation CreateSession($params: SessionParams!) {
     createSession(params: $params) {
-        id
-        token
-        expiresAt
-        createdAt
-        updatedAt
+        ...SessionFragment
     }
 }

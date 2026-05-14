@@ -7,7 +7,7 @@ import '../components/board_item.dart';
 import '../components/screen_title.dart';
 import '../constants.dart';
 import '../graphql/queries/current_user_boards.graphql.dart';
-import '../session.dart';
+import '../session_manager.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -56,7 +56,7 @@ class HomeScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text('Home'),
           actions: [
-            Session.hasBearer
+            SessionManager.hasBearer
                 ? Padding(
                     padding: EdgeInsets.only(right: 12),
                     child: IconButton.outlined(
@@ -71,7 +71,7 @@ class HomeScreen extends StatelessWidget {
         ),
         body: SingleChildScrollView(
           padding: EdgeInsets.all(16),
-          child: Session.hasBearer ? _getMyBoards(context) : SizedBox(),
+          child: SessionManager.hasBearer ? _getMyBoards(context) : SizedBox(),
         ),
       ),
     );

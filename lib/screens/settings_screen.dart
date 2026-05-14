@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../components/login_buttons.dart';
 import '../components/snackbar_alert.dart';
-import '../session.dart';
+import '../session_manager.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   Future<void> _attemptToLogout(BuildContext context) async {
-    final result = await Session.attemptToLogout(context);
+    final result = await SessionManager.attemptToLogout(context);
 
     if (!context.mounted) {
       return;
@@ -32,7 +32,7 @@ class SettingsScreen extends StatelessWidget {
           child: Column(
             spacing: 16,
             children: [
-              Session.hasBearer
+              SessionManager.hasBearer
                   ? SizedBox(
                       width: double.infinity,
                       child: OutlinedButton.icon(

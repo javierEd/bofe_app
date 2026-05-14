@@ -10,19 +10,19 @@ import 'screens/register_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/show_board_screen.dart';
 import 'screens/show_user_screen.dart';
-import 'session.dart';
+import 'session_manager.dart';
 
 final routeObserver = RouteObserver<ModalRoute<void>>();
 
 String? _requireBearer(BuildContext context, GoRouterState state) {
-  if (!Session.hasBearer) {
+  if (!SessionManager.hasBearer) {
     return '/login';
   }
   return null;
 }
 
 String? _requireNoBearer(BuildContext context, GoRouterState state) {
-  if (Session.hasBearer) {
+  if (SessionManager.hasBearer) {
     return '/';
   }
   return null;

@@ -5,7 +5,7 @@ import '../components/password_input_field.dart';
 import '../components/screen_title.dart';
 import '../components/snackbar_alert.dart';
 import '../components/text_input_field.dart';
-import '../session.dart';
+import '../session_manager.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -30,7 +30,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (_formLogin.currentState?.validate() == true) {
       _formLogin.currentState?.save();
-      final result = await Session.attemptToLogin(context, usernameOrEmail: _usernameOrEmail, password: _password);
+      final result = await SessionManager.attemptToLogin(
+        context,
+        usernameOrEmail: _usernameOrEmail,
+        password: _password,
+      );
 
       if (!mounted) {
         return;
@@ -59,27 +63,29 @@ class _LoginScreenState extends State<LoginScreen> {
         appBar: AppBar(title: Text('Login')),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(12),
-          child: FormContainer(
-            formKey: _formLogin,
-            onSubmit: _attemptToLogin,
-            fields: [
-              TextInputField(
-                labelText: 'Username or email',
-                errorText: _errorUsernameOrEmail,
-                required: true,
-                maxLines: 1,
-                onSaved: (value) {
-                  _usernameOrEmail = value ?? '';
-                },
-              ),
-              PasswordInputField(
-                errorText: _errorPassword,
-                required: true,
-                onSaved: (value) {
-                  _password = value ?? '';
-                },
-              ),
-            ],
+          child: Center(
+            child: FormContainer(
+              formKey: _formLogin,
+              onSubmit: _attemptToLogin,
+              fields: [
+                TextInputField(
+                  labelText: 'Username or email',
+                  errorText: _errorUsernameOrEmail,
+                  required: true,
+                  maxLines: 1,
+                  onSaved: (value) {
+                    _usernameOrEmail = value ?? '';
+                  },
+                ),
+                PasswordInputField(
+                  errorText: _errorPassword,
+                  required: true,
+                  onSaved: (value) {
+                    _password = value ?? '';
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -11,7 +11,7 @@ import '../components/text_input_field.dart';
 import '../graphql/schema.graphql.dart';
 import '../graphql_client.dart';
 import '../graphql/mutations/create_user.graphql.dart';
-import '../session.dart';
+import '../session_manager.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -71,7 +71,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       final errors = result.exception?.graphqlErrors.first;
 
       if (result.parsedData?.createUser != null) {
-        await Session.attemptToLogin(context, usernameOrEmail: _username, password: _password);
+        await SessionManager.attemptToLogin(context, usernameOrEmail: _username, password: _password);
       } else {
         showSnackBarAlert(context, errors?.message ?? 'Failed to create user');
 
@@ -97,68 +97,70 @@ class _RegisterScreenState extends State<RegisterScreen> {
         appBar: AppBar(title: Text('Register')),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(12),
-          child: FormContainer(
-            formKey: _formRegister,
-            onSubmit: _attemptToCreateUser,
-            fields: [
-              TextInputField(
-                labelText: 'Username',
-                errorText: _errorUsername,
-                required: true,
-                maxLines: 1,
-                onSaved: (value) {
-                  _username = value ?? '';
-                },
-              ),
-              TextInputField(
-                labelText: 'Email',
-                errorText: _errorEmail,
-                required: true,
-                maxLines: 1,
-                keyboardType: TextInputType.emailAddress,
-                onSaved: (value) {
-                  _email = value ?? '';
-                },
-              ),
-              PasswordInputField(
-                errorText: _errorPassword,
-                required: true,
-                onSaved: (value) {
-                  _password = value ?? '';
-                },
-              ),
-              TextInputField(
-                labelText: 'Full name',
-                errorText: _errorFullName,
-                required: true,
-                maxLines: 1,
-                onSaved: (value) {
-                  _fullName = value ?? '';
-                },
-              ),
-              DateField(
-                labelText: 'Birthdate',
-                errorText: _errorBirthdate,
-                required: true,
-                onChanged: (value) {
-                  _birthdate = value;
-                },
-              ),
-              DropdownField(
-                labelText: 'Country',
-                errorText: _errorCountryCode,
-                items: Enum$CountryCode.values.map((countryCode) {
-                  return DropdownMenuItem(
-                    value: countryCode,
-                    child: Text(WorldInfoPlus.getCountryByAlpha2(countryCode.name)?.name ?? ''),
-                  );
-                }).toList(),
-                required: true,
-                onChanged: (value) {
-                  _countryCode = value;
-                },
-              ),
-            ],
+          child: Center(
+            child: FormContainer(
+              formKey: _formRegister,
+              onSubmit: _attemptToCreateUser,
+              fields: [
+                TextInputField(
+                  labelText: 'Username',
+                  errorText: _errorUsername,
+                  required: true,
+                  maxLines: 1,
+                  onSaved: (value) {
+                    _username = value ?? '';
+                  },
+                ),
+                TextInputField(
+                  labelText: 'Email',
+                  errorText: _errorEmail,
+                  required: true,
+                  maxLines: 1,
+                  keyboardType: TextInputType.emailAddress,
+                  onSaved: (value) {
+                    _email = value ?? '';
+                  },
+                ),
+                PasswordInputField(
+                  errorText: _errorPassword,
+                  required: true,
+                  onSaved: (value) {
+                    _password = value ?? '';
+                  },
+                ),
+                TextInputField(
+                  labelText: 'Full name',
+                  errorText: _errorFullName,
+                  required: true,
+                  maxLines: 1,
+                  onSaved: (value) {
+                    _fullName = value ?? '';
+                  },
+                ),
+                DateField(
+                  labelText: 'Birthdate',
+                  errorText: _errorBirthdate,
+                  required: true,
+                  onChanged: (value) {
+                    _birthdate = value;
+                  },
+                ),
+                DropdownField(
+                  labelText: 'Country',
+                  errorText: _errorCountryCode,
+                  items: Enum$CountryCode.values.map((countryCode) {
+                    return DropdownMenuItem(
+                      value: countryCode,
+                      child: Text(WorldInfoPlus.getCountryByAlpha2(countryCode.name)?.name ?? ''),
+                    );
+                  }).toList(),
+                  required: true,
+                  onChanged: (value) {
+                    _countryCode = value;
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
