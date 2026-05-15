@@ -7,10 +7,18 @@ import '../components/board_item.dart';
 import '../components/screen_title.dart';
 import '../constants.dart';
 import '../graphql/queries/current_user_boards.graphql.dart';
+import '../router.dart';
 import '../session_manager.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> with RouteAware {
+  Future<QueryResult<Query$CurrentUserBoards>?> Function()? _refetch;
 
   Widget _getMyBoards(BuildContext context) {
     return Query$CurrentUserBoards$Widget(
@@ -19,6 +27,8 @@ class HomeScreen extends StatelessWidget {
         variables: Variables$Query$CurrentUserBoards(first: 12),
       ),
       builder: (result, {fetchMore, refetch}) {
+        _refetch ??= refetch;
+
         final user = result.parsedData?.currentUser;
 
         return Column(
@@ -46,6 +56,28 @@ class HomeScreen extends StatelessWidget {
         );
       },
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final currentRoute = ModalRoute.of(context);
+
+    if (currentRoute != null) {
+      routeObserver.subscribe(this, currentRoute);
+    }
+  }
+
+  @override
+  void didPopNext() {
+    _refetch?.call();
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
   }
 
   @override

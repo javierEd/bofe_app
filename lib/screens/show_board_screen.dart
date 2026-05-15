@@ -22,6 +22,13 @@ class ShowBoardScreen extends StatefulWidget {
 class _ShowBoardScreenState extends State<ShowBoardScreen> {
   String? _draggingListId;
   bool _draggingCard = false;
+  int _refetchListsCount = 0;
+
+  void _refetchLists() {
+    setState(() {
+      _refetchListsCount++;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +92,7 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> {
                                         DraggableListItem(
                                           list: list,
                                           showCardItemDragTargets: _draggingCard,
+                                          refetchCount: _refetchListsCount,
                                           onDragOutside: () {
                                             setState(() {
                                               _draggingListId = list.id;
@@ -94,6 +102,10 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> {
                                             setState(() {
                                               _draggingListId = null;
                                             });
+                                          },
+                                          onCardAccept: () {
+                                            refetch?.call();
+                                            _refetchLists();
                                           },
                                           onCardDragOutside: () {
                                             setState(() {

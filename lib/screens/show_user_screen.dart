@@ -7,6 +7,7 @@ import '../components/screen_title.dart';
 import '../constants.dart';
 import '../graphql/queries/user.graphql.dart';
 import '../graphql/queries/user_boards.graphql.dart';
+import '../router.dart';
 import '../screens/not_found_screen.dart';
 
 class ShowUserScreen extends StatefulWidget {
@@ -18,10 +19,11 @@ class ShowUserScreen extends StatefulWidget {
   State<ShowUserScreen> createState() => _ShowUserScreenState();
 }
 
-class _ShowUserScreenState extends State<ShowUserScreen> {
+class _ShowUserScreenState extends State<ShowUserScreen> with RouteAware {
   final _scrollController = ScrollController();
   String? _boardsEndCursor;
   Function(FetchMoreOptions$Query$UserBoards)? _boardsFetchMore;
+  Future<QueryResult<Query$UserBoards>?> Function()? _boardsRefetch;
 
   void _scrollListener() {
     if (_scrollController.offset < _scrollController.position.maxScrollExtent ||
@@ -61,10 +63,12 @@ class _ShowUserScreenState extends State<ShowUserScreen> {
         variables: Variables$Query$UserBoards(username: widget.username, first: 12),
       ),
       builder: (result, {fetchMore, refetch}) {
+        _boardsFetchMore ??= fetchMore;
+        _boardsRefetch ??= refetch;
+
         final user = result.parsedData?.user;
 
         _boardsEndCursor = user?.boards.pageInfo.endCursor;
-        _boardsFetchMore = fetchMore;
 
         return SliverGrid(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -99,7 +103,24 @@ class _ShowUserScreenState extends State<ShowUserScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final currentRoute = ModalRoute.of(context);
+
+    if (currentRoute != null) {
+      routeObserver.subscribe(this, currentRoute);
+    }
+  }
+
+  @override
+  void didPopNext() {
+    _boardsRefetch?.call();
+  }
+
+  @override
   void dispose() {
+    routeObserver.unsubscribe(this);
     _scrollController.removeListener(_scrollListener);
 
     super.dispose();

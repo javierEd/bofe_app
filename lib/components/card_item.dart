@@ -181,7 +181,7 @@ class CardItemDragTarget extends StatelessWidget {
             ),
           );
         },
-        onAcceptWithDetails: (details) async {
+        onAcceptWithDetails: (details) {
           final card = details.data;
 
           if (listId == card.listId) {
