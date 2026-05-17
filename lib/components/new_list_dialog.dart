@@ -11,7 +11,10 @@ Future<dynamic> showNewListDialog(BuildContext context, {required boardId}) {
   return showDialog(
     context: context,
     builder: (context) {
-      return Dialog(child: _NewListForm(boardId: boardId));
+      return AlertDialog(
+        title: Text('New List'),
+        content: _NewListForm(boardId: boardId),
+      );
     },
   );
 }
