@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../components/loading_dialog.dart';
 import '../graphql/fragments/list_fragment.graphql.dart';
+import '../graphql/mutations/delete_list.graphql.dart';
 import '../graphql/mutations/update_list_position.graphql.dart';
 import '../graphql/queries/list_cards.graphql.dart';
 import '../graphql_client.dart';
@@ -21,7 +23,7 @@ class DraggableListItem extends StatefulWidget {
     required this.refetchCount,
     required this.onDragOutside,
     required this.onDragEnded,
-    required this.onCardAccept,
+    required this.onChanged,
     required this.onCardDragOutside,
     required this.onCardDragEnded,
   });
@@ -31,7 +33,7 @@ class DraggableListItem extends StatefulWidget {
   final int refetchCount;
   final Function() onDragOutside;
   final Function() onDragEnded;
-  final Function() onCardAccept;
+  final Function() onChanged;
   final Function() onCardDragOutside;
   final Function() onCardDragEnded;
 
@@ -90,7 +92,7 @@ class _DraggableListItemState extends State<DraggableListItem> {
         isEditable: true,
         showCardItemDragTargets: widget.showCardItemDragTargets,
         refetchCount: widget.refetchCount,
-        onCardAccept: widget.onCardAccept,
+        onChanged: widget.onChanged,
         onCardDragOutside: widget.onCardDragOutside,
         onCardDragEnded: widget.onCardDragEnded,
       ),
@@ -105,7 +107,7 @@ class ListItem extends StatefulWidget {
     required this.isEditable,
     required this.showCardItemDragTargets,
     this.refetchCount,
-    this.onCardAccept,
+    this.onChanged,
     this.onCardDragOutside,
     this.onCardDragEnded,
   });
@@ -114,7 +116,7 @@ class ListItem extends StatefulWidget {
   final bool isEditable;
   final bool showCardItemDragTargets;
   final int? refetchCount;
-  final Function()? onCardAccept;
+  final Function()? onChanged;
   final Function()? onCardDragOutside;
   final Function()? onCardDragEnded;
 
@@ -125,6 +127,28 @@ class ListItem extends StatefulWidget {
 class _ListItemState extends State<ListItem> {
   String? _draggingCardId;
   Future<QueryResult<Query$ListCards>?> Function()? _refetch;
+
+  Future<void> _attemptToDeleteList(String id) async {
+    final loadingDialog = showLoadingDialog(context);
+    final graphQLClient = context.graphQLClient.value;
+    final result = await graphQLClient.mutate$DeleteList(
+      Options$Mutation$DeleteList(variables: Variables$Mutation$DeleteList(id: id)),
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    if (result.parsedData?.deleteList != true) {
+      final errors = result.exception?.graphqlErrors.first;
+
+      showSnackBarAlert(context, errors?.message ?? 'Failed to delete list');
+    }
+
+    widget.onChanged?.call();
+
+    loadingDialog.close();
+  }
 
   @override
   void didUpdateWidget(covariant ListItem oldWidget) {
@@ -157,12 +181,50 @@ class _ListItemState extends State<ListItem> {
             children:
                 <Widget>[
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(widget.list.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                       widget.list.isEditable
-                          ? IconButton(
-                              onPressed: () => showEditListDialog(context, list: widget.list),
-                              icon: Icon(Icons.edit_rounded),
+                          ? PopupMenuButton(
+                              icon: Icon(Icons.more_vert_rounded),
+                              tooltip: 'More',
+                              position: PopupMenuPosition.under,
+                              onSelected: (value) {
+                                switch (value) {
+                                  case 1:
+                                    showEditListDialog(context, list: widget.list);
+                                    break;
+                                  case 2:
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text('Confirm your action'),
+                                        content: const Text('Are you sure you want to delete this list?'),
+                                        actions: [
+                                          OutlinedButton(child: const Text('Cancel'), onPressed: () => context.pop()),
+                                          FilledButton(
+                                            child: const Text('Confirm'),
+                                            onPressed: () {
+                                              context.pop();
+                                              _attemptToDeleteList(widget.list.id);
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                    break;
+                                }
+                              },
+                              itemBuilder: (context) => [
+                                PopupMenuItem(
+                                  value: 1,
+                                  child: ListTile(leading: Icon(Icons.edit_rounded), title: Text('Edit')),
+                                ),
+                                PopupMenuItem(
+                                  value: 2,
+                                  child: ListTile(leading: Icon(Icons.delete_rounded), title: Text('Delete')),
+                                ),
+                              ],
                             )
                           : SizedBox(),
                     ],
@@ -177,7 +239,7 @@ class _ListItemState extends State<ListItem> {
                                     position: card.position,
                                     isVisible: widget.showCardItemDragTargets && _draggingCardId != card.id,
                                     onAccept: () {
-                                      widget.onCardAccept?.call();
+                                      widget.onChanged?.call();
                                     },
                                   ),
                                   DraggableCardItem(
@@ -208,7 +270,7 @@ class _ListItemState extends State<ListItem> {
                           position: cards?.lastOrNull?.position != null ? cards!.lastOrNull!.position + 1 : 0,
                           isVisible: widget.showCardItemDragTargets,
                           onAccept: () {
-                            widget.onCardAccept?.call();
+                            widget.onChanged?.call();
                           },
                         ),
                         SizedBox(

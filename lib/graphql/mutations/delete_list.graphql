@@ -1,0 +1,3 @@
+mutation DeleteList($id: UUID!) {
+  deleteList(id: $id)
+}

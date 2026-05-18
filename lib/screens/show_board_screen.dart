@@ -195,7 +195,7 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
                                               _draggingListId = null;
                                             });
                                           },
-                                          onCardAccept: () {
+                                          onChanged: () {
                                             refetch?.call();
                                             _refetchLists();
                                           },
