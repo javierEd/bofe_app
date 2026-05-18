@@ -3,5 +3,5 @@
          the Flutter tool needs it to communicate with the running application
          to allow setting breakpoints, to provide hot reload, etc.
     -->
-    <application tools:replace="android:label" android:label="Boards (dev)" android:usesCleartextTraffic="true" />
+    <application tools:replace="android:label" android:label="Bofe (dev)" android:usesCleartextTraffic="true" />
 </manifest>

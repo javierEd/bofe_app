@@ -1,7 +1,7 @@
-import 'package:boards/components/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../components/loading_dialog.dart';
 import '../components/login_buttons.dart';
 import '../components/snackbar_alert.dart';
 import '../session_manager.dart';

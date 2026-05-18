@@ -14,14 +14,14 @@ targets:
                         NaiveDate:
                             type: DateTime
                             toJsonFunctionName: dateToJson
-                            import: package:boards/graphql/scalars.dart
+                            import: package:bofe/graphql/scalars.dart
                         Duration:
                             type: Duration
                             fromJsonFunctionName: jsonToDuration
-                            import: package:boards/graphql/scalars.dart
+                            import: package:bofe/graphql/scalars.dart
                         Url:
                             type: Uri
                             fromJsonFunctionName: jsonToUri
-                            import: package:boards/graphql/scalars.dart
+                            import: package:bofe/graphql/scalars.dart
                         UUID:
                             type: String

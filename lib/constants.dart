@@ -24,5 +24,5 @@ const routeNameShowBoard = 'show_board';
 const routeNameShowUser = 'show_user';
 const routeNameShowUserBoard = 'show_user_board';
 
-const urlPrivacy = 'https://mango3.app/privacy';
-const urlTerms = 'https://mango3.app/terms';
+const urlPrivacy = 'https://about.bofe.app/privacy';
+const urlTerms = 'https://about.bofe.app/terms';

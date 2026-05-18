@@ -1,11 +1,11 @@
 {
-    "name": "Boards",
-    "short_name": "Boards",
+    "name": "Bofe",
+    "short_name": "Bofe",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#fc7753",
-    "theme_color": "#fc7753",
-    "description": "Cloud storage platform",
+    "background_color": "#1997a2",
+    "theme_color": "#1997a2",
+    "description": "Kanban style boards",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
