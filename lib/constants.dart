@@ -6,7 +6,7 @@ const colorWatchedFilled = Color(0xFFc3d350);
 const colorCounter = Color(0xFFF3EAF4);
 const colorGenreChip = Color(0xFFC3D350);
 const colorPlayIcon = Color(0x999E9E9E);
-const colorPrimary = Color(0xFFFC7753);
+const colorPrimary = Color(0xFF1997a2);
 const colorTranslucent = Color(0x22000000);
 
 const headerXAppToken = 'X-App-Token';
