@@ -11,7 +11,10 @@ Future<dynamic> showNewCardDialog(BuildContext context, {required listId}) {
   return showDialog(
     context: context,
     builder: (context) {
-      return Dialog(child: _NewCardForm(listId: listId));
+      return AlertDialog(
+        title: const Text('New Card'),
+        content: _NewCardForm(listId: listId),
+      );
     },
   );
 }

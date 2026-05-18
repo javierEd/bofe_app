@@ -128,11 +128,11 @@ class _ListItemState extends State<ListItem> {
   String? _draggingCardId;
   Future<QueryResult<Query$ListCards>?> Function()? _refetch;
 
-  Future<void> _attemptToDeleteList(String id) async {
+  Future<void> _attemptToDeleteList() async {
     final loadingDialog = showLoadingDialog(context);
     final graphQLClient = context.graphQLClient.value;
     final result = await graphQLClient.mutate$DeleteList(
-      Options$Mutation$DeleteList(variables: Variables$Mutation$DeleteList(id: id)),
+      Options$Mutation$DeleteList(variables: Variables$Mutation$DeleteList(id: widget.list.id)),
     );
 
     if (!mounted) {
@@ -206,7 +206,7 @@ class _ListItemState extends State<ListItem> {
                                             child: const Text('Confirm'),
                                             onPressed: () {
                                               context.pop();
-                                              _attemptToDeleteList(widget.list.id);
+                                              _attemptToDeleteList();
                                             },
                                           ),
                                         ],
