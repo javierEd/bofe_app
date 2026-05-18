@@ -1,5 +1,3 @@
-import 'package:boards/graphql/mutations/delete_board.graphql.dart';
-import 'package:boards/graphql_client.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -11,6 +9,8 @@ import '../components/new_list_dialog.dart';
 import '../components/screen_title.dart';
 import '../components/snackbar_alert.dart';
 import '../constants.dart';
+import '../graphql/mutations/delete_board.graphql.dart';
+import '../graphql_client.dart';
 import '../graphql/queries/board.graphql.dart';
 import '../graphql/queries/board_lists.graphql.dart';
 import '../router.dart';

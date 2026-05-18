@@ -43,7 +43,7 @@ class App extends StatelessWidget {
     return GraphQLProvider(
       client: ValueNotifier(graphQLClient),
       child: MaterialApp.router(
-        title: 'Boards',
+        title: 'Bofe',
         scrollBehavior: const MobileLikeScrollBehavior(),
         themeMode: ThemeMode.dark,
         theme: ThemeData(

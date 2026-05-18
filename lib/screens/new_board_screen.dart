@@ -1,4 +1,3 @@
-import 'package:boards/graphql/schema.graphql.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -7,6 +6,7 @@ import '../components/screen_title.dart';
 import '../components/snackbar_alert.dart';
 import '../constants.dart';
 import '../graphql_client.dart';
+import '../graphql/schema.graphql.dart';
 import '../graphql/mutations/create_board.graphql.dart';
 
 class NewBoardScreen extends StatelessWidget {

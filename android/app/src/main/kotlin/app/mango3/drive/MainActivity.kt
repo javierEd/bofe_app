@@ -1,4 +1,4 @@
-package app.mango3.boards
+package app.bofe
 
 import io.flutter.embedding.android.FlutterActivity
 

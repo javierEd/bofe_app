@@ -1,8 +1,8 @@
-import 'package:boards/constants.dart';
 import 'package:flutter/widgets.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 import 'config.dart';
+import 'constants.dart';
 import 'session_manager.dart';
 
 extension GraphQLClientExt on GraphQLClient {
@@ -23,8 +23,8 @@ extension GraphQLClientExt on GraphQLClient {
         )
         .concat(
           HttpLink(
-            Config.boardsApiUrl.replace(path: '/graphql').toString(),
-            defaultHeaders: {headerXAppToken: Config.boardsAppToken},
+            Config.bofeApiUrl.replace(path: '/graphql').toString(),
+            defaultHeaders: {headerXAppToken: Config.bofeAppToken},
           ),
         ),
     cache: GraphQLCache(store: HiveStore()),
