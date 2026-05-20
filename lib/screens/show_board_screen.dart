@@ -166,74 +166,77 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
                   return SingleChildScrollView(
                     padding: const EdgeInsets.all(12),
                     scrollDirection: Axis.horizontal,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: _draggingListId == null ? 12 : 0,
-                      children:
-                          lists
-                              .map(
-                                (list) => board.isEditable
-                                    ? [
-                                        ListItemDragTarget(
-                                          position: list.position,
-                                          isVisible: _draggingListId != null && _draggingListId != list.id,
-                                          onAccept: () async {
-                                            await refetch?.call();
-                                          },
-                                        ),
-                                        DraggableListItem(
-                                          list: list,
-                                          showCardItemDragTargets: _draggingCard,
-                                          refetchCount: _refetchListsCount,
-                                          onDragOutside: () {
-                                            setState(() {
-                                              _draggingListId = list.id;
-                                            });
-                                          },
-                                          onDragEnded: () {
-                                            setState(() {
-                                              _draggingListId = null;
-                                            });
-                                          },
-                                          onChanged: () {
-                                            refetch?.call();
-                                            _refetchLists();
-                                          },
-                                          onCardDragOutside: () {
-                                            setState(() {
-                                              _draggingCard = true;
-                                            });
-                                          },
-                                          onCardDragEnded: () {
-                                            setState(() {
-                                              _draggingCard = false;
-                                            });
-                                          },
-                                        ),
-                                      ]
-                                    : [ListItem(list: list, isEditable: false, showCardItemDragTargets: false)],
-                              )
-                              .expand((item) => item)
-                              .toList() +
-                          (board.isEditable
-                              ? [
-                                  ListItemDragTarget(
-                                    position: lists.lastOrNull?.position != null ? lists.lastOrNull!.position + 1 : 0,
-                                    isVisible: _draggingListId != null,
-                                    onAccept: () async {
-                                      await refetch?.call();
-                                    },
-                                  ),
-                                  SizedBox(
-                                    width: 320,
-                                    child: OutlinedButton(
-                                      onPressed: () =>
-                                          showNewListDialog(context, boardId: board.id).then((_) => refetch?.call()),
-                                      child: Text('NEW LIST'),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: _draggingListId == null ? 12 : 0,
+                        children:
+                            lists
+                                .map(
+                                  (list) => board.isEditable
+                                      ? [
+                                          ListItemDragTarget(
+                                            position: list.position,
+                                            isVisible: _draggingListId != null && _draggingListId != list.id,
+                                            onAccept: () async {
+                                              await refetch?.call();
+                                            },
+                                          ),
+                                          DraggableListItem(
+                                            list: list,
+                                            showCardItemDragTargets: _draggingCard,
+                                            refetchCount: _refetchListsCount,
+                                            onDragOutside: () {
+                                              setState(() {
+                                                _draggingListId = list.id;
+                                              });
+                                            },
+                                            onDragEnded: () {
+                                              setState(() {
+                                                _draggingListId = null;
+                                              });
+                                            },
+                                            onChanged: () {
+                                              refetch?.call();
+                                              _refetchLists();
+                                            },
+                                            onCardDragOutside: () {
+                                              setState(() {
+                                                _draggingCard = true;
+                                              });
+                                            },
+                                            onCardDragEnded: () {
+                                              setState(() {
+                                                _draggingCard = false;
+                                              });
+                                            },
+                                          ),
+                                        ]
+                                      : [ListItem(list: list, isEditable: false, showCardItemDragTargets: false)],
+                                )
+                                .expand((item) => item)
+                                .toList() +
+                            (board.isEditable
+                                ? [
+                                    ListItemDragTarget(
+                                      position: lists.lastOrNull?.position != null ? lists.lastOrNull!.position + 1 : 0,
+                                      isVisible: _draggingListId != null,
+                                      onAccept: () async {
+                                        await refetch?.call();
+                                      },
                                     ),
-                                  ),
-                                ]
-                              : []),
+                                    SizedBox(
+                                      width: 320,
+                                      child: OutlinedButton(
+                                        onPressed: () =>
+                                            showNewListDialog(context, boardId: board.id).then((_) => refetch?.call()),
+                                        child: Text('NEW LIST'),
+                                      ),
+                                    ),
+                                  ]
+                                : []),
+                      ),
                     ),
                   );
                 },
