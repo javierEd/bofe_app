@@ -13,9 +13,16 @@ import 'loading_dialog.dart';
 import 'snackbar_alert.dart';
 
 class DraggableCardItem extends StatefulWidget {
-  const DraggableCardItem({super.key, required this.card, required this.onDragOutside, required this.onDragEnded});
+  const DraggableCardItem({
+    super.key,
+    required this.card,
+    required this.onChanged,
+    required this.onDragOutside,
+    required this.onDragEnded,
+  });
 
   final Fragment$CardFragment card;
+  final Function() onChanged;
   final Function() onDragOutside;
   final Function() onDragEnded;
 
@@ -80,15 +87,16 @@ class _DraggableCardItemState extends State<DraggableCardItem> {
         });
         widget.onDragEnded();
       },
-      child: CardItem(key: _childKey, card: widget.card),
+      child: CardItem(key: _childKey, card: widget.card, onChanged: widget.onChanged),
     );
   }
 }
 
 class CardItem extends StatelessWidget {
-  const CardItem({super.key, required this.card});
+  const CardItem({super.key, required this.card, this.onChanged});
 
   final Fragment$CardFragment card;
+  final Function()? onChanged;
 
   Future<void> _attemptToDeleteCard(BuildContext context) async {
     final graphQLClient = context.graphQLClient.value;
@@ -96,15 +104,13 @@ class CardItem extends StatelessWidget {
       Options$Mutation$DeleteCard(variables: Variables$Mutation$DeleteCard(id: card.id)),
     );
 
-    if (!context.mounted) {
-      return;
-    }
-
-    if (result.parsedData?.deleteCard != true) {
+    if (context.mounted && result.parsedData?.deleteCard != true) {
       final errors = result.exception?.graphqlErrors.first;
 
       showSnackBarAlert(context, errors?.message ?? 'Failed to delete card');
     }
+
+    onChanged?.call();
   }
 
   @override
@@ -114,7 +120,7 @@ class CardItem extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(16)),
       child: Column(
-        spacing: 6,
+        spacing: 3,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           card.isEditable

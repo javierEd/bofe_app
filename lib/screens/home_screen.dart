@@ -21,6 +21,8 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
   Future<QueryResult<Query$CurrentUserBoards>?> Function()? _refetch;
 
   Widget _getMyBoards(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
+
     return Query$CurrentUserBoards$Widget(
       options: Options$Query$CurrentUserBoards(
         fetchPolicy: FetchPolicy.noCache,
@@ -37,8 +39,8 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
             Text('My Boards', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
             GridView.builder(
               shrinkWrap: true,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: isMobile ? 2 : 3,
                 mainAxisSpacing: 8,
                 crossAxisSpacing: 8,
               ),

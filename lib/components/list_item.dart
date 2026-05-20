@@ -244,6 +244,9 @@ class _ListItemState extends State<ListItem> {
                                   ),
                                   DraggableCardItem(
                                     card: card,
+                                    onChanged: () {
+                                      widget.onChanged?.call();
+                                    },
                                     onDragOutside: () {
                                       setState(() {
                                         _draggingCardId = card.id;
