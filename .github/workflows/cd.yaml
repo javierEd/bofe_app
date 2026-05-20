@@ -128,7 +128,7 @@ jobs:
                   mappingFile: artifact/mapping.txt
                   debugSymbols: artifact/symbols
                   status: ${{ vars.GOOGLE_PLAY_STATUS }}
-                  track: ${{ vars.GOOGLE_PLAY_TRACK }}
+                  tracks: ${{ vars.GOOGLE_PLAY_TRACKS }}
                   releaseName: ${{ github.ref_name }}
 
     deploy_web:
