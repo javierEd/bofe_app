@@ -46,8 +46,6 @@ class _EditListForm extends StatelessWidget {
     final updatedList = result.parsedData?.updateList;
 
     if (updatedList != null) {
-      showSnackBarAlert(context, 'List updated successfully');
-
       context.pop();
 
       return null;
