@@ -60,6 +60,7 @@ type CardObject {
 	content: String!
 	position: Int!
 	isEditable: Boolean!
+	user: UserObject!
 	createdAt: DateTime!
 	updatedAt: DateTime
 }
