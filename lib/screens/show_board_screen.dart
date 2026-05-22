@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:single_child_two_dimensional_scroll_view/single_child_two_dimensional_scroll_view.dart';
 
 import '../components/edit_board_dialog.dart';
 import '../components/list_item.dart';
@@ -30,6 +31,12 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
   String? _draggingListId;
   bool _draggingCard = false;
   Future<QueryResult<Query$BoardBySlug>?> Function()? _refetch;
+  final _horizontalScrollController = ScrollController();
+  final _verticalScrollController = ScrollController();
+
+  double get _boardHeight => _verticalScrollController.hasClients
+      ? _verticalScrollController.position.viewportDimension + _verticalScrollController.position.maxScrollExtent
+      : 0;
 
   Future<void> _attemptToDeleteBoard(String id) async {
     final loadingDialog = showLoadingDialog(context);
@@ -72,11 +79,14 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
   @override
   void dispose() {
     routeObserver.unsubscribe(this);
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
     return Query$BoardBySlug$Widget(
       options: Options$Query$BoardBySlug(variables: Variables$Query$BoardBySlug(slug: widget.slug)),
       builder: (result, {fetchMore, refetch}) {
@@ -157,89 +167,128 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
                       : null),
                   leading: BackButton(onPressed: () => context.goNamed(routeNameHome)),
                 ),
-                body: SizedBox(
-                  height: double.infinity,
-                  width: double.infinity,
-                  child: LayoutBuilder(
-                    builder: (context, constrainsts) {
-                      return SingleChildScrollView(
-                        padding: const EdgeInsets.all(12),
-                        scrollDirection: Axis.horizontal,
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            spacing: _draggingListId == null ? 12 : 0,
-                            children:
-                                board.allLists
-                                    .map(
-                                      (list) => board.isEditable
-                                          ? [
-                                              ListItemDragTarget(
-                                                position: list.position,
-                                                isVisible: _draggingListId != null && _draggingListId != list.id,
-                                                height: constrainsts.maxHeight,
-                                                onAccept: () async {
-                                                  await refetch?.call();
-                                                },
-                                              ),
-                                              DraggableListItem(
-                                                list: list,
-                                                showCardItemDragTargets: _draggingCard,
-                                                onDragOutside: () {
-                                                  setState(() {
-                                                    _draggingListId = list.id;
-                                                  });
-                                                },
-                                                onDragEnded: () {
-                                                  setState(() {
-                                                    _draggingListId = null;
-                                                  });
-                                                },
-                                                onCardDragOutside: () {
-                                                  setState(() {
-                                                    _draggingCard = true;
-                                                  });
-                                                },
-                                                onCardDragEnded: () {
-                                                  setState(() {
-                                                    _draggingCard = false;
-                                                  });
-                                                },
-                                              ),
-                                            ]
-                                          : [ListItem(list: list, isEditable: false, showCardItemDragTargets: false)],
-                                    )
-                                    .expand((item) => item)
-                                    .toList() +
-                                (board.isEditable
-                                    ? [
-                                        ListItemDragTarget(
-                                          position: board.allLists.lastOrNull?.position != null
-                                              ? board.allLists.lastOrNull!.position + 1
-                                              : 0,
-                                          isVisible: _draggingListId != null,
-                                          height: constrainsts.maxHeight,
-                                          onAccept: () async {
-                                            await refetch?.call();
-                                          },
-                                        ),
-                                        SizedBox(
-                                          width: 320,
-                                          child: OutlinedButton(
-                                            onPressed: () => showNewListDialog(
-                                              context,
-                                              boardId: board.id,
-                                            ).then((_) => refetch?.call()),
-                                            child: Text('NEW LIST'),
-                                          ),
-                                        ),
-                                      ]
-                                    : []),
+                body: Listener(
+                  onPointerMove: (event) {
+                    if (_draggingCard || _draggingListId != null) {
+                      if (event.position.dx < 42) {
+                        _horizontalScrollController.animateTo(
+                          _horizontalScrollController.position.minScrollExtent,
+                          duration: Duration(milliseconds: _horizontalScrollController.offset.toInt() * 2),
+                          curve: Curves.easeInOut,
+                        );
+                      } else if (event.position.dx > screenSize.width - 42) {
+                        _horizontalScrollController.animateTo(
+                          _horizontalScrollController.position.maxScrollExtent,
+                          duration: Duration(
+                            milliseconds:
+                                (_horizontalScrollController.position.maxScrollExtent -
+                                        _horizontalScrollController.offset)
+                                    .toInt() *
+                                2,
                           ),
-                        ),
-                      );
-                    },
+                          curve: Curves.easeInOut,
+                        );
+                      } else {
+                        _horizontalScrollController.jumpTo(_horizontalScrollController.offset);
+                      }
+
+                      if (event.position.dy < 100) {
+                        _verticalScrollController.animateTo(
+                          _verticalScrollController.position.minScrollExtent,
+                          duration: Duration(milliseconds: _verticalScrollController.offset.toInt() * 2),
+                          curve: Curves.easeInOut,
+                        );
+                      } else if (event.position.dy > screenSize.height - 42) {
+                        _verticalScrollController.animateTo(
+                          _verticalScrollController.position.maxScrollExtent,
+                          duration: Duration(
+                            milliseconds:
+                                (_verticalScrollController.position.maxScrollExtent - _verticalScrollController.offset)
+                                    .toInt() *
+                                2,
+                          ),
+                          curve: Curves.easeInOut,
+                        );
+                      } else {
+                        _verticalScrollController.jumpTo(_verticalScrollController.offset);
+                      }
+                    }
+                  },
+                  child: SizedBox(
+                    height: double.infinity,
+                    width: double.infinity,
+                    child: SingleChildTwoDimensionalScrollView(
+                      horizontalController: _horizontalScrollController,
+                      verticalController: _verticalScrollController,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: _draggingListId == null ? 12 : 0,
+                        children:
+                            board.allLists
+                                .map(
+                                  (list) => board.isEditable
+                                      ? [
+                                          ListItemDragTarget(
+                                            position: list.position,
+                                            isVisible: _draggingListId != null && _draggingListId != list.id,
+                                            height: _boardHeight,
+                                            onAccept: () async {
+                                              await refetch?.call();
+                                            },
+                                          ),
+                                          DraggableListItem(
+                                            list: list,
+                                            showCardItemDragTargets: _draggingCard,
+                                            onDragOutside: () {
+                                              setState(() {
+                                                _draggingListId = list.id;
+                                              });
+                                            },
+                                            onDragEnded: () {
+                                              setState(() {
+                                                _draggingListId = null;
+                                              });
+                                            },
+                                            onCardDragOutside: () {
+                                              setState(() {
+                                                _draggingCard = true;
+                                              });
+                                            },
+                                            onCardDragEnded: () {
+                                              setState(() {
+                                                _draggingCard = false;
+                                              });
+                                            },
+                                          ),
+                                        ]
+                                      : [ListItem(list: list, isEditable: false, showCardItemDragTargets: false)],
+                                )
+                                .expand((item) => item)
+                                .toList() +
+                            (board.isEditable
+                                ? [
+                                    ListItemDragTarget(
+                                      position: board.allLists.lastOrNull?.position != null
+                                          ? board.allLists.lastOrNull!.position + 1
+                                          : 0,
+                                      isVisible: _draggingListId != null,
+                                      height: _boardHeight,
+                                      onAccept: () async {
+                                        await refetch?.call();
+                                      },
+                                    ),
+                                    SizedBox(
+                                      width: 320,
+                                      child: OutlinedButton(
+                                        onPressed: () =>
+                                            showNewListDialog(context, boardId: board.id).then((_) => refetch?.call()),
+                                        child: Text('NEW LIST'),
+                                      ),
+                                    ),
+                                  ]
+                                : []),
+                      ),
+                    ),
                   ),
                 ),
               ),
