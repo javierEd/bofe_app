@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../components/loading_dialog.dart';
+import '../components/loading_overlay.dart';
 import '../graphql/fragments/list_with_cards_fragment.graphql.dart';
 import '../graphql/mutations/delete_list.graphql.dart';
 import '../graphql/mutations/update_list_position.graphql.dart';
@@ -116,7 +116,7 @@ class _ListItemState extends State<ListItem> {
   String? _draggingCardId;
 
   Future<void> _attemptToDeleteList() async {
-    final loadingDialog = showLoadingDialog(context);
+    final loadingOverlay = showLoadingOverlay(context);
     final graphQLClient = context.graphQLClient.value;
     final result = await graphQLClient.mutate$DeleteList(
       Options$Mutation$DeleteList(variables: Variables$Mutation$DeleteList(id: widget.list.id)),
@@ -132,7 +132,7 @@ class _ListItemState extends State<ListItem> {
       showSnackBarAlert(context, errors?.message ?? 'Failed to delete list');
     }
 
-    loadingDialog.close();
+    loadingOverlay.hide();
   }
 
   @override
@@ -297,7 +297,7 @@ class ListItemDragTarget extends StatelessWidget {
             return;
           }
 
-          final loadingDialog = showLoadingDialog(context);
+          final loadingOverlay = showLoadingOverlay(context);
 
           final graphqlClient = context.graphQLClient.value;
           final result = await graphqlClient.mutate$UpdateListPosition(
@@ -312,7 +312,7 @@ class ListItemDragTarget extends StatelessWidget {
 
           await onAccept();
 
-          loadingDialog.close();
+          loadingOverlay.hide();
         },
       ),
     );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../components/loading_dialog.dart';
+import '../components/loading_overlay.dart';
 import '../components/login_buttons.dart';
 import '../components/snackbar_alert.dart';
 import '../session_manager.dart';
@@ -10,7 +10,7 @@ class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   Future<void> _attemptToLogout(BuildContext context) async {
-    final loadingDialog = showLoadingDialog(context);
+    final loadingOverlay = showLoadingOverlay(context);
     final result = await SessionManager.attemptToLogout(context);
 
     if (context.mounted && result.parsedData?.finishSession != true) {
@@ -19,7 +19,7 @@ class SettingsScreen extends StatelessWidget {
       showSnackBarAlert(context, errors?.message ?? 'Failed to logout');
     }
 
-    loadingDialog.close();
+    loadingOverlay.hide();
   }
 
   @override
