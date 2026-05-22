@@ -46,8 +46,6 @@ class _EditCardForm extends StatelessWidget {
     final updatedCard = result.parsedData?.updateCard;
 
     if (updatedCard != null) {
-      showSnackBarAlert(context, 'Card updated successfully');
-
       context.pop();
 
       return null;

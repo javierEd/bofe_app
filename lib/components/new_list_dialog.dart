@@ -48,8 +48,6 @@ class _NewListFormState extends State<_NewListForm> {
     final errors = result.exception?.graphqlErrors.first;
 
     if (result.parsedData?.createList != null) {
-      showSnackBarAlert(context, 'List created successfully');
-
       context.pop();
 
       return null;

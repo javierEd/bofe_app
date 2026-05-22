@@ -44,8 +44,6 @@ class _NewCardForm extends StatelessWidget {
     final createdCard = result.parsedData?.createCard;
 
     if (createdCard != null) {
-      showSnackBarAlert(context, 'Card created successfully');
-
       context.pop();
 
       return null;
