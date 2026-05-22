@@ -4,6 +4,9 @@ fragment CardFragment on CardObject {
     content
     position
     isEditable
+    user {
+        ...UserFragment
+    }
     createdAt
     updatedAt
 }

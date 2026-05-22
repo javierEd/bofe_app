@@ -113,57 +113,67 @@ class CardItem extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(16)),
       child: Column(
-        spacing: 3,
+        spacing: 6,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          card.isEditable
-              ? Align(
-                  alignment: Alignment.centerRight,
-                  child: PopupMenuButton(
-                    icon: Icon(Icons.more_vert_rounded),
-                    tooltip: 'More',
-                    position: PopupMenuPosition.under,
-                    onSelected: (value) {
-                      switch (value) {
-                        case 1:
-                          showEditCardDialog(context, card: card);
-                          break;
-                        case 2:
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text('Confirm your action'),
-                              content: const Text('Are you sure you want to delete this card?'),
-                              actions: [
-                                OutlinedButton(child: const Text('Cancel'), onPressed: () => context.pop()),
-                                FilledButton(
-                                  child: const Text('Confirm'),
-                                  onPressed: () {
-                                    context.pop();
-                                    _attemptToDeleteCard(context);
-                                  },
-                                ),
-                              ],
-                            ),
-                          );
-                          break;
-                      }
-                    },
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: 1,
-                        child: ListTile(leading: Icon(Icons.edit_rounded), title: Text('Edit')),
-                      ),
-                      PopupMenuItem(
-                        value: 2,
-                        child: ListTile(leading: Icon(Icons.delete_rounded), title: Text('Delete')),
-                      ),
-                    ],
-                  ),
-                )
-              : SizedBox(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                spacing: 6,
+                children: [
+                  CircleAvatar(radius: 16, child: Text(card.user.initials, style: TextStyle(fontSize: 14))),
+                  Text('@${card.user.username}', style: TextStyle(fontSize: 14)),
+                ],
+              ),
+              card.isEditable
+                  ? PopupMenuButton(
+                      icon: Icon(Icons.more_vert_rounded),
+                      iconSize: 20,
+                      tooltip: 'More',
+                      position: PopupMenuPosition.under,
+                      onSelected: (value) {
+                        switch (value) {
+                          case 1:
+                            showEditCardDialog(context, card: card);
+                            break;
+                          case 2:
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Confirm your action'),
+                                content: const Text('Are you sure you want to delete this card?'),
+                                actions: [
+                                  OutlinedButton(child: const Text('Cancel'), onPressed: () => context.pop()),
+                                  FilledButton(
+                                    child: const Text('Confirm'),
+                                    onPressed: () {
+                                      context.pop();
+                                      _attemptToDeleteCard(context);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                            break;
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: 1,
+                          child: ListTile(leading: Icon(Icons.edit_rounded), title: Text('Edit')),
+                        ),
+                        PopupMenuItem(
+                          value: 2,
+                          child: ListTile(leading: Icon(Icons.delete_rounded), title: Text('Delete')),
+                        ),
+                      ],
+                    )
+                  : SizedBox(),
+            ],
+          ),
 
-          Text(card.content),
+          Text(card.content, style: TextStyle(fontSize: 16)),
         ],
       ),
     );
