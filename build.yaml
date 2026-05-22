@@ -6,6 +6,8 @@ targets:
                     clients:
                         - graphql
                         - graphql_flutter
+                    addTypenameExcludedPaths:
+                        - subscription
                     scalars:
                         JSONObject:
                             type: Map<String, dynamic>

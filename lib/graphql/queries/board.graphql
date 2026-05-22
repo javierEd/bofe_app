@@ -1,8 +1,0 @@
-query Board($idOrSlug: String!) {
-    board(idOrSlug: $idOrSlug) {
-        ...BoardFragment
-        user {
-            ...UserFragment
-        }
-    }
-}

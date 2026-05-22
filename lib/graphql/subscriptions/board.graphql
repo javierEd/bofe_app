@@ -1,0 +1,5 @@
+subscription Board($id: ID!) {
+    board(id: $id) {
+        ...BoardWithListsFragment
+    }
+}

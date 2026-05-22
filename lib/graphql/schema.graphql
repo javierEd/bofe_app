@@ -6,6 +6,7 @@ type BoardObject {
 	description: String!
 	visibility: BoardVisibility!
 	lists(after: UUID, first: Int): ListObjectConnection!
+	allLists: [ListObject!]!
 	isEditable: Boolean!
 	createdAt: DateTime!
 	updatedAt: DateTime
@@ -366,6 +367,7 @@ type ListObject {
 	name: String!
 	position: Int!
 	cards(after: UUID, first: Int): CardObjectConnection!
+	allCards: [CardObject!]!
 	isEditable: Boolean!
 	createdAt: DateTime!
 	updatedAt: DateTime
@@ -458,7 +460,8 @@ type PageInfo {
 }
 
 type QueryRoot {
-	board(idOrSlug: String!): BoardObject
+	board(id: ID!): BoardObject
+	boardBySlug(slug: String!): BoardObject
 	boards(after: UUID, first: Int): BoardObjectConnection!
 	currentUser: UserObject
 	info: InfoObject!
@@ -477,6 +480,10 @@ type SessionObject {
 input SessionParams {
 	usernameOrEmail: String!
 	password: String!
+}
+
+type SubscriptionRoot {
+	board(id: ID!): BoardObject
 }
 
 """
@@ -533,5 +540,6 @@ directive @specifiedBy(url: String!) on SCALAR
 schema {
 	query: QueryRoot
 	mutation: MutationRoot
+	subscription: SubscriptionRoot
 }
 

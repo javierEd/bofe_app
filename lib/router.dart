@@ -15,14 +15,14 @@ import 'session_manager.dart';
 final routeObserver = RouteObserver<ModalRoute<void>>();
 
 String? _requireBearer(BuildContext context, GoRouterState state) {
-  if (!SessionManager.hasBearer) {
+  if (!SessionManager.hasToken) {
     return '/login';
   }
   return null;
 }
 
 String? _requireNoBearer(BuildContext context, GoRouterState state) {
-  if (SessionManager.hasBearer) {
+  if (SessionManager.hasToken) {
     return '/';
   }
   return null;

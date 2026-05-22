@@ -13,16 +13,9 @@ import 'loading_dialog.dart';
 import 'snackbar_alert.dart';
 
 class DraggableCardItem extends StatefulWidget {
-  const DraggableCardItem({
-    super.key,
-    required this.card,
-    required this.onChanged,
-    required this.onDragOutside,
-    required this.onDragEnded,
-  });
+  const DraggableCardItem({super.key, required this.card, required this.onDragOutside, required this.onDragEnded});
 
   final Fragment$CardFragment card;
-  final Function() onChanged;
   final Function() onDragOutside;
   final Function() onDragEnded;
 
@@ -87,16 +80,15 @@ class _DraggableCardItemState extends State<DraggableCardItem> {
         });
         widget.onDragEnded();
       },
-      child: CardItem(key: _childKey, card: widget.card, onChanged: widget.onChanged),
+      child: CardItem(key: _childKey, card: widget.card),
     );
   }
 }
 
 class CardItem extends StatelessWidget {
-  const CardItem({super.key, required this.card, this.onChanged});
+  const CardItem({super.key, required this.card});
 
   final Fragment$CardFragment card;
-  final Function()? onChanged;
 
   Future<void> _attemptToDeleteCard(BuildContext context) async {
     final graphQLClient = context.graphQLClient.value;
@@ -109,8 +101,6 @@ class CardItem extends StatelessWidget {
 
       showSnackBarAlert(context, errors?.message ?? 'Failed to delete card');
     }
-
-    onChanged?.call();
   }
 
   @override
@@ -178,18 +168,11 @@ class CardItem extends StatelessWidget {
 }
 
 class CardItemDragTarget extends StatelessWidget {
-  const CardItemDragTarget({
-    super.key,
-    required this.listId,
-    required this.position,
-    required this.isVisible,
-    required this.onAccept,
-  });
+  const CardItemDragTarget({super.key, required this.listId, required this.position, required this.isVisible});
 
   final String listId;
   final int position;
   final bool isVisible;
-  final FutureOr<void> Function() onAccept;
 
   Future<void> _attemptToUpdateCardPosition(BuildContext context, Fragment$CardFragment card, int position) async {
     int newPosition = position;
@@ -215,8 +198,6 @@ class CardItemDragTarget extends StatelessWidget {
       showSnackBarAlert(context, 'Failed to update card position');
     }
 
-    await onAccept();
-
     loadingDialog.close();
   }
 
@@ -238,8 +219,6 @@ class CardItemDragTarget extends StatelessWidget {
     if (result.parsedData?.updateCardList == null && context.mounted) {
       showSnackBarAlert(context, 'Failed to update card list');
     }
-
-    await onAccept();
 
     loadingDialog.close();
   }
