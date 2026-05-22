@@ -34,7 +34,7 @@ jobs:
                   echo "storeFile=keystore.jks" >> android/key.properties
             - run: |
                   flutter build appbundle --release --obfuscate --split-debug-info=./build/symbols \
-                  --dart-define BOFE_APP_TOKEN="${{ secrets.BOFE_APP_TOKEN }}"
+                  --dart-define APP_TOKEN="${{ secrets.APP_TOKEN }}"
             - run: |
                   mkdir artifact
                   mv build/app/outputs/bundle/release/app-release.aab artifact/bofe-app-${{ github.ref_name }}.aab
@@ -69,7 +69,7 @@ jobs:
                   echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
                   echo "storeFile=keystore.jks" >> android/key.properties
             - run: |
-                  flutter build apk --release --dart-define BOFE_APP_TOKEN="${{ secrets.BOFE_APP_TOKEN }}"
+                  flutter build apk --release --dart-define APP_TOKEN="${{ secrets.APP_TOKEN }}"
             - name: Rename package
               run: mv ./build/app/outputs/flutter-apk/app-release.apk ./bofe-app-${{ github.ref_name }}.apk
             - name: Upload artifact
@@ -89,7 +89,7 @@ jobs:
             - uses: actions/configure-pages@v6
             - uses: ./.github/actions/setup-flutter
             - run: |
-                  flutter build web --release --dart-define BOFE_APP_TOKEN="${{ secrets.BOFE_APP_TOKEN }}"
+                  flutter build web --release --dart-define APP_TOKEN="${{ secrets.APP_TOKEN }}"
             - name: Upload artifact
               uses: actions/upload-pages-artifact@v5.0.0
               with:
