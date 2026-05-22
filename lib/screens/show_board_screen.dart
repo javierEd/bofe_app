@@ -5,7 +5,7 @@ import 'package:single_child_two_dimensional_scroll_view/single_child_two_dimens
 
 import '../components/edit_board_dialog.dart';
 import '../components/list_item.dart';
-import '../components/loading_dialog.dart';
+import '../components/loading_overlay.dart';
 import '../components/new_list_dialog.dart';
 import '../components/screen_title.dart';
 import '../components/snackbar_alert.dart';
@@ -39,7 +39,7 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
       : 0;
 
   Future<void> _attemptToDeleteBoard(String id) async {
-    final loadingDialog = showLoadingDialog(context);
+    final loadingOverlay = showLoadingOverlay(context);
     final graphQLClient = context.graphQLClient.value;
     final result = await graphQLClient.mutate$DeleteBoard(
       Options$Mutation$DeleteBoard(variables: Variables$Mutation$DeleteBoard(id: id)),
@@ -57,7 +57,7 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
       showSnackBarAlert(context, errors?.message ?? 'Failed to delete board');
     }
 
-    loadingDialog.close();
+    loadingOverlay.hide();
   }
 
   @override

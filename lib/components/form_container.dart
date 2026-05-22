@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'loading_dialog.dart';
+import 'loading_overlay.dart';
 
 class FormContainer extends StatelessWidget {
   const FormContainer({
@@ -37,11 +37,11 @@ class FormContainer extends StatelessWidget {
                   width: double.infinity,
                   child: FilledButton(
                     onPressed: () async {
-                      final loadingDialog = showLoadingDialog(context);
+                      final loadingOverlay = showLoadingOverlay(context);
 
                       await onSubmit();
 
-                      loadingDialog.close();
+                      loadingOverlay.hide();
                     },
                     child: Text('SUBMIT'),
                   ),

@@ -20,7 +20,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with RouteAware {
   Future<QueryResult<Query$CurrentUserBoards>?> Function()? _refetch;
 
-  Widget _getMyBoards(BuildContext context) {
+  Widget _getMyBoards() {
     final isMobile = MediaQuery.of(context).size.width < 600;
 
     return Query$CurrentUserBoards$Widget(
@@ -105,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
         ),
         body: SingleChildScrollView(
           padding: EdgeInsets.all(16),
-          child: SessionManager.hasToken ? _getMyBoards(context) : SizedBox(),
+          child: SessionManager.hasToken ? _getMyBoards() : SizedBox(),
         ),
       ),
     );

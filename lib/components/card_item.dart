@@ -9,7 +9,7 @@ import '../graphql/mutations/update_card_list.graphql.dart';
 import '../graphql/mutations/update_card_position.graphql.dart';
 import '../graphql_client.dart';
 import 'edit_card_dialog.dart';
-import 'loading_dialog.dart';
+import 'loading_overlay.dart';
 import 'snackbar_alert.dart';
 
 class DraggableCardItem extends StatefulWidget {
@@ -91,6 +91,7 @@ class CardItem extends StatelessWidget {
   final Fragment$CardFragment card;
 
   Future<void> _attemptToDeleteCard(BuildContext context) async {
+    final loadingOverlay = showLoadingOverlay(context);
     final graphQLClient = context.graphQLClient.value;
     final result = await graphQLClient.mutate$DeleteCard(
       Options$Mutation$DeleteCard(variables: Variables$Mutation$DeleteCard(id: card.id)),
@@ -101,6 +102,8 @@ class CardItem extends StatelessWidget {
 
       showSnackBarAlert(context, errors?.message ?? 'Failed to delete card');
     }
+
+    loadingOverlay.hide();
   }
 
   @override
@@ -185,7 +188,7 @@ class CardItemDragTarget extends StatelessWidget {
       return;
     }
 
-    final loadingDialog = showLoadingDialog(context);
+    final loadingOverlay = showLoadingOverlay(context);
 
     final graphqlClient = context.graphQLClient.value;
     final result = await graphqlClient.mutate$UpdateCardPosition(
@@ -198,7 +201,7 @@ class CardItemDragTarget extends StatelessWidget {
       showSnackBarAlert(context, 'Failed to update card position');
     }
 
-    loadingDialog.close();
+    loadingOverlay.hide();
   }
 
   Future<void> _attemptToUpdateCardList(
@@ -207,7 +210,7 @@ class CardItemDragTarget extends StatelessWidget {
     String listId,
     int position,
   ) async {
-    final loadingDialog = showLoadingDialog(context);
+    final loadingOverlay = showLoadingOverlay(context);
 
     final graphqlClient = context.graphQLClient.value;
     final result = await graphqlClient.mutate$UpdateCardList(
@@ -220,7 +223,7 @@ class CardItemDragTarget extends StatelessWidget {
       showSnackBarAlert(context, 'Failed to update card list');
     }
 
-    loadingDialog.close();
+    loadingOverlay.hide();
   }
 
   @override
