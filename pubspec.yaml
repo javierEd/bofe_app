@@ -40,6 +40,7 @@ dependencies:
     graphql_flutter: ^5.3.0
     package_info_plus: ^10.1.0
     restart_app: ^1.8.3
+    single_child_two_dimensional_scroll_view: ^0.1.0
     url_launcher: ^6.3.2
     world_info_plus: ^1.0.1
 
