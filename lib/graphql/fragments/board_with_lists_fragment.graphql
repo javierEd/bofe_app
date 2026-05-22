@@ -1,0 +1,9 @@
+fragment BoardWithListsFragment on BoardObject {
+    ...BoardFragment
+    allLists {
+        ...ListWithCardsFragment
+    }
+    user {
+        ...UserFragment
+    }
+}

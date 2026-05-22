@@ -9,8 +9,9 @@ Kanban style boards.
 
 ## Environment variables
 
-| Name           | Type   | Default               |
-| -------------- | ------ | --------------------- |
-| BOFE_API_URL   | String | https://api.bofe.app/ |
-| BOFE_APP_TOKEN | String |                       |
-| BOFE_URL       | String | https://bofe.app/     |
+| Name          | Type   | Default               |
+| ------------- | ------ | --------------------- |
+| API_URL       | String | https://api.bofe.app/ |
+| APP_TOKEN     | String |                       |
+| APP_URL       | String | https://bofe.app/     |
+| WEBSOCKET_URL | String | wss://api.bofe.app/   |

@@ -25,7 +25,9 @@ class SessionManager {
     return 'Bearer ${_session?.token}';
   }
 
-  static bool get hasBearer => _session != null;
+  static bool get hasToken => _session != null;
+
+  static String? get token => _session?.token;
 
   static Fragment$SessionFragment _decode(String value) {
     return Fragment$SessionFragment.fromJson(jsonDecode(value));
@@ -114,7 +116,7 @@ class SessionManager {
     }
 
     // Delete invalid session and restart app.
-    if (hasBearer) {
+    if (hasToken) {
       await _delete();
       await Restart.restartApp();
     }

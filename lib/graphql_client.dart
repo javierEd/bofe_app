@@ -6,8 +6,8 @@ import 'constants.dart';
 import 'session_manager.dart';
 
 extension GraphQLClientExt on GraphQLClient {
-  static GraphQLClient setup() => GraphQLClient(
-    link: AuthLink(getToken: () => SessionManager.bearer)
+  static GraphQLClient setup() {
+    final httpLink = AuthLink(getToken: () => SessionManager.bearer)
         .concat(
           ErrorLink(
             onException: (request, forward, exception) {
@@ -23,18 +23,32 @@ extension GraphQLClientExt on GraphQLClient {
         )
         .concat(
           HttpLink(
-            Config.bofeApiUrl.replace(path: '/graphql').toString(),
-            defaultHeaders: {headerXAppToken: Config.bofeAppToken},
+            Config.apiUrl.replace(path: '/graphql').toString(),
+            defaultHeaders: {headerXAppToken: Config.appToken},
           ),
-        ),
-    cache: GraphQLCache(store: HiveStore()),
-    defaultPolicies: DefaultPolicies(
-      query: Policies(fetch: FetchPolicy.networkOnly),
-      mutate: Policies(fetch: FetchPolicy.networkOnly),
-      watchQuery: Policies(fetch: FetchPolicy.cacheAndNetwork),
-    ),
-    queryRequestTimeout: const Duration(minutes: 1),
-  );
+        );
+    final webSocketLink = WebSocketLink(
+      Config.webSocketUrl.replace(path: '/ws').toString(),
+      subProtocol: GraphQLProtocol.graphqlTransportWs,
+      config: SocketClientConfig(
+        autoReconnect: true,
+        inactivityTimeout: const Duration(minutes: 1),
+        delayBetweenReconnectionAttempts: const Duration(seconds: 10),
+        initialPayload: {'app-token': Config.appToken, 'session-token': SessionManager.token},
+      ),
+    );
+
+    return GraphQLClient(
+      link: Link.split((request) => request.isSubscription, webSocketLink, httpLink),
+      cache: GraphQLCache(store: HiveStore()),
+      defaultPolicies: DefaultPolicies(
+        query: Policies(fetch: FetchPolicy.networkOnly),
+        mutate: Policies(fetch: FetchPolicy.networkOnly),
+        watchQuery: Policies(fetch: FetchPolicy.cacheAndNetwork),
+      ),
+      queryRequestTimeout: const Duration(minutes: 1),
+    );
+  }
 }
 
 extension BuildContextExt on BuildContext {

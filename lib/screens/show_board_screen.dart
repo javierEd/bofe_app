@@ -10,9 +10,9 @@ import '../components/screen_title.dart';
 import '../components/snackbar_alert.dart';
 import '../constants.dart';
 import '../graphql/mutations/delete_board.graphql.dart';
+import '../graphql/subscriptions/board.graphql.dart';
 import '../graphql_client.dart';
-import '../graphql/queries/board.graphql.dart';
-import '../graphql/queries/board_lists.graphql.dart';
+import '../graphql/queries/board_by_slug.graphql.dart';
 import '../router.dart';
 import '../screens/not_found_screen.dart';
 
@@ -29,8 +29,7 @@ class ShowBoardScreen extends StatefulWidget {
 class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
   String? _draggingListId;
   bool _draggingCard = false;
-  int _refetchListsCount = -9007199254740991;
-  Future<QueryResult<Query$Board>?> Function()? _refetch;
+  Future<QueryResult<Query$BoardBySlug>?> Function()? _refetch;
 
   Future<void> _attemptToDeleteBoard(String id) async {
     final loadingDialog = showLoadingDialog(context);
@@ -54,12 +53,6 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
     loadingDialog.close();
   }
 
-  void _refetchLists() {
-    setState(() {
-      _refetchListsCount++;
-    });
-  }
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -74,7 +67,6 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
   @override
   void didPopNext() {
     _refetch?.call();
-    _refetchLists();
   }
 
   @override
@@ -85,12 +77,12 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
-    return Query$Board$Widget(
-      options: Options$Query$Board(variables: Variables$Query$Board(idOrSlug: widget.slug)),
+    return Query$BoardBySlug$Widget(
+      options: Options$Query$BoardBySlug(variables: Variables$Query$BoardBySlug(slug: widget.slug)),
       builder: (result, {fetchMore, refetch}) {
         _refetch ??= refetch;
 
-        final board = result.parsedData?.board;
+        final board = result.parsedData?.boardBySlug;
 
         if (board == null || (widget.username != null && board.user.username != widget.username)) {
           if (result.isLoading) {
@@ -100,149 +92,159 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
           }
         }
 
-        return ScreenTitle(
-          title: '${board.name} by @${board.user.username}',
-          child: Scaffold(
-            appBar: AppBar(
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(board.name),
-                  Text('by @${board.user.username}', style: TextStyle(fontSize: 12)),
-                ],
-              ),
-              actions: (board.isEditable
-                  ? [
-                      IconButton(
-                        onPressed: () => showEditBoardDialog(context, board: board),
-                        tooltip: 'Edit',
-                        icon: Icon(Icons.edit_rounded),
-                      ),
-                      PopupMenuButton(
-                        icon: Icon(Icons.more_vert_rounded),
-                        tooltip: 'More',
-                        position: PopupMenuPosition.under,
-                        onSelected: (value) {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text('Confirm your action'),
-                              content: const Text('Are you sure you want to delete this board?'),
-                              actions: [
-                                OutlinedButton(child: const Text('Cancel'), onPressed: () => context.pop()),
-                                FilledButton(
-                                  child: const Text('Confirm'),
-                                  onPressed: () {
-                                    context.pop();
-                                    _attemptToDeleteBoard(board.id);
-                                  },
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            value: 1,
-                            child: ListTile(leading: Icon(Icons.delete_rounded), title: Text('Delete')),
+        return Subscription$Board$Widget(
+          options: Options$Subscription$Board(variables: Variables$Subscription$Board(id: board.id)),
+          builder: (result) {
+            final board = result.parsedData?.board;
+
+            if (board == null) {
+              if (result.isLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else {
+                return const NotFoundScreen();
+              }
+            }
+
+            return ScreenTitle(
+              title: '${board.name} by @${board.user.username}',
+              child: Scaffold(
+                appBar: AppBar(
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(board.name),
+                      Text('by @${board.user.username}', style: TextStyle(fontSize: 12)),
+                    ],
+                  ),
+                  actions: (board.isEditable
+                      ? [
+                          IconButton(
+                            onPressed: () => showEditBoardDialog(context, board: board),
+                            tooltip: 'Edit',
+                            icon: Icon(Icons.edit_rounded),
                           ),
-                        ],
-                      ),
-                    ]
-                  : null),
-              leading: BackButton(onPressed: () => context.goNamed(routeNameHome)),
-            ),
-            body: SizedBox(
-              height: double.infinity,
-              child: Query$BoardLists$Widget(
-                options: Options$Query$BoardLists(variables: Variables$Query$BoardLists(idOrSlug: widget.slug)),
-                builder: (result, {fetchMore, refetch}) {
-                  final lists = result.parsedData?.board?.lists.nodes;
-
-                  if (lists == null) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  return SingleChildScrollView(
-                    padding: const EdgeInsets.all(12),
-                    scrollDirection: Axis.horizontal,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        spacing: _draggingListId == null ? 12 : 0,
-                        children:
-                            lists
-                                .map(
-                                  (list) => board.isEditable
-                                      ? [
-                                          ListItemDragTarget(
-                                            position: list.position,
-                                            isVisible: _draggingListId != null && _draggingListId != list.id,
-                                            onAccept: () async {
-                                              await refetch?.call();
-                                            },
-                                          ),
-                                          DraggableListItem(
-                                            list: list,
-                                            showCardItemDragTargets: _draggingCard,
-                                            refetchCount: _refetchListsCount,
-                                            onDragOutside: () {
-                                              setState(() {
-                                                _draggingListId = list.id;
-                                              });
-                                            },
-                                            onDragEnded: () {
-                                              setState(() {
-                                                _draggingListId = null;
-                                              });
-                                            },
-                                            onChanged: () {
-                                              refetch?.call();
-                                              _refetchLists();
-                                            },
-                                            onCardDragOutside: () {
-                                              setState(() {
-                                                _draggingCard = true;
-                                              });
-                                            },
-                                            onCardDragEnded: () {
-                                              setState(() {
-                                                _draggingCard = false;
-                                              });
-                                            },
-                                          ),
-                                        ]
-                                      : [ListItem(list: list, isEditable: false, showCardItemDragTargets: false)],
-                                )
-                                .expand((item) => item)
-                                .toList() +
-                            (board.isEditable
-                                ? [
-                                    ListItemDragTarget(
-                                      position: lists.lastOrNull?.position != null ? lists.lastOrNull!.position + 1 : 0,
-                                      isVisible: _draggingListId != null,
-                                      onAccept: () async {
-                                        await refetch?.call();
+                          PopupMenuButton(
+                            icon: Icon(Icons.more_vert_rounded),
+                            tooltip: 'More',
+                            position: PopupMenuPosition.under,
+                            onSelected: (value) {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Confirm your action'),
+                                  content: const Text('Are you sure you want to delete this board?'),
+                                  actions: [
+                                    OutlinedButton(child: const Text('Cancel'), onPressed: () => context.pop()),
+                                    FilledButton(
+                                      child: const Text('Confirm'),
+                                      onPressed: () {
+                                        context.pop();
+                                        _attemptToDeleteBoard(board.id);
                                       },
                                     ),
-                                    SizedBox(
-                                      width: 320,
-                                      child: OutlinedButton(
-                                        onPressed: () =>
-                                            showNewListDialog(context, boardId: board.id).then((_) => refetch?.call()),
-                                        child: Text('NEW LIST'),
-                                      ),
-                                    ),
-                                  ]
-                                : []),
-                      ),
-                    ),
-                  );
-                },
+                                  ],
+                                ),
+                              );
+                            },
+                            itemBuilder: (context) => [
+                              PopupMenuItem(
+                                value: 1,
+                                child: ListTile(leading: Icon(Icons.delete_rounded), title: Text('Delete')),
+                              ),
+                            ],
+                          ),
+                        ]
+                      : null),
+                  leading: BackButton(onPressed: () => context.goNamed(routeNameHome)),
+                ),
+                body: SizedBox(
+                  height: double.infinity,
+                  width: double.infinity,
+                  child: LayoutBuilder(
+                    builder: (context, constrainsts) {
+                      return SingleChildScrollView(
+                        padding: const EdgeInsets.all(12),
+                        scrollDirection: Axis.horizontal,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            spacing: _draggingListId == null ? 12 : 0,
+                            children:
+                                board.allLists
+                                    .map(
+                                      (list) => board.isEditable
+                                          ? [
+                                              ListItemDragTarget(
+                                                position: list.position,
+                                                isVisible: _draggingListId != null && _draggingListId != list.id,
+                                                height: constrainsts.maxHeight,
+                                                onAccept: () async {
+                                                  await refetch?.call();
+                                                },
+                                              ),
+                                              DraggableListItem(
+                                                list: list,
+                                                showCardItemDragTargets: _draggingCard,
+                                                onDragOutside: () {
+                                                  setState(() {
+                                                    _draggingListId = list.id;
+                                                  });
+                                                },
+                                                onDragEnded: () {
+                                                  setState(() {
+                                                    _draggingListId = null;
+                                                  });
+                                                },
+                                                onCardDragOutside: () {
+                                                  setState(() {
+                                                    _draggingCard = true;
+                                                  });
+                                                },
+                                                onCardDragEnded: () {
+                                                  setState(() {
+                                                    _draggingCard = false;
+                                                  });
+                                                },
+                                              ),
+                                            ]
+                                          : [ListItem(list: list, isEditable: false, showCardItemDragTargets: false)],
+                                    )
+                                    .expand((item) => item)
+                                    .toList() +
+                                (board.isEditable
+                                    ? [
+                                        ListItemDragTarget(
+                                          position: board.allLists.lastOrNull?.position != null
+                                              ? board.allLists.lastOrNull!.position + 1
+                                              : 0,
+                                          isVisible: _draggingListId != null,
+                                          height: constrainsts.maxHeight,
+                                          onAccept: () async {
+                                            await refetch?.call();
+                                          },
+                                        ),
+                                        SizedBox(
+                                          width: 320,
+                                          child: OutlinedButton(
+                                            onPressed: () => showNewListDialog(
+                                              context,
+                                              boardId: board.id,
+                                            ).then((_) => refetch?.call()),
+                                            child: Text('NEW LIST'),
+                                          ),
+                                        ),
+                                      ]
+                                    : []),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );

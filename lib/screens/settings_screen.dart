@@ -33,7 +33,7 @@ class SettingsScreen extends StatelessWidget {
           child: Column(
             spacing: 16,
             children: [
-              SessionManager.hasBearer
+              SessionManager.hasToken
                   ? SizedBox(
                       width: double.infinity,
                       child: OutlinedButton.icon(

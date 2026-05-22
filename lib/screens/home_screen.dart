@@ -90,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
         appBar: AppBar(
           title: Text('Home'),
           actions: [
-            SessionManager.hasBearer
+            SessionManager.hasToken
                 ? Padding(
                     padding: EdgeInsets.only(right: 12),
                     child: IconButton.outlined(
@@ -105,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
         ),
         body: SingleChildScrollView(
           padding: EdgeInsets.all(16),
-          child: SessionManager.hasBearer ? _getMyBoards(context) : SizedBox(),
+          child: SessionManager.hasToken ? _getMyBoards(context) : SizedBox(),
         ),
       ),
     );
