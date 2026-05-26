@@ -24,7 +24,7 @@ Future<dynamic> showNewMemberDialog(BuildContext context, {required boardId}) {
 }
 
 class _NewMemberForm extends StatefulWidget {
-  _NewMemberForm({required this.boardId});
+  const _NewMemberForm({required this.boardId});
 
   final String boardId;
 
