@@ -1,5 +1,5 @@
 mutation CreateCard($params: CardParams!) {
     createCard(params: $params) {
-        ...CardFragment
+        id
     }
 }

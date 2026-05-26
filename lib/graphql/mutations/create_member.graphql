@@ -1,0 +1,6 @@
+mutation CreateMember($params: MemberParams!) {
+    createMember(params: $params) {
+        id
+    }
+}
+

@@ -1,7 +1,5 @@
 mutation CreateUser($params: UserParams!) {
   createUser(params: $params) {
     id
-    createdAt
-    updatedAt
   }
 }

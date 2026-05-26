@@ -2,7 +2,10 @@ fragment ListFragment on ListObject {
     id
     name
     position
+    canCreateCard
+    canMoveCard
     isEditable
+    isMovable
     createdAt
     updatedAt
 }

@@ -7,6 +7,12 @@ type BoardObject {
 	visibility: BoardVisibility!
 	lists(after: UUID, first: Int): ListObjectConnection!
 	allLists: [ListObject!]!
+	members(after: UUID, first: Int): MemberObjectConnection!
+	canCreateCard: Boolean!
+	canCreateList: Boolean!
+	canCreateMember: Boolean!
+	canMoveCard: Boolean!
+	canMoveList: Boolean!
 	isEditable: Boolean!
 	createdAt: DateTime!
 	updatedAt: DateTime
@@ -60,6 +66,7 @@ type CardObject {
 	content: String!
 	position: Int!
 	isEditable: Boolean!
+	isMovable: Boolean!
 	user: UserObject!
 	createdAt: DateTime!
 	updatedAt: DateTime
@@ -369,7 +376,10 @@ type ListObject {
 	position: Int!
 	cards(after: UUID, first: Int): CardObjectConnection!
 	allCards: [CardObject!]!
+	canCreateCard: Boolean!
+	canMoveCard: Boolean!
 	isEditable: Boolean!
+	isMovable: Boolean!
 	createdAt: DateTime!
 	updatedAt: DateTime
 }
@@ -408,15 +418,61 @@ input ListParams {
 	name: String!
 }
 
+type MemberObject {
+	id: ID!
+	user: UserObject!
+	isAdmin: Boolean!
+	isEditable: Boolean!
+	createdAt: DateTime!
+	updatedAt: DateTime
+}
+
+type MemberObjectConnection {
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+	"""
+	A list of edges.
+	"""
+	edges: [MemberObjectEdge!]!
+	"""
+	A list of nodes.
+	"""
+	nodes: [MemberObject!]!
+}
+
+"""
+An edge in a connection.
+"""
+type MemberObjectEdge {
+	"""
+	The item at the end of the edge
+	"""
+	node: MemberObject!
+	"""
+	A cursor for use in pagination
+	"""
+	cursor: String!
+}
+
+input MemberParams {
+	boardId: UUID!
+	userId: UUID!
+	isAdmin: Boolean!
+}
+
 type MutationRoot {
 	createBoard(params: BoardParams!): BoardObject!
 	createCard(params: CardParams!): CardObject!
 	createList(params: ListParams!): ListObject!
+	createMember(params: MemberParams!): MemberObject!
 	createSession(params: SessionParams!): SessionObject!
 	createUser(params: UserParams!): UserObject!
 	deleteBoard(id: UUID!): Boolean!
 	deleteCard(id: UUID!): Boolean!
 	deleteList(id: UUID!): Boolean!
+	deleteMember(id: UUID!): Boolean!
 	finishSession: Boolean!
 	refreshSession: SessionObject!
 	updateBoard(id: UUID!, params: BoardParams!): BoardObject!
@@ -425,6 +481,7 @@ type MutationRoot {
 	updateCardPosition(id: UUID!, position: Int!): CardObject!
 	updateList(id: UUID!, params: UpdateListParams!): ListObject!
 	updateListPosition(id: UUID!, position: Int!): ListObject!
+	updateMember(id: UUID!, params: UpdateMemberParams!): MemberObject!
 }
 
 """
@@ -468,6 +525,7 @@ type QueryRoot {
 	info: InfoObject!
 	list(id: ID!): ListObject
 	user(username: String!): UserObject
+	users(query: String!, after: UUID, first: Int): UserObjectConnection!
 }
 
 type SessionObject {
@@ -507,6 +565,10 @@ input UpdateListParams {
 	name: String!
 }
 
+input UpdateMemberParams {
+	isAdmin: Boolean!
+}
+
 type UserObject {
 	id: ID!
 	username: String!
@@ -515,6 +577,35 @@ type UserObject {
 	boards(after: UUID, first: Int): BoardObjectConnection!
 	createdAt: DateTime!
 	updatedAt: DateTime
+}
+
+type UserObjectConnection {
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+	"""
+	A list of edges.
+	"""
+	edges: [UserObjectEdge!]!
+	"""
+	A list of nodes.
+	"""
+	nodes: [UserObject!]!
+}
+
+"""
+An edge in a connection.
+"""
+type UserObjectEdge {
+	"""
+	The item at the end of the edge
+	"""
+	node: UserObject!
+	"""
+	A cursor for use in pagination
+	"""
+	cursor: String!
 }
 
 input UserParams {

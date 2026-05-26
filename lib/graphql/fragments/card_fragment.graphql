@@ -4,6 +4,7 @@ fragment CardFragment on CardObject {
     content
     position
     isEditable
+    isMovable
     user {
         ...UserFragment
     }

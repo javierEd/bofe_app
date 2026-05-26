@@ -1,0 +1,3 @@
+mutation DeleteMember($id: UUID!) {
+    deleteMember(id: $id)
+}

@@ -11,6 +11,7 @@ import '../graphql_client.dart';
 import 'edit_card_dialog.dart';
 import 'loading_overlay.dart';
 import 'snackbar_alert.dart';
+import 'user_item.dart';
 
 class DraggableCardItem extends StatefulWidget {
   const DraggableCardItem({super.key, required this.card, required this.onDragOutside, required this.onDragEnded});
@@ -119,13 +120,7 @@ class CardItem extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                spacing: 6,
-                children: [
-                  CircleAvatar(radius: 16, child: Text(card.user.initials, style: TextStyle(fontSize: 14))),
-                  Text('@${card.user.username}', style: TextStyle(fontSize: 14)),
-                ],
-              ),
+              UserItem(user: card.user),
               card.isEditable
                   ? PopupMenuButton(
                       icon: Icon(Icons.more_vert_rounded),

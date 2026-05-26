@@ -1,0 +1,5 @@
+mutation UpdateMember($id: UUID!, $params: UpdateMemberParams!) {
+    updateMember(id: $id, params: $params) {
+        id
+    }
+}

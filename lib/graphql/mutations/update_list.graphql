@@ -1,5 +1,5 @@
 mutation UpdateList($id: UUID!, $params: UpdateListParams!) {
     updateList(id: $id, params: $params) {
-        ...ListFragment
+        id
     }
 }
