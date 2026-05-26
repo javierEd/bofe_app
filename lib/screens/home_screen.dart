@@ -3,7 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../components/account_button.dart';
-import '../components/board_item.dart';
+import '../components/explore_page.dart';
+import '../components/home_page.dart';
 import '../components/screen_title.dart';
 import '../constants.dart';
 import '../graphql/queries/current_user_boards.graphql.dart';
@@ -18,47 +19,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with RouteAware {
+  int currentIndex = SessionManager.hasToken ? 0 : 1;
   Future<QueryResult<Query$CurrentUserBoards>?> Function()? _refetch;
-
-  Widget _getMyBoards() {
-    final isMobile = MediaQuery.of(context).size.width < 600;
-
-    return Query$CurrentUserBoards$Widget(
-      options: Options$Query$CurrentUserBoards(
-        fetchPolicy: FetchPolicy.noCache,
-        variables: Variables$Query$CurrentUserBoards(first: 12),
-      ),
-      builder: (result, {fetchMore, refetch}) {
-        _refetch ??= refetch;
-
-        final user = result.parsedData?.currentUser;
-
-        return Column(
-          spacing: 12,
-          children: [
-            Text('My Boards', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-            GridView.builder(
-              shrinkWrap: true,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: isMobile ? 2 : 3,
-                mainAxisSpacing: 8,
-                crossAxisSpacing: 8,
-              ),
-              itemCount: user?.boards.nodes.length ?? 0,
-              itemBuilder: (context, index) {
-                final board = user?.boards.nodes[index];
-
-                return BoardItem(
-                  board: board!,
-                  onTap: () => context.goNamed(routeNameShowBoard, pathParameters: {keySlug: board.slug}),
-                );
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   @override
   void didChangeDependencies() {
@@ -88,24 +50,40 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
       title: 'Home',
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Home'),
+          title: Row(spacing: 12, children: [Image.asset('assets/icon.png', height: 32), Text('Bofe')]),
           actions: [
-            SessionManager.hasToken
-                ? Padding(
-                    padding: EdgeInsets.only(right: 12),
-                    child: IconButton.outlined(
-                      tooltip: 'New board',
-                      icon: Icon(Icons.add),
-                      onPressed: () => context.goNamed(routeNameNewBoard),
-                    ),
-                  )
-                : SizedBox(),
+            if (SessionManager.hasToken)
+              Padding(
+                padding: EdgeInsets.only(right: 12),
+                child: IconButton.outlined(
+                  tooltip: 'New board',
+                  icon: Icon(Icons.add),
+                  onPressed: () => context.goNamed(routeNameNewBoard),
+                ),
+              ),
             Padding(padding: EdgeInsets.only(right: 12), child: AccountButton()),
           ],
         ),
-        body: SingleChildScrollView(
-          padding: EdgeInsets.all(16),
-          child: SessionManager.hasToken ? _getMyBoards() : SizedBox(),
+        body: [HomePage(), ExplorePage()][currentIndex],
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: currentIndex,
+          onDestinationSelected: (index) {
+            setState(() {
+              currentIndex = index;
+            });
+          },
+          destinations: [
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home_rounded),
+              label: 'Home',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.explore_outlined),
+              selectedIcon: Icon(Icons.explore_rounded),
+              label: 'Explore',
+            ),
+          ],
         ),
       ),
     );

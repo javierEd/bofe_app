@@ -151,9 +151,9 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
       builder: (result, {fetchMore, refetch}) {
         _refetch ??= refetch;
 
-        final board = result.parsedData?.boardBySlug;
+        final boardBySlug = result.parsedData?.boardBySlug;
 
-        if (board == null) {
+        if (boardBySlug == null) {
           if (result.isLoading) {
             return const Center(child: CircularProgressIndicator());
           } else {
@@ -162,7 +162,7 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
         }
 
         return Subscription$Board$Widget(
-          options: Options$Subscription$Board(variables: Variables$Subscription$Board(id: board.id)),
+          options: Options$Subscription$Board(variables: Variables$Subscription$Board(id: boardBySlug.id)),
           builder: (result) {
             final board = result.parsedData?.board;
 

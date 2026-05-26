@@ -1,0 +1,11 @@
+query Boards($after: UUID, $first: Int) {
+    boards(after: $after, first: $first) {
+        nodes {
+            ...BoardFragment
+        }
+        pageInfo {
+            endCursor
+            hasNextPage
+        }
+    }
+}

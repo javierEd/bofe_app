@@ -7,6 +7,7 @@ query CurrentUserBoards($after: UUID, $first: Int) {
             }
             pageInfo {
                 endCursor
+                hasNextPage
             }
         }
 

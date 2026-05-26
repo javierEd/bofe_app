@@ -80,7 +80,7 @@ class BoardMembersScreen extends StatelessWidget {
     loadingOverlay.hide();
   }
 
-  void _onScrollAtBottom(String boardId, String? endCursor, Function(FetchMoreOptions$Query$BoardMembers)? fetchMore) {
+  void _onScrollAtBottom(String boardId, String? endCursor, FetchMore<Query$BoardMembers>? fetchMore) {
     fetchMore?.call(
       FetchMoreOptions$Query$BoardMembers(
         variables: Variables$Query$BoardMembers(id: boardId, after: endCursor),
