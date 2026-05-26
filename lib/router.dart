@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 import 'constants.dart';
+import 'screens/board_members_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/new_board_screen.dart';
@@ -52,6 +53,16 @@ extension GoRouterExt on GoRouter {
               final slug = state.pathParameters[keySlug]!;
               return ShowBoardScreen(key: ValueKey(slug), slug: slug);
             },
+            routes: [
+              GoRoute(
+                name: routeNameBoardMembers,
+                path: 'members',
+                builder: (context, state) {
+                  final slug = state.pathParameters[keySlug]!;
+                  return BoardMembersScreen(key: ValueKey(slug), slug: slug);
+                },
+              ),
+            ],
           ),
           GoRoute(name: routeNameLogin, path: 'login', builder: (context, state) => LoginScreen()),
           GoRoute(name: routeNameSettings, path: 'settings', builder: (context, state) => SettingsScreen()),
@@ -68,17 +79,6 @@ extension GoRouterExt on GoRouter {
               final username = state.pathParameters[keyUsername]!;
               return ShowUserScreen(key: ValueKey(username), username: username);
             },
-            routes: [
-              GoRoute(
-                name: routeNameShowUserBoard,
-                path: 'boards/:$keySlug',
-                builder: (context, state) {
-                  final username = state.pathParameters[keyUsername]!;
-                  final slug = state.pathParameters[keySlug]!;
-                  return ShowBoardScreen(key: ValueKey(slug), username: username, slug: slug);
-                },
-              ),
-            ],
           ),
         ],
       ),

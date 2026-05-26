@@ -10,6 +10,7 @@ import '../components/new_list_dialog.dart';
 import '../components/screen_title.dart';
 import '../components/snackbar_alert.dart';
 import '../constants.dart';
+import '../graphql/fragments/board_fragment.graphql.dart';
 import '../graphql/mutations/delete_board.graphql.dart';
 import '../graphql/subscriptions/board.graphql.dart';
 import '../graphql_client.dart';
@@ -18,9 +19,8 @@ import '../router.dart';
 import '../screens/not_found_screen.dart';
 
 class ShowBoardScreen extends StatefulWidget {
-  const ShowBoardScreen({super.key, this.username, required this.slug});
+  const ShowBoardScreen({super.key, required this.slug});
 
-  final String? username;
   final String slug;
 
   @override
@@ -30,7 +30,7 @@ class ShowBoardScreen extends StatefulWidget {
 class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
   String? _draggingListId;
   bool _draggingCard = false;
-  Future<QueryResult<Query$BoardBySlug>?> Function()? _refetch;
+  Refetch<Query$BoardBySlug>? _refetch;
   final _horizontalScrollController = ScrollController();
   final _verticalScrollController = ScrollController();
 
@@ -58,6 +58,65 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
     }
 
     loadingOverlay.hide();
+  }
+
+  List<Widget> _getActions(Fragment$BoardFragment board) {
+    List<Widget> actions = [];
+
+    if (board.isEditable) {
+      actions.add(
+        IconButton(
+          onPressed: () => showEditBoardDialog(context, board: board),
+          tooltip: 'Edit',
+          icon: Icon(Icons.edit_rounded),
+        ),
+      );
+    }
+
+    actions.add(
+      IconButton(
+        onPressed: () => context.goNamed(routeNameBoardMembers, pathParameters: {keySlug: board.slug}),
+        tooltip: 'Members',
+        icon: Icon(Icons.groups_3_rounded),
+      ),
+    );
+
+    if (board.isEditable) {
+      actions.add(
+        PopupMenuButton(
+          icon: Icon(Icons.more_vert_rounded),
+          tooltip: 'More',
+          position: PopupMenuPosition.under,
+          onSelected: (value) {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Confirm your action'),
+                content: const Text('Are you sure you want to delete this board?'),
+                actions: [
+                  OutlinedButton(child: const Text('Cancel'), onPressed: () => context.pop()),
+                  FilledButton(
+                    child: const Text('Confirm'),
+                    onPressed: () {
+                      context.pop();
+                      _attemptToDeleteBoard(board.id);
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+          itemBuilder: (context) => [
+            PopupMenuItem(
+              value: 1,
+              child: ListTile(leading: Icon(Icons.delete_rounded), title: Text('Delete')),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return actions;
   }
 
   @override
@@ -94,7 +153,7 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
 
         final board = result.parsedData?.boardBySlug;
 
-        if (board == null || (widget.username != null && board.user.username != widget.username)) {
+        if (board == null) {
           if (result.isLoading) {
             return const Center(child: CircularProgressIndicator());
           } else {
@@ -126,45 +185,7 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
                       Text('by @${board.user.username}', style: TextStyle(fontSize: 12)),
                     ],
                   ),
-                  actions: (board.isEditable
-                      ? [
-                          IconButton(
-                            onPressed: () => showEditBoardDialog(context, board: board),
-                            tooltip: 'Edit',
-                            icon: Icon(Icons.edit_rounded),
-                          ),
-                          PopupMenuButton(
-                            icon: Icon(Icons.more_vert_rounded),
-                            tooltip: 'More',
-                            position: PopupMenuPosition.under,
-                            onSelected: (value) {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text('Confirm your action'),
-                                  content: const Text('Are you sure you want to delete this board?'),
-                                  actions: [
-                                    OutlinedButton(child: const Text('Cancel'), onPressed: () => context.pop()),
-                                    FilledButton(
-                                      child: const Text('Confirm'),
-                                      onPressed: () {
-                                        context.pop();
-                                        _attemptToDeleteBoard(board.id);
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                value: 1,
-                                child: ListTile(leading: Icon(Icons.delete_rounded), title: Text('Delete')),
-                              ),
-                            ],
-                          ),
-                        ]
-                      : null),
+                  actions: _getActions(board),
                   leading: BackButton(onPressed: () => context.goNamed(routeNameHome)),
                 ),
                 body: Listener(
@@ -218,6 +239,7 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
                     height: double.infinity,
                     width: double.infinity,
                     child: SingleChildTwoDimensionalScrollView(
+                      padding: EdgeInsets.all(16),
                       horizontalController: _horizontalScrollController,
                       verticalController: _verticalScrollController,
                       child: Row(
@@ -226,7 +248,7 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
                         children:
                             board.allLists
                                 .map(
-                                  (list) => board.isEditable
+                                  (list) => board.canMoveList
                                       ? [
                                           ListItemDragTarget(
                                             position: list.position,
@@ -261,32 +283,47 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
                                             },
                                           ),
                                         ]
-                                      : [ListItem(list: list, isEditable: false, showCardItemDragTargets: false)],
+                                      : [
+                                          ListItem(
+                                            list: list,
+                                            showCardItemDragTargets: _draggingCard,
+                                            onCardDragOutside: () {
+                                              setState(() {
+                                                _draggingCard = true;
+                                              });
+                                            },
+                                            onCardDragEnded: () {
+                                              setState(() {
+                                                _draggingCard = false;
+                                              });
+                                            },
+                                          ),
+                                        ],
                                 )
                                 .expand((item) => item)
                                 .toList() +
-                            (board.isEditable
-                                ? [
-                                    ListItemDragTarget(
-                                      position: board.allLists.lastOrNull?.position != null
-                                          ? board.allLists.lastOrNull!.position + 1
-                                          : 0,
-                                      isVisible: _draggingListId != null,
-                                      height: _boardHeight,
-                                      onAccept: () async {
-                                        await refetch?.call();
-                                      },
-                                    ),
-                                    SizedBox(
-                                      width: 320,
-                                      child: OutlinedButton(
-                                        onPressed: () =>
-                                            showNewListDialog(context, boardId: board.id).then((_) => refetch?.call()),
-                                        child: Text('NEW LIST'),
-                                      ),
-                                    ),
-                                  ]
-                                : []),
+                            [
+                              if (board.canMoveList)
+                                ListItemDragTarget(
+                                  position: board.allLists.lastOrNull?.position != null
+                                      ? board.allLists.lastOrNull!.position + 1
+                                      : 0,
+                                  isVisible: _draggingListId != null,
+                                  height: _boardHeight,
+                                  onAccept: () async {
+                                    await refetch?.call();
+                                  },
+                                ),
+                              if (board.canCreateList)
+                                SizedBox(
+                                  width: 320,
+                                  child: OutlinedButton(
+                                    onPressed: () =>
+                                        showNewListDialog(context, boardId: board.id).then((_) => refetch?.call()),
+                                    child: Text('NEW LIST'),
+                                  ),
+                                ),
+                            ],
                       ),
                     ),
                   ),

@@ -1,5 +1,5 @@
 mutation CreateList($params: ListParams!) {
     createList(params: $params) {
-        ...ListFragment
+        id
     }
 }

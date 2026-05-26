@@ -2,6 +2,7 @@ fragment UserFragment on UserObject {
     id
     username
     initials
+    displayName
     createdAt
     updatedAt
 }

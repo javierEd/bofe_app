@@ -81,10 +81,7 @@ class _ShowUserScreenState extends State<ShowUserScreen> with RouteAware {
                     .map(
                       (board) => BoardItem(
                         board: board,
-                        onTap: () => context.goNamed(
-                          routeNameShowUserBoard,
-                          pathParameters: {keyUsername: widget.username, keySlug: board.slug},
-                        ),
+                        onTap: () => context.goNamed(routeNameShowBoard, pathParameters: {keySlug: board.slug}),
                       ),
                     )
                     .toList() ??

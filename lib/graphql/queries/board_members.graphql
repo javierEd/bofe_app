@@ -1,0 +1,23 @@
+query BoardMembers($id: ID!, $first: Int, $after: UUID) {
+    board(id: $id) {
+        id
+        members(first: $first, after: $after) {
+            nodes {
+                id
+                user {
+                    ...UserFragment
+                }
+                isAdmin
+                isEditable
+                createdAt
+                updatedAt
+            }
+            pageInfo {
+                endCursor
+                hasNextPage
+            }
+        }
+        createdAt
+        updatedAt
+    }
+}

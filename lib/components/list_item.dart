@@ -45,10 +45,7 @@ class _DraggableListItemState extends State<DraggableListItem> {
       data: widget.list,
       feedback: Material(
         color: Colors.transparent,
-        child: Opacity(
-          opacity: 0.75,
-          child: ListItem(list: widget.list, isEditable: true, showCardItemDragTargets: false),
-        ),
+        child: Opacity(opacity: 0.75, child: ListItem(list: widget.list, showCardItemDragTargets: false)),
       ),
       childWhenDragging: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
@@ -83,7 +80,6 @@ class _DraggableListItemState extends State<DraggableListItem> {
       },
       child: ListItem(
         list: widget.list,
-        isEditable: true,
         showCardItemDragTargets: widget.showCardItemDragTargets,
         onCardDragOutside: widget.onCardDragOutside,
         onCardDragEnded: widget.onCardDragEnded,
@@ -96,14 +92,12 @@ class ListItem extends StatefulWidget {
   const ListItem({
     super.key,
     required this.list,
-    required this.isEditable,
     required this.showCardItemDragTargets,
     this.onCardDragOutside,
     this.onCardDragEnded,
   });
 
   final Fragment$ListWithCardsFragment list;
-  final bool isEditable;
   final bool showCardItemDragTargets;
   final Function()? onCardDragOutside;
   final Function()? onCardDragEnded;
@@ -202,7 +196,7 @@ class _ListItemState extends State<ListItem> {
             ] +
             (widget.list.allCards
                 .map(
-                  (card) => widget.isEditable
+                  (card) => widget.list.canMoveCard
                       ? [
                           CardItemDragTarget(
                             listId: widget.list.id,
@@ -229,7 +223,7 @@ class _ListItemState extends State<ListItem> {
                 )
                 .expand((item) => item)
                 .toList()) +
-            (widget.isEditable
+            (widget.list.canCreateCard
                 ? [
                     CardItemDragTarget(
                       listId: widget.list.id,

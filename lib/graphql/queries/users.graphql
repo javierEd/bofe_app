@@ -1,0 +1,11 @@
+query Users($query: String!, $first: Int, $after: UUID) {
+    users(query: $query, first: $first, after: $after) {
+        nodes {
+            ...UserFragment
+        }
+        pageInfo {
+            endCursor
+            hasNextPage
+        }
+    }
+}

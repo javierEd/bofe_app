@@ -21,8 +21,8 @@ const routeNameNewBoard = 'new_board';
 const routeNameRegister = 'register';
 const routeNameSettings = 'settings';
 const routeNameShowBoard = 'show_board';
+const routeNameBoardMembers = 'board_members';
 const routeNameShowUser = 'show_user';
-const routeNameShowUserBoard = 'show_user_board';
 
 const urlPrivacy = 'https://about.bofe.app/privacy';
 const urlTerms = 'https://about.bofe.app/terms';
