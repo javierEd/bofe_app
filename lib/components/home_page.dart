@@ -64,6 +64,7 @@ class _HomePageState extends State<HomePage> {
             Query$CurrentUserBoards$Widget(
               options: Options$Query$CurrentUserBoards(variables: Variables$Query$CurrentUserBoards(first: 12)),
               builder: (result, {fetchMore, refetch}) {
+                _isLoadingNext = result.isLoading && _hasNextPage;
                 _fetchMore ??= fetchMore;
 
                 return QueryResultBuilder(
@@ -73,7 +74,6 @@ class _HomePageState extends State<HomePage> {
                   builder: (data) {
                     final boards = data.currentUser!.boards;
 
-                    _isLoadingNext = result.isLoading && _hasNextPage;
                     _endCursor = boards.pageInfo.endCursor;
                     _hasNextPage = boards.pageInfo.hasNextPage;
 
