@@ -3,11 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../components/boards_grid_view.dart';
+import '../components/infinite_scroll_view.dart';
+import '../components/query_result_builder.dart';
 import '../components/screen_title.dart';
 import '../constants.dart';
 import '../graphql/queries/user.graphql.dart';
 import '../graphql/queries/user_boards.graphql.dart';
-import '../router.dart';
 import '../screens/not_found_screen.dart';
 
 class ShowUserScreen extends StatefulWidget {
@@ -19,21 +20,16 @@ class ShowUserScreen extends StatefulWidget {
   State<ShowUserScreen> createState() => _ShowUserScreenState();
 }
 
-class _ShowUserScreenState extends State<ShowUserScreen> with RouteAware {
-  final _scrollController = ScrollController();
-  String? _boardsEndCursor;
-  FetchMore<Query$UserBoards>? _boardsFetchMore;
-  Refetch<Query$UserBoards>? _boardsRefetch;
+class _ShowUserScreenState extends State<ShowUserScreen> {
+  bool _isLoadingNext = false;
+  String? _endCursor;
+  bool _hasNextPage = false;
+  FetchMore<Query$UserBoards>? _fetchMore;
 
-  void _scrollListener() {
-    if (_scrollController.offset < _scrollController.position.maxScrollExtent ||
-        _scrollController.position.outOfRange) {
-      return;
-    }
-
-    _boardsFetchMore?.call(
+  void _onScrollAtBottom() {
+    _fetchMore?.call(
       FetchMoreOptions$Query$UserBoards(
-        variables: Variables$Query$UserBoards(username: widget.username, after: _boardsEndCursor, first: 12),
+        variables: Variables$Query$UserBoards(username: widget.username, after: _endCursor, first: 12),
         updateQuery: (previousResultData, fetchMoreResultData) {
           if (fetchMoreResultData == null || fetchMoreResultData['user']['boards']['nodes'].length == 0) {
             return previousResultData;
@@ -56,101 +52,67 @@ class _ShowUserScreenState extends State<ShowUserScreen> with RouteAware {
     );
   }
 
-  Widget _getBoards() {
-    return Query$UserBoards$Widget(
-      options: Options$Query$UserBoards(
-        fetchPolicy: FetchPolicy.noCache,
-        variables: Variables$Query$UserBoards(username: widget.username, first: 12),
-      ),
-      builder: (result, {fetchMore, refetch}) {
-        _boardsFetchMore ??= fetchMore;
-        _boardsRefetch ??= refetch;
-
-        final user = result.parsedData?.user;
-
-        _boardsEndCursor = user?.boards.pageInfo.endCursor;
-
-        return BoardsGridView(boards: user?.boards.nodes ?? []);
-      },
-    );
-  }
-
-  @override
-  void initState() {
-    _scrollController.addListener(_scrollListener);
-
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    final currentRoute = ModalRoute.of(context);
-
-    if (currentRoute != null) {
-      routeObserver.subscribe(this, currentRoute);
-    }
-  }
-
-  @override
-  void didPopNext() {
-    _boardsRefetch?.call();
-  }
-
-  @override
-  void dispose() {
-    routeObserver.unsubscribe(this);
-    _scrollController.removeListener(_scrollListener);
-
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Query$User$Widget(
       options: Options$Query$User(variables: Variables$Query$User(username: widget.username)),
       builder: (result, {fetchMore, refetch}) {
-        final user = result.parsedData?.user;
+        return QueryResultBuilder(
+          result: result,
+          buildIf: (parsedData) => parsedData?.user != null,
+          noResultWidget: const NotFoundScreen(),
+          builder: (parsedData) {
+            final user = parsedData.user;
 
-        if (user == null) {
-          if (result.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else {
-            return const NotFoundScreen();
-          }
-        }
+            return ScreenTitle(
+              title: '@${user!.username}',
+              child: Scaffold(
+                appBar: AppBar(leading: BackButton(onPressed: () => context.goNamed(routeNameHome))),
+                body: InfiniteScrollView(
+                  hasMore: _hasNextPage,
+                  isLoading: _isLoadingNext,
+                  onScrollAtBottom: _onScrollAtBottom,
+                  child: Column(
+                    spacing: 16,
+                    children: [
+                      Center(
+                        child: CircleAvatar(radius: 48, child: Text(user.initials, style: TextStyle(fontSize: 48))),
+                      ),
+                      Text(
+                        '@${user.username}',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.white),
+                      ),
+                      Query$UserBoards$Widget(
+                        options: Options$Query$UserBoards(
+                          fetchPolicy: FetchPolicy.noCache,
+                          variables: Variables$Query$UserBoards(username: widget.username, first: 12),
+                        ),
+                        builder: (result, {fetchMore, refetch}) {
+                          _isLoadingNext = result.isLoading && _hasNextPage;
+                          _fetchMore ??= fetchMore;
 
-        return ScreenTitle(
-          title: '@${user.username}',
-          child: Scaffold(
-            appBar: AppBar(
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.transparent,
-              leading: BackButton(onPressed: () => context.goNamed(routeNameHome)),
-            ),
-            body: CustomScrollView(
-              controller: _scrollController,
-              slivers: [
-                SliverList(
-                  delegate: SliverChildListDelegate([
-                    const SizedBox(height: 16),
-                    Center(
-                      child: CircleAvatar(radius: 48, child: Text(user.initials, style: TextStyle(fontSize: 48))),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      '@${user.username}',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.white),
-                    ),
-                    const SizedBox(height: 28),
-                  ]),
+                          return QueryResultBuilder(
+                            result: result,
+                            buildIf: (parsedData) => parsedData?.user?.boards.nodes.isNotEmpty == true,
+                            refetch: refetch,
+                            builder: (parsedData) {
+                              final boards = parsedData.user!.boards;
+
+                              _endCursor = boards.pageInfo.endCursor;
+                              _hasNextPage = boards.pageInfo.hasNextPage;
+
+                              return BoardsGridView(boards: boards.nodes);
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-                SliverPadding(padding: const EdgeInsets.all(16), sliver: _getBoards()),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );
