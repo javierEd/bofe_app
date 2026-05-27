@@ -17,7 +17,7 @@ class DraggableListItem extends StatefulWidget {
   const DraggableListItem({
     super.key,
     required this.list,
-    required this.showCardItemDragTargets,
+    required this.isDraggingCard,
     required this.onDragOutside,
     required this.onDragEnded,
     required this.onCardDragOutside,
@@ -25,7 +25,7 @@ class DraggableListItem extends StatefulWidget {
   });
 
   final Fragment$ListWithCardsFragment list;
-  final bool showCardItemDragTargets;
+  final bool isDraggingCard;
   final Function() onDragOutside;
   final Function() onDragEnded;
   final Function() onCardDragOutside;
@@ -36,8 +36,22 @@ class DraggableListItem extends StatefulWidget {
 }
 
 class _DraggableListItemState extends State<DraggableListItem> {
+  final GlobalKey _listItemSizeKey = GlobalKey();
+  Size? _listItemSize;
   double? _initialX;
   bool _isOutside = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final renderBox = _listItemSizeKey.currentContext?.findRenderObject() as RenderBox;
+
+      setState(() {
+        _listItemSize = renderBox.size;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +59,17 @@ class _DraggableListItemState extends State<DraggableListItem> {
       data: widget.list,
       feedback: Material(
         color: Colors.transparent,
-        child: Opacity(opacity: 0.75, child: ListItem(list: widget.list, showCardItemDragTargets: false)),
+        child: Opacity(
+          opacity: 0.50,
+          child: SizedBox(
+            height: _listItemSize?.height,
+            child: ListItem(key: ValueKey(widget.list.id), list: widget.list, isDraggingCard: false),
+          ),
+        ),
       ),
       childWhenDragging: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
-        width: _isOutside ? 0 : 320,
+        width: _isOutside ? 0 : _listItemSize?.width,
         decoration: BoxDecoration(color: Colors.white30, borderRadius: BorderRadius.circular(16)),
       ),
       onDragUpdate: (details) {
@@ -78,11 +98,15 @@ class _DraggableListItemState extends State<DraggableListItem> {
         });
         widget.onDragEnded();
       },
-      child: ListItem(
-        list: widget.list,
-        showCardItemDragTargets: widget.showCardItemDragTargets,
-        onCardDragOutside: widget.onCardDragOutside,
-        onCardDragEnded: widget.onCardDragEnded,
+      child: SizedBox(
+        key: _listItemSizeKey,
+        child: ListItem(
+          key: ValueKey(widget.list.id),
+          list: widget.list,
+          isDraggingCard: widget.isDraggingCard,
+          onCardDragOutside: widget.onCardDragOutside,
+          onCardDragEnded: widget.onCardDragEnded,
+        ),
       ),
     );
   }
@@ -92,13 +116,13 @@ class ListItem extends StatefulWidget {
   const ListItem({
     super.key,
     required this.list,
-    required this.showCardItemDragTargets,
+    required this.isDraggingCard,
     this.onCardDragOutside,
     this.onCardDragEnded,
   });
 
   final Fragment$ListWithCardsFragment list;
-  final bool showCardItemDragTargets;
+  final bool isDraggingCard;
   final Function()? onCardDragOutside;
   final Function()? onCardDragEnded;
 
@@ -108,6 +132,10 @@ class ListItem extends StatefulWidget {
 
 class _ListItemState extends State<ListItem> {
   String? _draggingCardId;
+  final _scrollController = ScrollController();
+  bool _isAnimating = false;
+  final _pixelsPerSecond = 250.0;
+  final _edgeThreshold = 50;
 
   Future<void> _attemptToDeleteList() async {
     final loadingOverlay = showLoadingOverlay(context);
@@ -129,6 +157,51 @@ class _ListItemState extends State<ListItem> {
     loadingOverlay.hide();
   }
 
+  void _onPointerMove(PointerMoveEvent event) {
+    if ((widget.isDraggingCard || _draggingCardId != null)) {
+      final pointerPosition = event.localPosition;
+
+      if (!_isAnimating) {
+        if (pointerPosition.dy <= _edgeThreshold) {
+          setState(() {
+            _isAnimating = true;
+          });
+          final minExtent = _scrollController.position.minScrollExtent;
+          final distanceToScroll = (_scrollController.offset - minExtent).abs();
+          final durationMs = ((distanceToScroll / _pixelsPerSecond) * 1000).round();
+
+          _scrollController.animateTo(
+            minExtent,
+            duration: Duration(milliseconds: durationMs),
+            curve: Curves.easeInOut,
+          );
+        } else if (!_isAnimating &&
+            pointerPosition.dy >= _scrollController.position.viewportDimension - _edgeThreshold) {
+          setState(() {
+            _isAnimating = true;
+          });
+
+          final maxExtent = _scrollController.position.maxScrollExtent;
+          final distanceToScroll = (maxExtent - _scrollController.offset).abs();
+          final durationMs = ((distanceToScroll / _pixelsPerSecond) * 1000).round();
+
+          _scrollController.animateTo(
+            maxExtent,
+            duration: Duration(milliseconds: durationMs),
+            curve: Curves.easeInOut,
+          );
+        }
+      } else if (pointerPosition.dy > _edgeThreshold &&
+          pointerPosition.dy < _scrollController.position.viewportDimension - _edgeThreshold) {
+        setState(() {
+          _isAnimating = false;
+        });
+
+        _scrollController.jumpTo(_scrollController.offset);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -139,126 +212,139 @@ class _ListItemState extends State<ListItem> {
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 12,
-        children:
-            <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(widget.list.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  widget.list.isEditable
-                      ? PopupMenuButton(
-                          icon: Icon(Icons.more_vert_rounded),
-                          tooltip: 'More',
-                          position: PopupMenuPosition.under,
-                          onSelected: (value) {
-                            switch (value) {
-                              case 1:
-                                showEditListDialog(context, list: widget.list);
-                                break;
-                              case 2:
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: const Text('Confirm your action'),
-                                    content: const Text('Are you sure you want to delete this list?'),
-                                    actions: [
-                                      OutlinedButton(child: const Text('Cancel'), onPressed: () => context.pop()),
-                                      FilledButton(
-                                        child: const Text('Confirm'),
-                                        onPressed: () {
-                                          context.pop();
-                                          _attemptToDeleteList();
-                                        },
-                                      ),
-                                    ],
+        spacing: 8,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(widget.list.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              widget.list.isEditable
+                  ? PopupMenuButton(
+                      icon: Icon(Icons.more_vert_rounded),
+                      tooltip: 'More',
+                      position: PopupMenuPosition.under,
+                      onSelected: (value) {
+                        switch (value) {
+                          case 1:
+                            showEditListDialog(context, list: widget.list);
+                            break;
+                          case 2:
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Confirm your action'),
+                                content: const Text('Are you sure you want to delete this list?'),
+                                actions: [
+                                  OutlinedButton(child: const Text('Cancel'), onPressed: () => context.pop()),
+                                  FilledButton(
+                                    child: const Text('Confirm'),
+                                    onPressed: () {
+                                      context.pop();
+                                      _attemptToDeleteList();
+                                    },
                                   ),
-                                );
-                                break;
-                            }
-                          },
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              value: 1,
-                              child: ListTile(leading: Icon(Icons.edit_rounded), title: Text('Edit')),
-                            ),
-                            PopupMenuItem(
-                              value: 2,
-                              child: ListTile(leading: Icon(Icons.delete_rounded), title: Text('Delete')),
-                            ),
-                          ],
-                        )
-                      : SizedBox(),
-                ],
-              ),
-            ] +
-            (widget.list.allCards
-                .map(
-                  (card) => widget.list.canMoveCard
-                      ? [
+                                ],
+                              ),
+                            );
+                            break;
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: 1,
+                          child: ListTile(leading: Icon(Icons.edit_rounded), title: Text('Edit')),
+                        ),
+                        PopupMenuItem(
+                          value: 2,
+                          child: ListTile(leading: Icon(Icons.delete_rounded), title: Text('Delete')),
+                        ),
+                      ],
+                    )
+                  : SizedBox(),
+            ],
+          ),
+          Expanded(
+            child: Listener(
+              onPointerMove: _onPointerMove,
+              onPointerUp: (event) {
+                setState(() {
+                  _isAnimating = false;
+                });
+              },
+              onPointerCancel: (event) {
+                setState(() {
+                  _isAnimating = false;
+                });
+              },
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: Column(
+                  spacing: 8,
+                  children:
+                      widget.list.allCards
+                          .map(
+                            (card) => widget.list.canMoveCard
+                                ? [
+                                    CardItemDragTarget(
+                                      listId: widget.list.id,
+                                      position: card.position,
+                                      isVisible: widget.isDraggingCard && _draggingCardId != card.id,
+                                    ),
+                                    DraggableCardItem(
+                                      card: card,
+                                      onDragOutside: () {
+                                        setState(() {
+                                          _draggingCardId = card.id;
+                                        });
+                                        widget.onCardDragOutside?.call();
+                                      },
+                                      onDragEnded: () {
+                                        setState(() {
+                                          _draggingCardId = null;
+                                        });
+                                        widget.onCardDragEnded?.call();
+                                      },
+                                    ),
+                                  ]
+                                : [CardItem(card: card)],
+                          )
+                          .expand((item) => item)
+                          .toList() +
+                      [
+                        if (widget.list.canMoveCard)
                           CardItemDragTarget(
                             listId: widget.list.id,
-                            position: card.position,
-                            isVisible: widget.showCardItemDragTargets && _draggingCardId != card.id,
+                            position: widget.list.allCards.lastOrNull?.position != null
+                                ? widget.list.allCards.lastOrNull!.position + 1
+                                : 0,
+                            isVisible: widget.isDraggingCard,
                           ),
-                          DraggableCardItem(
-                            card: card,
-                            onDragOutside: () {
-                              setState(() {
-                                _draggingCardId = card.id;
-                              });
-                              widget.onCardDragOutside?.call();
-                            },
-                            onDragEnded: () {
-                              setState(() {
-                                _draggingCardId = null;
-                              });
-                              widget.onCardDragEnded?.call();
-                            },
-                          ),
-                        ]
-                      : [CardItem(card: card)],
-                )
-                .expand((item) => item)
-                .toList()) +
-            (widget.list.canCreateCard
-                ? [
-                    CardItemDragTarget(
-                      listId: widget.list.id,
-                      position: widget.list.allCards.lastOrNull?.position != null
-                          ? widget.list.allCards.lastOrNull!.position + 1
-                          : 0,
-                      isVisible: widget.showCardItemDragTargets,
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton(
-                        onPressed: () {
-                          showNewCardDialog(context, listId: widget.list.id);
-                        },
-                        child: Text('NEW CARD'),
-                      ),
-                    ),
-                  ]
-                : []),
+                      ],
+                ),
+              ),
+            ),
+          ),
+          if (widget.list.canCreateCard)
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () {
+                  showNewCardDialog(context, listId: widget.list.id);
+                },
+                child: Text('NEW CARD'),
+              ),
+            ),
+        ],
       ),
     );
   }
 }
 
 class ListItemDragTarget extends StatelessWidget {
-  const ListItemDragTarget({
-    super.key,
-    required this.position,
-    required this.height,
-    required this.isVisible,
-    required this.onAccept,
-  });
+  const ListItemDragTarget({super.key, required this.position, required this.isVisible, required this.onAccept});
 
   final int position;
-  final double height;
   final bool isVisible;
   final FutureOr<void> Function() onAccept;
 
@@ -271,7 +357,6 @@ class ListItemDragTarget extends StatelessWidget {
           return AnimatedContainer(
             duration: const Duration(milliseconds: 250),
             margin: const EdgeInsets.symmetric(horizontal: 12),
-            height: height,
             width: accepted.isNotEmpty ? 320 : 16,
             decoration: BoxDecoration(
               color: accepted.isNotEmpty ? Colors.white30 : Colors.white24,

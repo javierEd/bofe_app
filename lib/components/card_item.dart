@@ -25,10 +25,22 @@ class DraggableCardItem extends StatefulWidget {
 }
 
 class _DraggableCardItemState extends State<DraggableCardItem> {
-  final GlobalKey _childKey = GlobalKey();
-  Size? _childSize;
+  final GlobalKey _cardItemSizeKey = GlobalKey();
+  Size? _cardItemSize;
   Offset? _initialOffset;
   bool _isOutside = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final renderBox = _cardItemSizeKey.currentContext?.findRenderObject() as RenderBox;
+
+      setState(() {
+        _cardItemSize = renderBox.size;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,21 +48,16 @@ class _DraggableCardItemState extends State<DraggableCardItem> {
       data: widget.card,
       feedback: Material(
         color: Colors.transparent,
-        child: Opacity(opacity: 0.75, child: CardItem(card: widget.card)),
+        child: Opacity(
+          opacity: 0.5,
+          child: CardItem(key: ValueKey(widget.card.id), card: widget.card),
+        ),
       ),
       childWhenDragging: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
-        height: _isOutside ? 0 : _childSize?.height,
+        height: _isOutside ? 0 : _cardItemSize?.height,
         decoration: BoxDecoration(color: Colors.white30, borderRadius: BorderRadius.circular(16)),
       ),
-      onDragStarted: () {
-        final renderBox = _childKey.currentContext?.findRenderObject() as RenderBox?;
-        if (renderBox != null) {
-          setState(() {
-            _childSize = renderBox.size;
-          });
-        }
-      },
       onDragUpdate: (details) {
         final currentOffset = details.globalPosition;
         _initialOffset ??= currentOffset;
@@ -81,7 +88,10 @@ class _DraggableCardItemState extends State<DraggableCardItem> {
         });
         widget.onDragEnded();
       },
-      child: CardItem(key: _childKey, card: widget.card),
+      child: SizedBox(
+        key: _cardItemSizeKey,
+        child: CardItem(key: ValueKey(widget.card.id), card: widget.card),
+      ),
     );
   }
 }
@@ -112,7 +122,11 @@ class CardItem extends StatelessWidget {
     return Container(
       width: 296,
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(16)),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        color: Colors.black54,
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Column(
         spacing: 6,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -240,7 +254,7 @@ class CardItemDragTarget extends StatelessWidget {
           return AnimatedContainer(
             duration: const Duration(milliseconds: 250),
             margin: const EdgeInsets.symmetric(vertical: 6),
-            height: accepted.isNotEmpty ? 48 : 12,
+            height: accepted.isNotEmpty ? 92 : 12,
             decoration: BoxDecoration(
               color: accepted.isNotEmpty ? Colors.white30 : Colors.white24,
               borderRadius: BorderRadius.circular(16),
