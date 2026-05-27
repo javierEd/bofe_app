@@ -1,8 +1,5 @@
 query BoardBySlug($slug: String!) {
     boardBySlug(slug: $slug) {
         ...BoardFragment
-        user {
-            ...UserFragment
-        }
     }
 }

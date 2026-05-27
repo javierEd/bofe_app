@@ -12,7 +12,7 @@ class BoardsGridView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 600;
+    final isMobile = MediaQuery.of(context).size.width < 640;
 
     return GridView.builder(
       shrinkWrap: true,

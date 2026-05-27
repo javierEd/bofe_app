@@ -15,6 +15,7 @@ class UserItem extends StatelessWidget {
         CircleAvatar(radius: 16, child: Text(user.initials, style: TextStyle(fontSize: 14))),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(user.displayName, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
             Text('@${user.username}', style: TextStyle(fontSize: 12)),
