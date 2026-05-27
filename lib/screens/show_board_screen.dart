@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:single_child_two_dimensional_scroll_view/single_child_two_dimensional_scroll_view.dart';
 
 import '../components/edit_board_dialog.dart';
 import '../components/list_item.dart';
@@ -29,14 +28,12 @@ class ShowBoardScreen extends StatefulWidget {
 
 class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
   String? _draggingListId;
-  bool _draggingCard = false;
+  bool _isDraggingCard = false;
   Refetch<Query$BoardBySlug>? _refetch;
-  final _horizontalScrollController = ScrollController();
-  final _verticalScrollController = ScrollController();
-
-  double get _boardHeight => _verticalScrollController.hasClients
-      ? _verticalScrollController.position.viewportDimension + _verticalScrollController.position.maxScrollExtent
-      : 0;
+  final _scrollController = ScrollController();
+  bool _isAnimating = false;
+  final _pixelsPerSecond = 250.0;
+  final _edgeThreshold = 50;
 
   Future<void> _attemptToDeleteBoard(String id) async {
     final loadingOverlay = showLoadingOverlay(context);
@@ -119,6 +116,51 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
     return actions;
   }
 
+  void _onPointerMove(PointerMoveEvent event) {
+    if (_isDraggingCard || _draggingListId != null) {
+      final pointerPosition = event.localPosition;
+
+      if (!_isAnimating) {
+        if (pointerPosition.dx <= _edgeThreshold) {
+          setState(() {
+            _isAnimating = true;
+          });
+          final minExtent = _scrollController.position.minScrollExtent;
+          final distanceToScroll = (_scrollController.offset - minExtent).abs();
+          final durationMs = ((distanceToScroll / _pixelsPerSecond) * 1000).round();
+
+          _scrollController.animateTo(
+            minExtent,
+            duration: Duration(milliseconds: durationMs),
+            curve: Curves.easeInOut,
+          );
+        } else if (!_isAnimating &&
+            pointerPosition.dx >= _scrollController.position.viewportDimension - _edgeThreshold) {
+          setState(() {
+            _isAnimating = true;
+          });
+
+          final maxExtent = _scrollController.position.maxScrollExtent;
+          final distanceToScroll = (maxExtent - _scrollController.offset).abs();
+          final durationMs = ((distanceToScroll / _pixelsPerSecond) * 1000).round();
+
+          _scrollController.animateTo(
+            maxExtent,
+            duration: Duration(milliseconds: durationMs),
+            curve: Curves.easeInOut,
+          );
+        }
+      } else if (pointerPosition.dx > _edgeThreshold &&
+          pointerPosition.dx < _scrollController.position.viewportDimension - _edgeThreshold) {
+        setState(() {
+          _isAnimating = false;
+        });
+
+        _scrollController.jumpTo(_scrollController.offset);
+      }
+    }
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -144,8 +186,6 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-
     return Query$BoardBySlug$Widget(
       options: Options$Query$BoardBySlug(variables: Variables$Query$BoardBySlug(slug: widget.slug)),
       builder: (result, {fetchMore, refetch}) {
@@ -189,59 +229,24 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
                   leading: BackButton(onPressed: () => context.goNamed(routeNameHome)),
                 ),
                 body: Listener(
-                  onPointerMove: (event) {
-                    if (_draggingCard || _draggingListId != null) {
-                      if (event.position.dx < 42) {
-                        _horizontalScrollController.animateTo(
-                          _horizontalScrollController.position.minScrollExtent,
-                          duration: Duration(milliseconds: _horizontalScrollController.offset.toInt() * 2),
-                          curve: Curves.easeInOut,
-                        );
-                      } else if (event.position.dx > screenSize.width - 42) {
-                        _horizontalScrollController.animateTo(
-                          _horizontalScrollController.position.maxScrollExtent,
-                          duration: Duration(
-                            milliseconds:
-                                (_horizontalScrollController.position.maxScrollExtent -
-                                        _horizontalScrollController.offset)
-                                    .toInt() *
-                                2,
-                          ),
-                          curve: Curves.easeInOut,
-                        );
-                      } else {
-                        _horizontalScrollController.jumpTo(_horizontalScrollController.offset);
-                      }
-
-                      if (event.position.dy < 100) {
-                        _verticalScrollController.animateTo(
-                          _verticalScrollController.position.minScrollExtent,
-                          duration: Duration(milliseconds: _verticalScrollController.offset.toInt() * 2),
-                          curve: Curves.easeInOut,
-                        );
-                      } else if (event.position.dy > screenSize.height - 42) {
-                        _verticalScrollController.animateTo(
-                          _verticalScrollController.position.maxScrollExtent,
-                          duration: Duration(
-                            milliseconds:
-                                (_verticalScrollController.position.maxScrollExtent - _verticalScrollController.offset)
-                                    .toInt() *
-                                2,
-                          ),
-                          curve: Curves.easeInOut,
-                        );
-                      } else {
-                        _verticalScrollController.jumpTo(_verticalScrollController.offset);
-                      }
-                    }
+                  onPointerMove: _onPointerMove,
+                  onPointerUp: (event) {
+                    setState(() {
+                      _isAnimating = false;
+                    });
+                  },
+                  onPointerCancel: (event) {
+                    setState(() {
+                      _isAnimating = false;
+                    });
                   },
                   child: SizedBox(
                     height: double.infinity,
                     width: double.infinity,
-                    child: SingleChildTwoDimensionalScrollView(
+                    child: SingleChildScrollView(
                       padding: EdgeInsets.all(16),
-                      horizontalController: _horizontalScrollController,
-                      verticalController: _verticalScrollController,
+                      controller: _scrollController,
+                      scrollDirection: Axis.horizontal,
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         spacing: _draggingListId == null ? 12 : 0,
@@ -253,14 +258,13 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
                                           ListItemDragTarget(
                                             position: list.position,
                                             isVisible: _draggingListId != null && _draggingListId != list.id,
-                                            height: _boardHeight,
                                             onAccept: () async {
                                               await refetch?.call();
                                             },
                                           ),
                                           DraggableListItem(
                                             list: list,
-                                            showCardItemDragTargets: _draggingCard,
+                                            isDraggingCard: _isDraggingCard,
                                             onDragOutside: () {
                                               setState(() {
                                                 _draggingListId = list.id;
@@ -273,28 +277,29 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
                                             },
                                             onCardDragOutside: () {
                                               setState(() {
-                                                _draggingCard = true;
+                                                _isDraggingCard = true;
                                               });
                                             },
                                             onCardDragEnded: () {
                                               setState(() {
-                                                _draggingCard = false;
+                                                _isDraggingCard = false;
                                               });
                                             },
                                           ),
                                         ]
                                       : [
                                           ListItem(
+                                            key: ValueKey(list.id),
                                             list: list,
-                                            showCardItemDragTargets: _draggingCard,
+                                            isDraggingCard: _isDraggingCard,
                                             onCardDragOutside: () {
                                               setState(() {
-                                                _draggingCard = true;
+                                                _isDraggingCard = true;
                                               });
                                             },
                                             onCardDragEnded: () {
                                               setState(() {
-                                                _draggingCard = false;
+                                                _isDraggingCard = false;
                                               });
                                             },
                                           ),
@@ -309,7 +314,6 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
                                       ? board.allLists.lastOrNull!.position + 1
                                       : 0,
                                   isVisible: _draggingListId != null,
-                                  height: _boardHeight,
                                   onAccept: () async {
                                     await refetch?.call();
                                   },

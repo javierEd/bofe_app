@@ -848,14 +848,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
-  single_child_two_dimensional_scroll_view:
-    dependency: "direct main"
-    description:
-      name: single_child_two_dimensional_scroll_view
-      sha256: "428b6d4f885ed186605a37273e163c4af0222feb18993d4307b1e07c16ed8f6c"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.1.0"
   sky_engine:
     dependency: transitive
     description: flutter
