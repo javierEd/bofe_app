@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
-import '../components/board_item.dart';
+import '../components/boards_grid_view.dart';
 import '../components/screen_title.dart';
 import '../constants.dart';
 import '../graphql/queries/user.graphql.dart';
@@ -22,8 +22,8 @@ class ShowUserScreen extends StatefulWidget {
 class _ShowUserScreenState extends State<ShowUserScreen> with RouteAware {
   final _scrollController = ScrollController();
   String? _boardsEndCursor;
-  Function(FetchMoreOptions$Query$UserBoards)? _boardsFetchMore;
-  Future<QueryResult<Query$UserBoards>?> Function()? _boardsRefetch;
+  FetchMore<Query$UserBoards>? _boardsFetchMore;
+  Refetch<Query$UserBoards>? _boardsRefetch;
 
   void _scrollListener() {
     if (_scrollController.offset < _scrollController.position.maxScrollExtent ||
@@ -70,24 +70,7 @@ class _ShowUserScreenState extends State<ShowUserScreen> with RouteAware {
 
         _boardsEndCursor = user?.boards.pageInfo.endCursor;
 
-        return SliverGrid(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            mainAxisSpacing: 8,
-            crossAxisSpacing: 8,
-          ),
-          delegate: SliverChildListDelegate(
-            user?.boards.nodes
-                    .map(
-                      (board) => BoardItem(
-                        board: board,
-                        onTap: () => context.goNamed(routeNameShowBoard, pathParameters: {keySlug: board.slug}),
-                      ),
-                    )
-                    .toList() ??
-                [],
-          ),
-        );
+        return BoardsGridView(boards: user?.boards.nodes ?? []);
       },
     );
   }
