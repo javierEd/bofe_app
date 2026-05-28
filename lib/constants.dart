@@ -13,6 +13,7 @@ const keySession = 'session';
 const keySlug = 'slug';
 const keyUsername = 'username';
 
+const routeNameBoard = 'board';
 const routeNameCard = 'card';
 const routeNameEditCard = 'edit_card';
 const routeNameHome = 'home';
@@ -20,7 +21,6 @@ const routeNameLogin = 'login';
 const routeNameNewBoard = 'new_board';
 const routeNameRegister = 'register';
 const routeNameSettings = 'settings';
-const routeNameShowBoard = 'show_board';
 const routeNameBoardMembers = 'board_members';
 const routeNameShowUser = 'show_user';
 

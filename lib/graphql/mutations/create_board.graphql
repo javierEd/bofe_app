@@ -1,6 +1,5 @@
 mutation CreateBoard($params: BoardParams!) {
     createBoard(params: $params) {
-        id
-        slug
+        ...BoardFragment
     }
 }
