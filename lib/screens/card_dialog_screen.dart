@@ -9,8 +9,9 @@ import '../components/user_item.dart';
 import '../graphql/queries/card.graphql.dart';
 
 class CardDialogScreen extends StatelessWidget {
-  const CardDialogScreen({super.key, required this.id});
+  const CardDialogScreen({super.key, required this.boardSlug, required this.id});
 
+  final String boardSlug;
   final String id;
 
   @override
@@ -22,7 +23,7 @@ class CardDialogScreen extends StatelessWidget {
           return QueryResultBuilder(
             result: result,
             refetch: refetch,
-            buildIf: (parsedData) => parsedData?.card != null,
+            buildIf: (parsedData) => parsedData?.card?.board.slug == boardSlug,
             builder: (parsedData) {
               final card = parsedData.card!;
 
@@ -43,7 +44,12 @@ class CardDialogScreen extends StatelessWidget {
                           child: UserItem(user: card.user),
                         ),
                       ),
-                      CardPopupMenuButton(card: card),
+                      CardPopupMenuButton(
+                        card: card,
+                        beforeEdit: () {
+                          context.pop();
+                        },
+                      ),
                     ],
                   ),
                   SelectableText(card.content, style: TextStyle(fontSize: 18)),

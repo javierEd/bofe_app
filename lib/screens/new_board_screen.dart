@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../build_context.dart';
 import '../components/board_form.dart';
 import '../components/screen_title.dart';
 import '../components/snackbar_alert.dart';
 import '../constants.dart';
-import '../graphql_client.dart';
 import '../graphql/schema.graphql.dart';
 import '../graphql/mutations/create_board.graphql.dart';
 
@@ -15,8 +15,7 @@ class NewBoardScreen extends StatelessWidget {
   final _formNewBoard = GlobalKey<FormState>();
 
   Future<Map<String, dynamic>?> _attemptToCreateBoard(BuildContext context, Input$BoardParams params) async {
-    final graphQLClient = context.graphQLClient.value;
-    final result = await graphQLClient.mutate$CreateBoard(
+    final result = await context.graphQLClient.mutate$CreateBoard(
       Options$Mutation$CreateBoard(variables: Variables$Mutation$CreateBoard(params: params)),
     );
 

@@ -1,56 +1,49 @@
-import 'package:flutter/widgets.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 import 'config.dart';
 import 'constants.dart';
 import 'session_manager.dart';
 
-extension GraphQLClientExt on GraphQLClient {
-  static GraphQLClient setup() {
-    final httpLink = AuthLink(getToken: () => SessionManager.bearer)
-        .concat(
-          ErrorLink(
-            onException: (request, forward, exception) {
-              if (exception is ServerException && exception.statusCode == 401) {
-                SessionManager.onUnauthorized();
+GraphQLClient getGraphQLClient() {
+  final httpLink = AuthLink(getToken: () => SessionManager.bearer)
+      .concat(
+        ErrorLink(
+          onException: (request, forward, exception) {
+            if (exception is ServerException && exception.statusCode == 401) {
+              SessionManager.onUnauthorized();
 
-                throw exception;
-              }
+              throw exception;
+            }
 
-              return forward(request);
-            },
-          ),
-        )
-        .concat(
-          HttpLink(
-            Config.apiUrl.replace(path: '/graphql').toString(),
-            defaultHeaders: {headerXAppToken: Config.appToken},
-          ),
-        );
-    final webSocketLink = WebSocketLink(
-      Config.webSocketUrl.replace(path: '/ws').toString(),
-      subProtocol: GraphQLProtocol.graphqlTransportWs,
-      config: SocketClientConfig(
-        autoReconnect: true,
-        inactivityTimeout: const Duration(minutes: 1),
-        delayBetweenReconnectionAttempts: const Duration(seconds: 10),
-        initialPayload: {'app-token': Config.appToken, 'session-token': SessionManager.token},
-      ),
-    );
+            return forward(request);
+          },
+        ),
+      )
+      .concat(
+        HttpLink(
+          Config.apiUrl.replace(path: '/graphql').toString(),
+          defaultHeaders: {headerXAppToken: Config.appToken},
+        ),
+      );
+  final webSocketLink = WebSocketLink(
+    Config.webSocketUrl.replace(path: '/ws').toString(),
+    subProtocol: GraphQLProtocol.graphqlTransportWs,
+    config: SocketClientConfig(
+      autoReconnect: true,
+      inactivityTimeout: const Duration(minutes: 1),
+      delayBetweenReconnectionAttempts: const Duration(seconds: 10),
+      initialPayload: {'app-token': Config.appToken, 'session-token': SessionManager.token},
+    ),
+  );
 
-    return GraphQLClient(
-      link: Link.split((request) => request.isSubscription, webSocketLink, httpLink),
-      cache: GraphQLCache(store: HiveStore()),
-      defaultPolicies: DefaultPolicies(
-        query: Policies(fetch: FetchPolicy.networkOnly),
-        mutate: Policies(fetch: FetchPolicy.networkOnly),
-        watchQuery: Policies(fetch: FetchPolicy.cacheAndNetwork),
-      ),
-      queryRequestTimeout: const Duration(minutes: 1),
-    );
-  }
-}
-
-extension BuildContextExt on BuildContext {
-  ValueNotifier<GraphQLClient> get graphQLClient => GraphQLProvider.of(this);
+  return GraphQLClient(
+    link: Link.split((request) => request.isSubscription, webSocketLink, httpLink),
+    cache: GraphQLCache(store: HiveStore()),
+    defaultPolicies: DefaultPolicies(
+      query: Policies(fetch: FetchPolicy.networkOnly),
+      mutate: Policies(fetch: FetchPolicy.networkOnly),
+      watchQuery: Policies(fetch: FetchPolicy.cacheAndNetwork),
+    ),
+    queryRequestTimeout: const Duration(minutes: 1),
+  );
 }

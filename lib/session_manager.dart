@@ -5,13 +5,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:restart_app/restart_app.dart';
 
+import 'build_context.dart';
 import 'constants.dart';
 import 'graphql/fragments/session_fragment.graphql.dart';
 import 'graphql/mutations/create_session.graphql.dart';
 import 'graphql/mutations/finish_session.graphql.dart';
 import 'graphql/mutations/refresh_session.graphql.dart';
 import 'graphql/schema.graphql.dart';
-import 'graphql_client.dart';
 
 class SessionManager {
   static final _storage = FlutterSecureStorage();
@@ -56,8 +56,7 @@ class SessionManager {
     required String usernameOrEmail,
     required String password,
   }) async {
-    final graphQLClient = context.graphQLClient.value;
-    final result = await graphQLClient.mutate$CreateSession(
+    final result = await context.graphQLClient.mutate$CreateSession(
       Options$Mutation$CreateSession(
         variables: Variables$Mutation$CreateSession(
           params: Input$SessionParams(usernameOrEmail: usernameOrEmail, password: password),
@@ -77,8 +76,7 @@ class SessionManager {
   }
 
   static Future<QueryResult<Mutation$FinishSession>> attemptToLogout(BuildContext context) async {
-    final graphQLClient = context.graphQLClient.value;
-    final result = await graphQLClient.mutate$FinishSession();
+    final result = await context.graphQLClient.mutate$FinishSession();
 
     if (result.parsedData?.finishSession == true) {
       await _delete();

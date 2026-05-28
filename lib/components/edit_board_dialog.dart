@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../build_context.dart';
 import '../constants.dart';
 import '../graphql/schema.graphql.dart';
 import '../graphql/fragments/board_fragment.graphql.dart';
 import '../graphql/mutations/update_board.graphql.dart';
-import '../graphql_client.dart';
 import 'board_form.dart';
 import 'snackbar_alert.dart';
 
@@ -29,8 +29,7 @@ class _EditBoardForm extends StatelessWidget {
   final _formEditBoard = GlobalKey<FormState>();
 
   Future<Map<String, dynamic>?> _attemptToUpdateBoard(BuildContext context, Input$BoardParams params) async {
-    final graphQLClient = context.graphQLClient.value;
-    final result = await graphQLClient.mutate$UpdateBoard(
+    final result = await context.graphQLClient.mutate$UpdateBoard(
       Options$Mutation$UpdateBoard(
         variables: Variables$Mutation$UpdateBoard(id: board.id, params: params),
       ),

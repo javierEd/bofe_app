@@ -14,7 +14,7 @@ void main() async {
 
   await SessionManager.init();
 
-  final graphQLClient = GraphQLClientExt.setup();
+  final graphQLClient = getGraphQLClient();
 
   await SessionManager.attemptToRefresh(graphQLClient);
 
@@ -94,7 +94,7 @@ class App extends StatelessWidget {
             border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
           ),
         ),
-        routerConfig: GoRouterExt.setup(),
+        routerConfig: getGoRouter(),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
+import '../build_context.dart';
 import '../components/edit_board_dialog.dart';
 import '../components/list_item.dart';
 import '../components/loading_overlay.dart';
@@ -12,7 +13,6 @@ import '../constants.dart';
 import '../graphql/fragments/board_fragment.graphql.dart';
 import '../graphql/mutations/delete_board.graphql.dart';
 import '../graphql/subscriptions/board.graphql.dart';
-import '../graphql_client.dart';
 import '../graphql/queries/board_by_slug.graphql.dart';
 import '../router.dart';
 import '../screens/not_found_screen.dart';
@@ -37,8 +37,7 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
 
   Future<void> _attemptToDeleteBoard(String id) async {
     final loadingOverlay = showLoadingOverlay(context);
-    final graphQLClient = context.graphQLClient.value;
-    final result = await graphQLClient.mutate$DeleteBoard(
+    final result = await context.graphQLClient.mutate$DeleteBoard(
       Options$Mutation$DeleteBoard(variables: Variables$Mutation$DeleteBoard(id: id)),
     );
 

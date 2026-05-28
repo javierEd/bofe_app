@@ -14,6 +14,7 @@ const keySlug = 'slug';
 const keyUsername = 'username';
 
 const routeNameCard = 'card';
+const routeNameEditCard = 'edit_card';
 const routeNameHome = 'home';
 const routeNameLogin = 'login';
 const routeNameNewBoard = 'new_board';

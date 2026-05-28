@@ -1,12 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
+import '../build_context.dart';
 import '../graphql/fragments/card_fragment.graphql.dart';
 import '../graphql/mutations/update_card_list.graphql.dart';
 import '../graphql/mutations/update_card_position.graphql.dart';
-import '../graphql_client.dart';
 import 'card_popup_menu_button.dart';
 import 'loading_overlay.dart';
 import 'snackbar_alert.dart';
@@ -14,15 +13,8 @@ import 'user_item.dart';
 import '../constants.dart';
 
 class DraggableCardItem extends StatefulWidget {
-  const DraggableCardItem({
-    super.key,
-    required this.boardSlug,
-    required this.card,
-    required this.onDragOutside,
-    required this.onDragEnded,
-  });
+  const DraggableCardItem({super.key, required this.card, required this.onDragOutside, required this.onDragEnded});
 
-  final String boardSlug;
   final Fragment$CardFragment card;
   final Function() onDragOutside;
   final Function() onDragEnded;
@@ -57,7 +49,7 @@ class _DraggableCardItemState extends State<DraggableCardItem> {
         color: Colors.transparent,
         child: Opacity(
           opacity: 0.5,
-          child: CardItem(key: ValueKey(widget.card.id), boardSlug: widget.boardSlug, card: widget.card),
+          child: CardItem(key: ValueKey(widget.card.id), card: widget.card),
         ),
       ),
       childWhenDragging: AnimatedContainer(
@@ -97,23 +89,22 @@ class _DraggableCardItemState extends State<DraggableCardItem> {
       },
       child: SizedBox(
         key: _cardItemSizeKey,
-        child: CardItem(key: ValueKey(widget.card.id), boardSlug: widget.boardSlug, card: widget.card),
+        child: CardItem(key: ValueKey(widget.card.id), card: widget.card),
       ),
     );
   }
 }
 
 class CardItem extends StatelessWidget {
-  const CardItem({super.key, required this.boardSlug, required this.card});
+  const CardItem({super.key, required this.card});
 
-  final String boardSlug;
   final Fragment$CardFragment card;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(16),
-      onTap: () => context.goNamed(routeNameCard, pathParameters: {keySlug: boardSlug, keyId: card.id}),
+      onTap: () => context.router.goToCard(card),
       child: Ink(
         child: Container(
           width: 296,
@@ -163,8 +154,7 @@ class CardItemDragTarget extends StatelessWidget {
 
     final loadingOverlay = showLoadingOverlay(context);
 
-    final graphqlClient = context.graphQLClient.value;
-    final result = await graphqlClient.mutate$UpdateCardPosition(
+    final result = await context.graphQLClient.mutate$UpdateCardPosition(
       Options$Mutation$UpdateCardPosition(
         variables: Variables$Mutation$UpdateCardPosition(id: card.id, position: newPosition),
       ),
@@ -185,8 +175,7 @@ class CardItemDragTarget extends StatelessWidget {
   ) async {
     final loadingOverlay = showLoadingOverlay(context);
 
-    final graphqlClient = context.graphQLClient.value;
-    final result = await graphqlClient.mutate$UpdateCardList(
+    final result = await context.graphQLClient.mutate$UpdateCardList(
       Options$Mutation$UpdateCardList(
         variables: Variables$Mutation$UpdateCardList(id: card.id, listId: listId, position: position),
       ),
@@ -218,7 +207,7 @@ class CardItemDragTarget extends StatelessWidget {
         onAcceptWithDetails: (details) {
           final card = details.data;
 
-          if (listId == card.listId) {
+          if (listId == card.list.id) {
             _attemptToUpdateCardPosition(context, card, position);
           } else {
             _attemptToUpdateCardList(context, card, listId, position);
