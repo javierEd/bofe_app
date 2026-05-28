@@ -1,8 +1,6 @@
-import 'package:bofe/graphql/fragments/board_fragment.graphql.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
-import '../constants.dart';
+import '../graphql/fragments/board_fragment.graphql.dart';
 import 'board_item.dart';
 
 class BoardsGridView extends StatelessWidget {
@@ -16,6 +14,7 @@ class BoardsGridView extends StatelessWidget {
 
     return GridView.builder(
       shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: isMobile ? 2 : 3,
         mainAxisSpacing: 8,
@@ -25,10 +24,7 @@ class BoardsGridView extends StatelessWidget {
       itemBuilder: (context, index) {
         final board = boards[index];
 
-        return BoardItem(
-          board: board,
-          onTap: () => context.goNamed(routeNameShowBoard, pathParameters: {keySlug: board.slug}),
-        );
+        return BoardItem(board: board);
       },
     );
   }

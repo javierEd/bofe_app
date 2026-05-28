@@ -17,16 +17,16 @@ import '../graphql/queries/board_by_slug.graphql.dart';
 import '../router.dart';
 import '../screens/not_found_screen.dart';
 
-class ShowBoardScreen extends StatefulWidget {
-  const ShowBoardScreen({super.key, required this.slug});
+class BoardScreen extends StatefulWidget {
+  const BoardScreen({super.key, required this.slug});
 
   final String slug;
 
   @override
-  State<ShowBoardScreen> createState() => _ShowBoardScreenState();
+  State<BoardScreen> createState() => _BoardScreenState();
 }
 
-class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
+class _BoardScreenState extends State<BoardScreen> with RouteAware {
   String? _draggingListId;
   bool _isDraggingCard = false;
   Refetch<Query$BoardBySlug>? _refetch;

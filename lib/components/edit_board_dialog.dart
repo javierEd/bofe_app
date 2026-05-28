@@ -49,7 +49,7 @@ class _EditBoardForm extends StatelessWidget {
         context.pop();
       } else {
         context.pop();
-        context.goNamed(routeNameShowBoard, pathParameters: {keySlug: updatedBoard.slug});
+        context.goNamed(routeNameBoard, pathParameters: {keySlug: updatedBoard.slug});
       }
 
       return null;

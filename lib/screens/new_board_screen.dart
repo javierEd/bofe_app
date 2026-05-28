@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../build_context.dart';
 import '../components/board_form.dart';
 import '../components/screen_title.dart';
 import '../components/snackbar_alert.dart';
-import '../constants.dart';
 import '../graphql/schema.graphql.dart';
 import '../graphql/mutations/create_board.graphql.dart';
 
@@ -29,7 +27,7 @@ class NewBoardScreen extends StatelessWidget {
     if (createdBoard != null) {
       showSnackBarAlert(context, 'Board created successfully');
 
-      context.goNamed(routeNameShowBoard, pathParameters: {keySlug: createdBoard.slug});
+      context.router.goToBoard(createdBoard);
 
       return null;
     } else {

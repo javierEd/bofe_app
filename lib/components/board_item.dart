@@ -1,3 +1,4 @@
+import 'package:bofe/build_context.dart';
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
@@ -6,10 +7,9 @@ import '../graphql/fragments/board_fragment.graphql.dart';
 import 'user_item.dart';
 
 class BoardItem extends StatelessWidget {
-  const BoardItem({super.key, required this.board, this.onTap});
+  const BoardItem({super.key, required this.board});
 
   final Fragment$BoardFragment board;
-  final Function()? onTap;
 
   Icon _getVisibilityIcon() {
     switch (board.visibility) {
@@ -26,7 +26,7 @@ class BoardItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(12),
-      onTap: onTap,
+      onTap: () => context.router.goToBoard(board),
       child: Ink(
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: colorBoardItemBackground),
         child: Stack(
