@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
-extension ValueKeys on ValueKey<String> {
-  static ValueKey<String> card(String id) => ValueKey('card-$id');
+class ValueKeys {
+  static ValueKey<String> card(String id) => ValueKey('card_$id');
+
+  static ValueKey<String> editCard(String id) => ValueKey('edit_card_$id');
 }

@@ -4,11 +4,11 @@ query BoardMembers($id: ID!, $first: Int, $after: UUID) {
         members(first: $first, after: $after) {
             nodes {
                 id
+                isAdmin
+                isEditable
                 user {
                     ...UserFragment
                 }
-                isAdmin
-                isEditable
                 createdAt
                 updatedAt
             }

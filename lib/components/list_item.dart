@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../build_context.dart';
 import '../components/loading_overlay.dart';
 import '../graphql/fragments/list_with_cards_fragment.graphql.dart';
 import '../graphql/mutations/delete_list.graphql.dart';
 import '../graphql/mutations/update_list_position.graphql.dart';
-import '../graphql_client.dart';
 import 'card_item.dart';
 import 'edit_list_dialog.dart';
 import 'new_card_dialog.dart';
@@ -149,8 +149,7 @@ class _ListItemState extends State<ListItem> {
 
   Future<void> _attemptToDeleteList() async {
     final loadingOverlay = showLoadingOverlay(context);
-    final graphQLClient = context.graphQLClient.value;
-    final result = await graphQLClient.mutate$DeleteList(
+    final result = await context.graphQLClient.mutate$DeleteList(
       Options$Mutation$DeleteList(variables: Variables$Mutation$DeleteList(id: widget.list.id)),
     );
 
@@ -302,7 +301,6 @@ class _ListItemState extends State<ListItem> {
                                       isVisible: widget.isDraggingCard && _draggingCardId != card.id,
                                     ),
                                     DraggableCardItem(
-                                      boardSlug: widget.boardSlug,
                                       card: card,
                                       onDragOutside: () {
                                         setState(() {
@@ -318,7 +316,7 @@ class _ListItemState extends State<ListItem> {
                                       },
                                     ),
                                   ]
-                                : [CardItem(key: ValueKey(card.id), boardSlug: widget.boardSlug, card: card)],
+                                : [CardItem(key: ValueKey(card.id), card: card)],
                           )
                           .expand((item) => item)
                           .toList() +
@@ -389,8 +387,7 @@ class ListItemDragTarget extends StatelessWidget {
 
           final loadingOverlay = showLoadingOverlay(context);
 
-          final graphqlClient = context.graphQLClient.value;
-          final result = await graphqlClient.mutate$UpdateListPosition(
+          final result = await context.graphQLClient.mutate$UpdateListPosition(
             Options$Mutation$UpdateListPosition(
               variables: Variables$Mutation$UpdateListPosition(id: list.id, position: newPosition),
             ),

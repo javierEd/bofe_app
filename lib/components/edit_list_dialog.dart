@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../build_context.dart';
 import '../graphql/schema.graphql.dart';
 import '../graphql/fragments/list_fragment.graphql.dart';
 import '../graphql/mutations/update_list.graphql.dart';
-import '../graphql_client.dart';
 import 'list_form.dart';
 import 'snackbar_alert.dart';
 
@@ -28,8 +28,7 @@ class _EditListForm extends StatelessWidget {
   final _formEditList = GlobalKey<FormState>();
 
   Future<Map<String, dynamic>?> _attemptToUpdateList(BuildContext context, String name) async {
-    final graphQLClient = context.graphQLClient.value;
-    final result = await graphQLClient.mutate$UpdateList(
+    final result = await context.graphQLClient.mutate$UpdateList(
       Options$Mutation$UpdateList(
         variables: Variables$Mutation$UpdateList(
           id: list.id,

@@ -1,10 +1,16 @@
 fragment CardFragment on CardObject {
     id
-    listId
     content
     position
     isEditable
     isMovable
+    board {
+        id
+        slug
+    }
+    list {
+        id
+    }
     user {
         ...UserFragment
     }

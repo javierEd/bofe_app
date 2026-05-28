@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../build_context.dart';
 import '../graphql/fragments/card_fragment.graphql.dart';
 import '../graphql/mutations/delete_card.graphql.dart';
-import '../graphql_client.dart';
-import 'edit_card_dialog.dart';
 import 'loading_overlay.dart';
 import 'snackbar_alert.dart';
 
 class CardPopupMenuButton extends StatelessWidget {
-  const CardPopupMenuButton({super.key, required this.card, this.iconSize});
+  const CardPopupMenuButton({super.key, required this.card, this.iconSize, this.beforeEdit});
 
   final Fragment$CardFragment card;
   final double? iconSize;
+  final Function()? beforeEdit;
 
   Future<void> _attemptToDeleteCard(BuildContext context) async {
     final loadingOverlay = showLoadingOverlay(context);
-    final graphQLClient = context.graphQLClient.value;
-    final result = await graphQLClient.mutate$DeleteCard(
+    final result = await context.graphQLClient.mutate$DeleteCard(
       Options$Mutation$DeleteCard(variables: Variables$Mutation$DeleteCard(id: card.id)),
     );
 
@@ -41,7 +40,8 @@ class CardPopupMenuButton extends StatelessWidget {
         onSelected: (value) {
           switch (value) {
             case 1:
-              showEditCardDialog(context, card: card);
+              beforeEdit?.call();
+              context.router.goToEditCard(card);
               break;
             case 2:
               showDialog(

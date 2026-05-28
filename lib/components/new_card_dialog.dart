@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../build_context.dart';
 import '../graphql/schema.graphql.dart';
 import '../graphql/mutations/create_card.graphql.dart';
-import '../graphql_client.dart';
 import 'card_form.dart';
 import 'snackbar_alert.dart';
 
@@ -27,8 +27,7 @@ class _NewCardForm extends StatelessWidget {
   final _formNewCard = GlobalKey<FormState>();
 
   Future<Map<String, dynamic>?> _attemptToCreateCard(BuildContext context, String content) async {
-    final graphQLClient = context.graphQLClient.value;
-    final result = await graphQLClient.mutate$CreateCard(
+    final result = await context.graphQLClient.mutate$CreateCard(
       Options$Mutation$CreateCard(
         variables: Variables$Mutation$CreateCard(
           params: Input$CardParams(listId: listId, content: content),
@@ -45,6 +44,7 @@ class _NewCardForm extends StatelessWidget {
 
     if (createdCard != null) {
       context.pop();
+      context.router.goToCard(createdCard);
 
       return null;
     } else {

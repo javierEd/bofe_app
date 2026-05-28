@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:world_info_plus/world_info_plus.dart';
 
+import '../build_context.dart';
 import '../components/date_field.dart';
 import '../components/dropdown_field.dart';
 import '../components/form_container.dart';
@@ -9,7 +10,6 @@ import '../components/screen_title.dart';
 import '../components/snackbar_alert.dart';
 import '../components/text_input_field.dart';
 import '../graphql/schema.graphql.dart';
-import '../graphql_client.dart';
 import '../graphql/mutations/create_user.graphql.dart';
 import '../session_manager.dart';
 
@@ -48,8 +48,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (_formRegister.currentState?.validate() == true) {
       _formRegister.currentState?.save();
-      final graphQLClient = context.graphQLClient.value;
-      final result = await graphQLClient.mutate$CreateUser(
+      final result = await context.graphQLClient.mutate$CreateUser(
         Options$Mutation$CreateUser(
           variables: Variables$Mutation$CreateUser(
             params: Input$UserParams(

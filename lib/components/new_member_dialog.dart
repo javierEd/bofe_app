@@ -2,11 +2,11 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../build_context.dart';
 import '../graphql/fragments/user_fragment.graphql.dart';
 import '../graphql/queries/users.graphql.dart';
 import '../graphql/schema.graphql.dart';
 import '../graphql/mutations/create_member.graphql.dart';
-import '../graphql_client.dart';
 import 'form_container.dart';
 import 'snackbar_alert.dart';
 import 'user_item.dart';
@@ -40,8 +40,7 @@ class _NewMemberFormState extends State<_NewMemberForm> {
   String? _errorUserId;
 
   Future<Map<String, dynamic>?> _attemptToCreateMember() async {
-    final graphQLClient = context.graphQLClient.value;
-    final result = await graphQLClient.mutate$CreateMember(
+    final result = await context.graphQLClient.mutate$CreateMember(
       Options$Mutation$CreateMember(
         variables: Variables$Mutation$CreateMember(
           params: Input$MemberParams(boardId: widget.boardId, userId: _userId!, isAdmin: _isAdmin),
@@ -125,9 +124,7 @@ class _NewMemberFormState extends State<_NewMemberForm> {
               return [];
             }
 
-            final graphQLClient = context.graphQLClient.value;
-
-            final result = await graphQLClient.query$Users(
+            final result = await context.graphQLClient.query$Users(
               Options$Query$Users(variables: Variables$Query$Users(query: query)),
             );
 

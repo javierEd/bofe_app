@@ -62,7 +62,8 @@ enum BoardVisibility {
 
 type CardObject {
 	id: ID!
-	listId: UUID!
+	board: BoardObject!
+	list: ListObject!
 	content: String!
 	position: Int!
 	isEditable: Boolean!
@@ -482,6 +483,7 @@ type MutationRoot {
 	updateList(id: UUID!, params: UpdateListParams!): ListObject!
 	updateListPosition(id: UUID!, position: Int!): ListObject!
 	updateMember(id: UUID!, params: UpdateMemberParams!): MemberObject!
+	updatePassword(params: UpdatePasswordParams!): UserObject!
 }
 
 """
@@ -568,6 +570,11 @@ input UpdateListParams {
 
 input UpdateMemberParams {
 	isAdmin: Boolean!
+}
+
+input UpdatePasswordParams {
+	currentPassword: String!
+	newPassword: String!
 }
 
 type UserObject {

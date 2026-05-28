@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
+import '../build_context.dart';
 import '../components/infinite_scroll_view.dart';
 import '../components/loading_overlay.dart';
 import '../components/new_member_dialog.dart';
@@ -15,7 +16,6 @@ import '../graphql/mutations/delete_member.graphql.dart';
 import '../graphql/mutations/update_member.graphql.dart';
 import '../graphql/queries/board_by_slug.graphql.dart';
 import '../graphql/schema.graphql.dart';
-import '../graphql_client.dart';
 
 class BoardMembersScreen extends StatelessWidget {
   const BoardMembersScreen({super.key, required this.slug});
@@ -28,8 +28,7 @@ class BoardMembersScreen extends StatelessWidget {
     required Refetch<Query$BoardMembers>? refetch,
   }) async {
     final loadingOverlay = showLoadingOverlay(context);
-    final graphQLClient = context.graphQLClient.value;
-    final result = await graphQLClient.mutate$DeleteMember(
+    final result = await context.graphQLClient.mutate$DeleteMember(
       Options$Mutation$DeleteMember(variables: Variables$Mutation$DeleteMember(id: id)),
     );
 
@@ -55,8 +54,7 @@ class BoardMembersScreen extends StatelessWidget {
     required Refetch<Query$BoardMembers>? refetch,
   }) async {
     final loadingOverlay = showLoadingOverlay(context);
-    final graphQLClient = context.graphQLClient.value;
-    final result = await graphQLClient.mutate$UpdateMember(
+    final result = await context.graphQLClient.mutate$UpdateMember(
       Options$Mutation$UpdateMember(
         variables: Variables$Mutation$UpdateMember(
           id: id,

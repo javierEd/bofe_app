@@ -4,13 +4,13 @@ fragment BoardFragment on BoardObject {
     slug
     description
     visibility
-    user {
-        ...UserFragment
-    }
     canCreateList
     canCreateMember
     canMoveList
     isEditable
+    user {
+        ...UserFragment
+    }
     createdAt
     updatedAt
 }
