@@ -263,6 +263,7 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
                                             },
                                           ),
                                           DraggableListItem(
+                                            boardSlug: board.slug,
                                             list: list,
                                             isDraggingCard: _isDraggingCard,
                                             onDragOutside: () {
@@ -290,6 +291,7 @@ class _ShowBoardScreenState extends State<ShowBoardScreen> with RouteAware {
                                       : [
                                           ListItem(
                                             key: ValueKey(list.id),
+                                            boardSlug: board.slug,
                                             list: list,
                                             isDraggingCard: _isDraggingCard,
                                             onCardDragOutside: () {

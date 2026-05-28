@@ -21,13 +21,12 @@ class ShowUserScreen extends StatefulWidget {
 }
 
 class _ShowUserScreenState extends State<ShowUserScreen> {
-  bool _isLoadingNext = false;
   String? _endCursor;
   bool _hasNextPage = false;
   FetchMore<Query$UserBoards>? _fetchMore;
 
-  void _onScrollAtBottom() {
-    _fetchMore?.call(
+  Future<void> _onScrollAtBottom() async {
+    await _fetchMore?.call(
       FetchMoreOptions$Query$UserBoards(
         variables: Variables$Query$UserBoards(username: widget.username, after: _endCursor, first: 12),
         updateQuery: (previousResultData, fetchMoreResultData) {
@@ -70,7 +69,6 @@ class _ShowUserScreenState extends State<ShowUserScreen> {
                 appBar: AppBar(leading: BackButton(onPressed: () => context.goNamed(routeNameHome))),
                 body: InfiniteScrollView(
                   hasMore: _hasNextPage,
-                  isLoading: _isLoadingNext,
                   onScrollAtBottom: _onScrollAtBottom,
                   child: Column(
                     spacing: 16,
@@ -89,7 +87,6 @@ class _ShowUserScreenState extends State<ShowUserScreen> {
                           variables: Variables$Query$UserBoards(username: widget.username, first: 12),
                         ),
                         builder: (result, {fetchMore, refetch}) {
-                          _isLoadingNext = result.isLoading && _hasNextPage;
                           _fetchMore ??= fetchMore;
 
                           return QueryResultBuilder(

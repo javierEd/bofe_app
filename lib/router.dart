@@ -1,7 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import 'components/dialog_page.dart';
 import 'constants.dart';
+import 'screens/card_dialog_screen.dart';
 import 'screens/board_members_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
@@ -12,6 +15,7 @@ import 'screens/settings_screen.dart';
 import 'screens/show_board_screen.dart';
 import 'screens/show_user_screen.dart';
 import 'session_manager.dart';
+import 'value_keys.dart';
 
 final routeObserver = RouteObserver<ModalRoute<void>>();
 
@@ -54,6 +58,17 @@ extension GoRouterExt on GoRouter {
               return ShowBoardScreen(key: ValueKey(slug), slug: slug);
             },
             routes: [
+              GoRoute(
+                name: routeNameCard,
+                path: 'cards/:id',
+                pageBuilder: (BuildContext context, GoRouterState state) {
+                  final id = state.pathParameters[keyId]!;
+                  return DialogPage(
+                    barrierDismissible: false,
+                    builder: (_) => CardDialogScreen(key: ValueKeys.card(id), id: id),
+                  );
+                },
+              ),
               GoRoute(
                 name: routeNameBoardMembers,
                 path: 'members',

@@ -49,6 +49,7 @@ class App extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: colorPrimary, brightness: Brightness.dark),
           useMaterial3: true,
+          dialogTheme: DialogThemeData(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
           filledButtonTheme: FilledButtonThemeData(
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.all(20),
