@@ -16,13 +16,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool _isLoadingNext = false;
   String? _endCursor;
   bool _hasNextPage = false;
   FetchMore<Query$CurrentUserBoards>? _fetchMore;
 
-  void _onScrollAtBottom() {
-    _fetchMore?.call(
+  Future<void> _onScrollAtBottom() async {
+    await _fetchMore?.call(
       FetchMoreOptions$Query$CurrentUserBoards(
         variables: Variables$Query$CurrentUserBoards(after: _endCursor),
         updateQuery: (previousResultData, fetchMoreResultData) {
@@ -54,7 +53,6 @@ class _HomePageState extends State<HomePage> {
     if (SessionManager.hasToken) {
       return InfiniteScrollView(
         hasMore: _hasNextPage,
-        isLoading: _isLoadingNext,
         onScrollAtBottom: _onScrollAtBottom,
         child: Column(
           spacing: 12,
@@ -64,7 +62,6 @@ class _HomePageState extends State<HomePage> {
             Query$CurrentUserBoards$Widget(
               options: Options$Query$CurrentUserBoards(variables: Variables$Query$CurrentUserBoards(first: 12)),
               builder: (result, {fetchMore, refetch}) {
-                _isLoadingNext = result.isLoading && _hasNextPage;
                 _fetchMore ??= fetchMore;
 
                 return QueryResultBuilder(

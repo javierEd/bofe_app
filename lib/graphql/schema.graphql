@@ -521,6 +521,7 @@ type QueryRoot {
 	board(id: ID!): BoardObject
 	boardBySlug(slug: String!): BoardObject
 	boards(after: UUID, first: Int): BoardObjectConnection!
+	card(id: ID!): CardObject
 	currentUser: UserObject
 	info: InfoObject!
 	list(id: ID!): ListObject

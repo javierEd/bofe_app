@@ -4,18 +4,25 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../graphql/fragments/card_fragment.graphql.dart';
-import '../graphql/mutations/delete_card.graphql.dart';
 import '../graphql/mutations/update_card_list.graphql.dart';
 import '../graphql/mutations/update_card_position.graphql.dart';
 import '../graphql_client.dart';
-import 'edit_card_dialog.dart';
+import 'card_popup_menu_button.dart';
 import 'loading_overlay.dart';
 import 'snackbar_alert.dart';
 import 'user_item.dart';
+import '../constants.dart';
 
 class DraggableCardItem extends StatefulWidget {
-  const DraggableCardItem({super.key, required this.card, required this.onDragOutside, required this.onDragEnded});
+  const DraggableCardItem({
+    super.key,
+    required this.boardSlug,
+    required this.card,
+    required this.onDragOutside,
+    required this.onDragEnded,
+  });
 
+  final String boardSlug;
   final Fragment$CardFragment card;
   final Function() onDragOutside;
   final Function() onDragEnded;
@@ -50,7 +57,7 @@ class _DraggableCardItemState extends State<DraggableCardItem> {
         color: Colors.transparent,
         child: Opacity(
           opacity: 0.5,
-          child: CardItem(key: ValueKey(widget.card.id), card: widget.card),
+          child: CardItem(key: ValueKey(widget.card.id), boardSlug: widget.boardSlug, card: widget.card),
         ),
       ),
       childWhenDragging: AnimatedContainer(
@@ -90,100 +97,47 @@ class _DraggableCardItemState extends State<DraggableCardItem> {
       },
       child: SizedBox(
         key: _cardItemSizeKey,
-        child: CardItem(key: ValueKey(widget.card.id), card: widget.card),
+        child: CardItem(key: ValueKey(widget.card.id), boardSlug: widget.boardSlug, card: widget.card),
       ),
     );
   }
 }
 
 class CardItem extends StatelessWidget {
-  const CardItem({super.key, required this.card});
+  const CardItem({super.key, required this.boardSlug, required this.card});
 
+  final String boardSlug;
   final Fragment$CardFragment card;
-
-  Future<void> _attemptToDeleteCard(BuildContext context) async {
-    final loadingOverlay = showLoadingOverlay(context);
-    final graphQLClient = context.graphQLClient.value;
-    final result = await graphQLClient.mutate$DeleteCard(
-      Options$Mutation$DeleteCard(variables: Variables$Mutation$DeleteCard(id: card.id)),
-    );
-
-    if (context.mounted && result.parsedData?.deleteCard != true) {
-      final errors = result.exception?.graphqlErrors.first;
-
-      showSnackBarAlert(context, errors?.message ?? 'Failed to delete card');
-    }
-
-    loadingOverlay.hide();
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 296,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-        color: Colors.black54,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        spacing: 6,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: () => context.goNamed(routeNameCard, pathParameters: {keySlug: boardSlug, keyId: card.id}),
+      child: Ink(
+        child: Container(
+          width: 296,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            color: colorCardBackground,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            spacing: 6,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              UserItem(user: card.user),
-              card.isEditable
-                  ? PopupMenuButton(
-                      icon: Icon(Icons.more_vert_rounded),
-                      iconSize: 20,
-                      tooltip: 'More',
-                      position: PopupMenuPosition.under,
-                      onSelected: (value) {
-                        switch (value) {
-                          case 1:
-                            showEditCardDialog(context, card: card);
-                            break;
-                          case 2:
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: const Text('Confirm your action'),
-                                content: const Text('Are you sure you want to delete this card?'),
-                                actions: [
-                                  OutlinedButton(child: const Text('Cancel'), onPressed: () => context.pop()),
-                                  FilledButton(
-                                    child: const Text('Confirm'),
-                                    onPressed: () {
-                                      context.pop();
-                                      _attemptToDeleteCard(context);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            );
-                            break;
-                        }
-                      },
-                      itemBuilder: (context) => [
-                        PopupMenuItem(
-                          value: 1,
-                          child: ListTile(leading: Icon(Icons.edit_rounded), title: Text('Edit')),
-                        ),
-                        PopupMenuItem(
-                          value: 2,
-                          child: ListTile(leading: Icon(Icons.delete_rounded), title: Text('Delete')),
-                        ),
-                      ],
-                    )
-                  : SizedBox(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  UserItem(user: card.user),
+                  CardPopupMenuButton(card: card, iconSize: 20),
+                ],
+              ),
+              Text(card.content, maxLines: 3, overflow: TextOverflow.fade, style: TextStyle(fontSize: 16)),
             ],
           ),
-
-          Text(card.content, style: TextStyle(fontSize: 16)),
-        ],
+        ),
       ),
     );
   }

@@ -80,8 +80,8 @@ class BoardMembersScreen extends StatelessWidget {
     loadingOverlay.hide();
   }
 
-  void _onScrollAtBottom(String boardId, String? endCursor, FetchMore<Query$BoardMembers>? fetchMore) {
-    fetchMore?.call(
+  Future<void> _onScrollAtBottom(String boardId, String? endCursor, FetchMore<Query$BoardMembers>? fetchMore) async {
+    await fetchMore?.call(
       FetchMoreOptions$Query$BoardMembers(
         variables: Variables$Query$BoardMembers(id: boardId, after: endCursor),
         updateQuery: (previousResultData, fetchMoreResultData) {
@@ -149,7 +149,6 @@ class BoardMembersScreen extends StatelessWidget {
 
                         return InfiniteScrollView(
                           hasMore: hasNextPage,
-                          isLoading: result.isLoading && hasNextPage,
                           onScrollAtBottom: () => _onScrollAtBottom(board.id, endCursor, fetchMore),
                           child: Column(
                             spacing: 3,

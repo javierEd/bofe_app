@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
 
 class InfiniteScrollView extends StatefulWidget {
-  const InfiniteScrollView({
-    super.key,
-    required this.hasMore,
-    required this.isLoading,
-    required this.onScrollAtBottom,
-    required this.child,
-  });
+  const InfiniteScrollView({super.key, required this.hasMore, required this.onScrollAtBottom, required this.child});
 
   final bool hasMore;
-  final bool isLoading;
-  final Function() onScrollAtBottom;
+  final Future<void> Function() onScrollAtBottom;
   final Widget child;
 
   @override
@@ -20,12 +13,21 @@ class InfiniteScrollView extends StatefulWidget {
 
 class _InfiniteScrollViewState extends State<InfiniteScrollView> {
   final _controller = ScrollController();
+  bool _isLoading = false;
 
-  void _scrollListener() {
+  Future<void> _scrollListener() async {
     if (widget.hasMore &&
         _controller.offset >= _controller.position.maxScrollExtent &&
         !_controller.position.outOfRange) {
-      widget.onScrollAtBottom();
+      setState(() {
+        _isLoading = true;
+      });
+
+      await widget.onScrollAtBottom();
+
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -52,7 +54,7 @@ class _InfiniteScrollViewState extends State<InfiniteScrollView> {
         spacing: 6,
         children: [
           widget.child,
-          if (widget.isLoading) const Center(child: CircularProgressIndicator()),
+          if (_isLoading) const Center(child: CircularProgressIndicator()),
         ],
       ),
     );

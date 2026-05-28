@@ -16,6 +16,7 @@ import 'snackbar_alert.dart';
 class DraggableListItem extends StatefulWidget {
   const DraggableListItem({
     super.key,
+    required this.boardSlug,
     required this.list,
     required this.isDraggingCard,
     required this.onDragOutside,
@@ -24,6 +25,7 @@ class DraggableListItem extends StatefulWidget {
     required this.onCardDragEnded,
   });
 
+  final String boardSlug;
   final Fragment$ListWithCardsFragment list;
   final bool isDraggingCard;
   final Function() onDragOutside;
@@ -63,7 +65,12 @@ class _DraggableListItemState extends State<DraggableListItem> {
           opacity: 0.50,
           child: SizedBox(
             height: _listItemSize?.height,
-            child: ListItem(key: ValueKey(widget.list.id), list: widget.list, isDraggingCard: false),
+            child: ListItem(
+              key: ValueKey(widget.list.id),
+              boardSlug: widget.boardSlug,
+              list: widget.list,
+              isDraggingCard: false,
+            ),
           ),
         ),
       ),
@@ -102,6 +109,7 @@ class _DraggableListItemState extends State<DraggableListItem> {
         key: _listItemSizeKey,
         child: ListItem(
           key: ValueKey(widget.list.id),
+          boardSlug: widget.boardSlug,
           list: widget.list,
           isDraggingCard: widget.isDraggingCard,
           onCardDragOutside: widget.onCardDragOutside,
@@ -115,12 +123,14 @@ class _DraggableListItemState extends State<DraggableListItem> {
 class ListItem extends StatefulWidget {
   const ListItem({
     super.key,
+    required this.boardSlug,
     required this.list,
     required this.isDraggingCard,
     this.onCardDragOutside,
     this.onCardDragEnded,
   });
 
+  final String boardSlug;
   final Fragment$ListWithCardsFragment list;
   final bool isDraggingCard;
   final Function()? onCardDragOutside;
@@ -292,6 +302,7 @@ class _ListItemState extends State<ListItem> {
                                       isVisible: widget.isDraggingCard && _draggingCardId != card.id,
                                     ),
                                     DraggableCardItem(
+                                      boardSlug: widget.boardSlug,
                                       card: card,
                                       onDragOutside: () {
                                         setState(() {
@@ -307,7 +318,7 @@ class _ListItemState extends State<ListItem> {
                                       },
                                     ),
                                   ]
-                                : [CardItem(card: card)],
+                                : [CardItem(key: ValueKey(card.id), boardSlug: widget.boardSlug, card: card)],
                           )
                           .expand((item) => item)
                           .toList() +

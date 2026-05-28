@@ -14,13 +14,12 @@ class ExplorePage extends StatefulWidget {
 }
 
 class _ExplorePageState extends State<ExplorePage> {
-  bool _isLoadingNext = false;
   String? _endCursor;
   bool _hasNextPage = false;
   FetchMore<Query$Boards>? _fetchMore;
 
-  void _onScrollAtBottom() {
-    _fetchMore?.call(
+  Future<void> _onScrollAtBottom() async {
+    await _fetchMore?.call(
       FetchMoreOptions$Query$Boards(
         variables: Variables$Query$Boards(after: _endCursor),
         updateQuery: (previousResultData, fetchMoreResultData) {
@@ -48,7 +47,6 @@ class _ExplorePageState extends State<ExplorePage> {
   Widget build(BuildContext context) {
     return InfiniteScrollView(
       hasMore: _hasNextPage,
-      isLoading: _isLoadingNext,
       onScrollAtBottom: _onScrollAtBottom,
       child: Column(
         spacing: 12,
@@ -67,7 +65,6 @@ class _ExplorePageState extends State<ExplorePage> {
                 builder: (data) {
                   final boards = data.boards;
 
-                  _isLoadingNext = result.isLoading && _hasNextPage;
                   _endCursor = boards.pageInfo.endCursor;
                   _hasNextPage = boards.pageInfo.hasNextPage;
 
