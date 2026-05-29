@@ -1,4 +1,3 @@
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -7,6 +6,7 @@ import '../graphql/fragments/user_fragment.graphql.dart';
 import '../graphql/queries/users.graphql.dart';
 import '../graphql/schema.graphql.dart';
 import '../graphql/mutations/create_member.graphql.dart';
+import 'dropdown_search_field.dart';
 import 'form_container.dart';
 import 'snackbar_alert.dart';
 import 'user_item.dart';
@@ -83,49 +83,26 @@ class _NewMemberFormState extends State<_NewMemberForm> {
         }
       },
       fields: [
-        DropdownSearch<Fragment$UserFragment>(
-          decoratorProps: DropDownDecoratorProps(
-            decoration: InputDecoration(
-              labelText: 'User',
-              errorText: _errorUserId,
-              border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
-            ),
-          ),
-          popupProps: PopupProps.dialog(
-            showSearchBox: true,
-            title: const Text('Select an user', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            dialogProps: const DialogProps(
-              titlePadding: EdgeInsets.all(16),
-              contentPadding: EdgeInsets.all(16),
-              barrierDismissible: true,
-              barrierLabel: 'Close',
-            ),
-            itemBuilder: (context, item, isDisabled, isSelected) => UserItem(user: item),
-          ),
+        DropdownSearchField<Fragment$UserFragment>(
+          labelText: 'User',
+          errorText: _errorUserId,
+          required: true,
+          itemBuilder: (context, item, isDisabled, isSelected) => UserItem(user: item),
           compareFn: (item1, item2) => item1.id == item2.id,
           itemAsString: (item) => '${item.displayName} @${item.username}',
           dropdownBuilder: (context, item) => item != null ? UserItem(user: item) : SizedBox(),
-          validator: (item) {
-            if (item == null) {
-              return 'Can\'t be blank';
-            }
-
-            return null;
-          },
           onSelected: (item) {
             setState(() {
               _userId = item?.id;
             });
           },
           items: (filter, loadProps) async {
-            final query = filter.trim();
-
-            if (query.length < 3) {
+            if (filter.length < 3) {
               return [];
             }
 
             final result = await context.graphQLClient.query$Users(
-              Options$Query$Users(variables: Variables$Query$Users(query: query)),
+              Options$Query$Users(variables: Variables$Query$Users(query: filter)),
             );
 
             return result.parsedData?.users.nodes ?? [];

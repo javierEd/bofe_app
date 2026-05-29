@@ -1,0 +1,8 @@
+query BoardLists($id: ID!) {
+    board(id: $id) {
+        id
+        allLists {
+            ...ListFragment
+        }
+    }
+}

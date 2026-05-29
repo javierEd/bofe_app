@@ -6,6 +6,7 @@ import 'components/dialog_page.dart';
 import 'constants.dart';
 import 'graphql/fragments/board_fragment.graphql.dart';
 import 'graphql/fragments/card_fragment.graphql.dart';
+import 'graphql/fragments/list_fragment.graphql.dart';
 import 'screens/card_dialog_screen.dart';
 import 'screens/board_members_screen.dart';
 import 'screens/board_screen.dart';
@@ -13,6 +14,7 @@ import 'screens/edit_card_dialog_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/new_board_screen.dart';
+import 'screens/new_card_dialog_screen.dart';
 import 'screens/not_found_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/settings_screen.dart';
@@ -60,6 +62,18 @@ GoRouter getGoRouter() => GoRouter(
             return BoardScreen(key: ValueKeys.board(slug), slug: slug);
           },
           routes: [
+            GoRoute(
+              name: routeNameNewCard,
+              path: 'cards/new',
+              pageBuilder: (BuildContext context, GoRouterState state) {
+                final boardSlug = state.pathParameters[keySlug]!;
+                final extra = state.extra as NewCardDialogExtra?;
+                return DialogPage(
+                  barrierDismissible: false,
+                  builder: (_) => NewCardDialogScreen(boardSlug: boardSlug, extra: extra),
+                );
+              },
+            ),
             GoRoute(
               name: routeNameCard,
               path: 'cards/:id',
@@ -126,7 +140,12 @@ class AppRouter {
   void goToCard(Fragment$CardFragment card) =>
       context.goNamed(routeNameCard, pathParameters: {keySlug: card.board.slug, keyId: card.id});
 
-  void goToEditCard(Fragment$CardFragment card) {
-    context.goNamed(routeNameEditCard, pathParameters: {keySlug: card.board.slug, keyId: card.id});
-  }
+  void goToEditCard(Fragment$CardFragment card) =>
+      context.goNamed(routeNameEditCard, pathParameters: {keySlug: card.board.slug, keyId: card.id});
+
+  void goToNewCard(Fragment$BoardFragment board, Fragment$ListFragment list) => context.goNamed(
+    routeNameNewCard,
+    pathParameters: {keySlug: board.slug},
+    extra: NewCardDialogExtra(list: list),
+  );
 }

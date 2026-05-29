@@ -5,18 +5,18 @@ import 'package:go_router/go_router.dart';
 
 import '../build_context.dart';
 import '../components/loading_overlay.dart';
+import '../graphql/fragments/board_fragment.graphql.dart';
 import '../graphql/fragments/list_with_cards_fragment.graphql.dart';
 import '../graphql/mutations/delete_list.graphql.dart';
 import '../graphql/mutations/update_list_position.graphql.dart';
 import 'card_item.dart';
 import 'edit_list_dialog.dart';
-import 'new_card_dialog.dart';
 import 'snackbar_alert.dart';
 
 class DraggableListItem extends StatefulWidget {
   const DraggableListItem({
     super.key,
-    required this.boardSlug,
+    required this.board,
     required this.list,
     required this.isDraggingCard,
     required this.onDragOutside,
@@ -25,7 +25,7 @@ class DraggableListItem extends StatefulWidget {
     required this.onCardDragEnded,
   });
 
-  final String boardSlug;
+  final Fragment$BoardFragment board;
   final Fragment$ListWithCardsFragment list;
   final bool isDraggingCard;
   final Function() onDragOutside;
@@ -67,7 +67,7 @@ class _DraggableListItemState extends State<DraggableListItem> {
             height: _listItemSize?.height,
             child: ListItem(
               key: ValueKey(widget.list.id),
-              boardSlug: widget.boardSlug,
+              board: widget.board,
               list: widget.list,
               isDraggingCard: false,
             ),
@@ -109,7 +109,7 @@ class _DraggableListItemState extends State<DraggableListItem> {
         key: _listItemSizeKey,
         child: ListItem(
           key: ValueKey(widget.list.id),
-          boardSlug: widget.boardSlug,
+          board: widget.board,
           list: widget.list,
           isDraggingCard: widget.isDraggingCard,
           onCardDragOutside: widget.onCardDragOutside,
@@ -123,14 +123,14 @@ class _DraggableListItemState extends State<DraggableListItem> {
 class ListItem extends StatefulWidget {
   const ListItem({
     super.key,
-    required this.boardSlug,
+    required this.board,
     required this.list,
     required this.isDraggingCard,
     this.onCardDragOutside,
     this.onCardDragEnded,
   });
 
-  final String boardSlug;
+  final Fragment$BoardFragment board;
   final Fragment$ListWithCardsFragment list;
   final bool isDraggingCard;
   final Function()? onCardDragOutside;
@@ -339,7 +339,7 @@ class _ListItemState extends State<ListItem> {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () {
-                  showNewCardDialog(context, listId: widget.list.id);
+                  context.router.goToNewCard(widget.board, widget.list);
                 },
                 child: Text('NEW CARD'),
               ),
