@@ -477,7 +477,7 @@ type MutationRoot {
 	finishSession: Boolean!
 	refreshSession: SessionObject!
 	updateBoard(id: UUID!, params: BoardParams!): BoardObject!
-	updateCard(id: UUID!, params: UpdateCardParams!): CardObject!
+	updateCard(id: UUID!, params: CardParams!): CardObject!
 	updateCardList(id: UUID!, listId: UUID!, position: Int!): CardObject!
 	updateCardPosition(id: UUID!, position: Int!): CardObject!
 	updateList(id: UUID!, params: UpdateListParams!): ListObject!
@@ -559,10 +559,6 @@ entities without requiring a central allocating authority.
 * [RFC4122: A Universally Unique Identifier (UUID) URN Namespace](http://tools.ietf.org/html/rfc4122)
 """
 scalar UUID
-
-input UpdateCardParams {
-	content: String!
-}
 
 input UpdateListParams {
 	name: String!

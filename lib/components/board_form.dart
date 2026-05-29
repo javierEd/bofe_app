@@ -90,7 +90,7 @@ class _BoardFormState extends State<BoardForm> {
         TextInputField(
           labelText: 'Description',
           initialValue: _description,
-          maxLines: 4,
+          keyboardType: TextInputType.multiline,
           onSaved: (value) {
             _description = value ?? '';
           },

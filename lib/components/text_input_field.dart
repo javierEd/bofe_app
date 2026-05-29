@@ -67,7 +67,7 @@ class TextInputField extends StatelessWidget {
     ),
     keyboardType: keyboardType,
     minLines: minLines ?? (keyboardType == TextInputType.multiline ? 2 : null),
-    maxLines: maxLines ?? 1,
+    maxLines: maxLines ?? (keyboardType == TextInputType.multiline ? 2 : null),
     validator: (value) => _validator(context, value),
     onSaved: onSaved,
     onTap: onTap,

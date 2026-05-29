@@ -1,6 +1,7 @@
 import 'package:bofe/build_context.dart';
 import 'package:bofe/components/card_form.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../components/query_result_builder.dart';
 import '../components/scrollable_dialog.dart';
@@ -15,15 +16,12 @@ class EditCardDialogScreen extends StatelessWidget {
   final String boardSlug;
   final String id;
 
-  final _formEditList = GlobalKey<FormState>();
+  final _formEditCard = GlobalKey<FormState>();
 
-  Future<Map<String, dynamic>?> _attemptToUpdateCard(BuildContext context, String content) async {
+  Future<Map<String, dynamic>?> _attemptToUpdateCard(BuildContext context, Input$CardParams params) async {
     final result = await context.graphQLClient.mutate$UpdateCard(
       Options$Mutation$UpdateCard(
-        variables: Variables$Mutation$UpdateCard(
-          id: id,
-          params: Input$UpdateCardParams(content: content),
-        ),
+        variables: Variables$Mutation$UpdateCard(id: id, params: params),
       ),
     );
 
@@ -35,7 +33,7 @@ class EditCardDialogScreen extends StatelessWidget {
     final updatedCard = result.parsedData?.updateCard;
 
     if (updatedCard != null) {
-      context.router.goToCard(updatedCard);
+      context.pop();
 
       return null;
     } else {
@@ -60,9 +58,10 @@ class EditCardDialogScreen extends StatelessWidget {
               final card = parsedData.card!;
 
               return CardForm(
-                formKey: _formEditList,
+                formKey: _formEditCard,
+                boardId: card.board.id,
                 initialValues: card,
-                onSubmit: (content) => _attemptToUpdateCard(context, content),
+                onSubmit: (params) => _attemptToUpdateCard(context, params),
               );
             },
           );
