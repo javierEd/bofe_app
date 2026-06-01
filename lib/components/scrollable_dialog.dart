@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class ScrollableDialog extends StatelessWidget {
-  const ScrollableDialog({super.key, required this.child, this.title});
+  const ScrollableDialog({super.key, required this.child, this.title, this.width = 640});
 
   final Widget? title;
   final Widget child;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +23,7 @@ class ScrollableDialog extends StatelessWidget {
               onTap: () {},
               child: Dialog(
                 child: Container(
-                  width: 640,
+                  width: width,
                   padding: const EdgeInsets.all(16),
                   child: title != null
                       ? Column(
