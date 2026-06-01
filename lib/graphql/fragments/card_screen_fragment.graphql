@@ -1,0 +1,4 @@
+fragment CardScreenFragment on CardObject {
+    ...CardFragment
+    content
+}

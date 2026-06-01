@@ -1,6 +1,8 @@
 import 'package:bofe/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../components/card_popup_menu_button.dart';
 import '../components/query_result_builder.dart';
@@ -52,7 +54,17 @@ class CardDialogScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SelectableText(card.content, style: TextStyle(fontSize: 18)),
+                  MarkdownBody(
+                    data: card.content,
+                    selectable: true,
+                    softLineBreak: true,
+                    styleSheet: MarkdownStyleSheet(textScaler: TextScaler.linear(1.3)),
+                    onTapLink: (text, href, title) async {
+                      if (href != null && await canLaunchUrlString(href)) {
+                        launchUrlString(href, mode: LaunchMode.inAppBrowserView);
+                      }
+                    },
+                  ),
                 ],
               );
             },

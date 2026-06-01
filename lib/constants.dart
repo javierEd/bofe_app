@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 const colorBoardItemBackground = Color(0xFF303037);
-const colorCardBackground = Colors.black54;
+const colorCardBackground = Color(0xFF101010);
 const colorChip = Color(0xFFDBFCFF);
 const colorPrimary = Color(0xFF1997a2);
 const colorTranslucent = Color(0x22000000);

@@ -1,6 +1,5 @@
 fragment CardFragment on CardObject {
     id
-    content
     position
     isEditable
     isMovable

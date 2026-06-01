@@ -1,5 +1,5 @@
 mutation UpdateCard($id: UUID!, $params: CardParams!) {
     updateCard(id: $id, params: $params) {
-        ...CardFragment
+        id
     }
 }

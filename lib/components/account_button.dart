@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../build_context.dart';
 import '../graphql/fragments/user_fragment.graphql.dart';
@@ -77,18 +77,16 @@ class AccountButton extends StatelessWidget {
               children: [
                 TextButton(
                   onPressed: () async {
-                    final url = Uri.parse(urlPrivacy);
-                    if (await canLaunchUrl(url)) {
-                      await launchUrl(url, mode: LaunchMode.inAppBrowserView);
+                    if (await canLaunchUrlString(urlPrivacy)) {
+                      await launchUrlString(urlPrivacy, mode: LaunchMode.inAppBrowserView);
                     }
                   },
                   child: const Text('Privacy Policy'),
                 ),
                 TextButton(
                   onPressed: () async {
-                    final url = Uri.parse(urlTerms);
-                    if (await canLaunchUrl(url)) {
-                      await launchUrl(url, mode: LaunchMode.inAppBrowserView);
+                    if (await canLaunchUrlString(urlTerms)) {
+                      await launchUrlString(urlTerms, mode: LaunchMode.inAppBrowserView);
                     }
                   },
                   child: const Text('Terms of Service'),
