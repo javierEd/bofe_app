@@ -15,6 +15,7 @@ const keyUsername = 'username';
 
 const routeNameBoard = 'board';
 const routeNameCard = 'card';
+const routeNameChangePassword = 'change_password';
 const routeNameEditCard = 'edit_card';
 const routeNameHome = 'home';
 const routeNameLogin = 'login';
