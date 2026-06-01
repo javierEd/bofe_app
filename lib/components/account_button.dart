@@ -7,115 +7,112 @@ import '../build_context.dart';
 import '../graphql/fragments/user_fragment.graphql.dart';
 import '../constants.dart';
 import 'current_user.dart';
+import 'scrollable_dialog.dart';
 import 'user_item.dart';
 
 class AccountButton extends StatelessWidget {
   const AccountButton({super.key});
 
-  void _showAccountBottomSheet(BuildContext context, {Fragment$UserFragment? user}) {
-    showModalBottomSheet(
+  void _showAccountDialog(BuildContext context, {Fragment$UserFragment? user}) {
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return Container(
-          width: 480,
-          margin: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            spacing: 12,
-            children: [
-              Column(
-                spacing: 8,
-                children: user != null
-                    ? [
-                        Center(child: UserAvatarImage(user: user, size: 32)),
-                        Text(
-                          '@${user.username}',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white),
-                        ),
-                        SizedBox(height: 6),
-                        SizedBox(
-                          width: double.infinity,
-                          child: OutlinedButton.icon(
-                            onPressed: () =>
-                                context.goNamed(routeNameShowUser, pathParameters: {keyUsername: user.username}),
-                            icon: const Icon(Icons.person_rounded),
-                            label: const Text('Profile'),
-                          ),
-                        ),
-                      ]
-                    : [
-                        SizedBox(
-                          width: double.infinity,
-                          child: OutlinedButton.icon(
-                            onPressed: () => context.router.goToLogin(),
-                            icon: const Icon(Icons.login_rounded),
-                            label: const Text('Login'),
-                          ),
-                        ),
-                        SizedBox(
-                          width: double.infinity,
-                          child: OutlinedButton.icon(
-                            onPressed: () => context.router.goToRegister(),
-                            icon: const Icon(Icons.person_add_rounded),
-                            label: const Text('Register'),
-                          ),
-                        ),
-                      ],
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton.icon(
-                  onPressed: () => context.goNamed(routeNameSettings),
-                  icon: Icon(Icons.settings_rounded),
-                  label: const Text('Settings'),
-                ),
-              ),
-              SizedBox(height: 6),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 8,
-                children: [
-                  TextButton(
-                    onPressed: () async {
-                      final url = Uri.parse(urlPrivacy);
-                      if (await canLaunchUrl(url)) {
-                        await launchUrl(url, mode: LaunchMode.inAppBrowserView);
-                      }
-                    },
-                    child: const Text('Privacy Policy'),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      final url = Uri.parse(urlTerms);
-                      if (await canLaunchUrl(url)) {
-                        await launchUrl(url, mode: LaunchMode.inAppBrowserView);
-                      }
-                    },
-                    child: const Text('Terms of Service'),
-                  ),
-                ],
-              ),
-              FutureBuilder(
-                future: PackageInfo.fromPlatform(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Center(
-                      child: Text(
-                        'Version ${snapshot.data!.version}',
-                        style: TextStyle(fontSize: 13, color: Colors.white70),
+      builder: (BuildContext context) => ScrollableDialog(
+        width: 480,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 12,
+          children: [
+            Column(
+              spacing: 8,
+              children: user != null
+                  ? [
+                      Center(child: UserAvatarImage(user: user, size: 32)),
+                      Text(
+                        '@${user.username}',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white),
                       ),
-                    );
-                  }
-
-                  return SizedBox();
-                },
+                      SizedBox(height: 6),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: () =>
+                              context.goNamed(routeNameShowUser, pathParameters: {keyUsername: user.username}),
+                          icon: const Icon(Icons.person_rounded),
+                          label: const Text('Profile'),
+                        ),
+                      ),
+                    ]
+                  : [
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: () => context.router.goToLogin(),
+                          icon: const Icon(Icons.login_rounded),
+                          label: const Text('Login'),
+                        ),
+                      ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: () => context.router.goToRegister(),
+                          icon: const Icon(Icons.person_add_rounded),
+                          label: const Text('Register'),
+                        ),
+                      ),
+                    ],
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () => context.goNamed(routeNameSettings),
+                icon: Icon(Icons.settings_rounded),
+                label: const Text('Settings'),
               ),
-            ],
-          ),
-        );
-      },
+            ),
+            SizedBox(height: 6),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 8,
+              children: [
+                TextButton(
+                  onPressed: () async {
+                    final url = Uri.parse(urlPrivacy);
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(url, mode: LaunchMode.inAppBrowserView);
+                    }
+                  },
+                  child: const Text('Privacy Policy'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    final url = Uri.parse(urlTerms);
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(url, mode: LaunchMode.inAppBrowserView);
+                    }
+                  },
+                  child: const Text('Terms of Service'),
+                ),
+              ],
+            ),
+            FutureBuilder(
+              future: PackageInfo.fromPlatform(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Center(
+                    child: Text(
+                      'Version ${snapshot.data!.version}',
+                      style: TextStyle(fontSize: 13, color: Colors.white70),
+                    ),
+                  );
+                }
+
+                return SizedBox();
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -125,12 +122,12 @@ class AccountButton extends StatelessWidget {
       builder: (user, {refetch}) {
         if (user != null) {
           return IconButton(
-            onPressed: () => _showAccountBottomSheet(context, user: user),
+            onPressed: () => _showAccountDialog(context, user: user),
             icon: UserAvatarImage(user: user),
           );
         } else {
           return IconButton.outlined(
-            onPressed: () => _showAccountBottomSheet(context),
+            onPressed: () => _showAccountDialog(context),
             icon: const Icon(Icons.account_circle_rounded, color: Colors.white),
           );
         }
