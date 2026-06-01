@@ -3,6 +3,7 @@ fragment UserFragment on UserObject {
     username
     initials
     displayName
+    avatarImageUrl
     createdAt
     updatedAt
 }

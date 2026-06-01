@@ -32,7 +32,7 @@ GraphQLClient getGraphQLClient() {
       autoReconnect: true,
       inactivityTimeout: const Duration(minutes: 1),
       delayBetweenReconnectionAttempts: const Duration(seconds: 10),
-      initialPayload: {'app-token': Config.appToken, 'session-token': SessionManager.token},
+      initialPayload: () => {'app-token': Config.appToken, 'session-token': SessionManager.token},
     ),
   );
 

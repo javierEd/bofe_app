@@ -6,6 +6,7 @@ import '../components/boards_grid_view.dart';
 import '../components/infinite_scroll_view.dart';
 import '../components/query_result_builder.dart';
 import '../components/screen_title.dart';
+import '../components/user_item.dart';
 import '../constants.dart';
 import '../graphql/queries/user.graphql.dart';
 import '../graphql/queries/user_boards.graphql.dart';
@@ -73,9 +74,7 @@ class _ShowUserScreenState extends State<ShowUserScreen> {
                   child: Column(
                     spacing: 16,
                     children: [
-                      Center(
-                        child: CircleAvatar(radius: 48, child: Text(user.initials, style: TextStyle(fontSize: 48))),
-                      ),
+                      Center(child: UserAvatarImage(user: user, size: 64)),
                       Text(
                         '@${user.username}',
                         textAlign: TextAlign.center,

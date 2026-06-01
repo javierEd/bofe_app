@@ -484,6 +484,7 @@ type MutationRoot {
 	updateListPosition(id: UUID!, position: Int!): ListObject!
 	updateMember(id: UUID!, params: UpdateMemberParams!): MemberObject!
 	updatePassword(params: UpdatePasswordParams!): UserObject!
+	updateProfile(params: UpdateProfileParams!): UserObject!
 }
 
 """
@@ -573,11 +574,24 @@ input UpdatePasswordParams {
 	newPassword: String!
 }
 
+input UpdateProfileParams {
+	displayName: String!
+	fullName: String!
+	birthdate: NaiveDate
+	countryCode: CountryCode!
+}
+
+"""
+URL is a String implementing the [URL Standard](http://url.spec.whatwg.org/)
+"""
+scalar Url
+
 type UserObject {
 	id: ID!
 	username: String!
 	initials: String!
 	displayName: String!
+	avatarImageUrl: Url!
 	boards(after: UUID, first: Int): BoardObjectConnection!
 	createdAt: DateTime!
 	updatedAt: DateTime

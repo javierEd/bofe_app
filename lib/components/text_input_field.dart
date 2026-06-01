@@ -64,6 +64,7 @@ class TextInputField extends StatelessWidget {
       prefixIcon: prefixIcon,
       suffixIcon: suffixIcon,
       errorText: errorText,
+      alignLabelWithHint: true,
     ),
     keyboardType: keyboardType,
     minLines: minLines ?? (keyboardType == TextInputType.multiline ? 2 : null),

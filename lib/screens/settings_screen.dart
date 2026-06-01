@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:settings_ui/settings_ui.dart';
 
+import '../build_context.dart';
 import '../components/loading_overlay.dart';
-import '../components/login_buttons.dart';
+import '../components/screen_title.dart';
 import '../components/snackbar_alert.dart';
 import '../session_manager.dart';
 
@@ -22,47 +24,58 @@ class SettingsScreen extends StatelessWidget {
     loadingOverlay.hide();
   }
 
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirm your action'),
+        content: const Text('Are you sure you want to logout?'),
+        actions: [
+          OutlinedButton(child: const Text('Cancel'), onPressed: () => context.pop()),
+          FilledButton(
+            child: const Text('Confirm'),
+            onPressed: () {
+              context.pop();
+              _attemptToLogout(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
-      body: Center(
-        child: Container(
-          margin: const EdgeInsets.all(16),
-          width: 640,
-          child: Column(
-            spacing: 16,
-            children: [
-              SessionManager.hasToken
-                  ? SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text('Confirm your action'),
-                              content: const Text('Are you sure you want to logout?'),
-                              actions: [
-                                OutlinedButton(child: const Text('Cancel'), onPressed: () => context.pop()),
-                                FilledButton(
-                                  child: const Text('Confirm'),
-                                  onPressed: () {
-                                    context.pop();
-                                    _attemptToLogout(context);
-                                  },
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.logout_rounded),
-                        label: const Text('Logout'),
+    return ScreenTitle(
+      title: 'Settings',
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Settings')),
+        body: SettingsList(
+          sections: [
+            SettingsSection(
+              title: Text('Account'),
+              tiles: SessionManager.hasToken
+                  ? [
+                      SettingsTile(
+                        leading: const Icon(Icons.logout_rounded),
+                        title: const Text('Logout'),
+                        onPressed: _showLogoutDialog,
                       ),
-                    )
-                  : const LoginButtons(),
-            ],
-          ),
+                    ]
+                  : [
+                      SettingsTile.navigation(
+                        leading: const Icon(Icons.login_rounded),
+                        title: const Text('Login'),
+                        onPressed: (context) => context.router.goToLogin(),
+                      ),
+                      SettingsTile.navigation(
+                        leading: const Icon(Icons.person_add_rounded),
+                        title: const Text('Register'),
+                        onPressed: (context) => context.router.goToRegister(),
+                      ),
+                    ],
+            ),
+          ],
         ),
       ),
     );
