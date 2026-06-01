@@ -10,6 +10,7 @@ import 'graphql/fragments/list_fragment.graphql.dart';
 import 'screens/card_dialog_screen.dart';
 import 'screens/board_members_screen.dart';
 import 'screens/board_screen.dart';
+import 'screens/change_password_screen.dart';
 import 'screens/edit_card_dialog_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
@@ -109,7 +110,18 @@ GoRouter getGoRouter() => GoRouter(
           ],
         ),
         GoRoute(name: routeNameLogin, path: 'login', builder: (context, state) => LoginScreen()),
-        GoRoute(name: routeNameSettings, path: 'settings', builder: (context, state) => SettingsScreen()),
+        GoRoute(
+          name: routeNameSettings,
+          path: 'settings',
+          builder: (context, state) => SettingsScreen(),
+          routes: [
+            GoRoute(
+              name: routeNameChangePassword,
+              path: 'change-password',
+              builder: (context, state) => ChangePasswordScreen(),
+            ),
+          ],
+        ),
         GoRoute(
           name: routeNameRegister,
           path: 'register',
@@ -139,6 +151,8 @@ class AppRouter {
 
   void goToCard(Fragment$CardFragment card) =>
       context.goNamed(routeNameCard, pathParameters: {keySlug: card.board.slug, keyId: card.id});
+
+  void goToChangePassword() => context.goNamed(routeNameChangePassword);
 
   void goToEditCard(Fragment$CardFragment card) =>
       context.goNamed(routeNameEditCard, pathParameters: {keySlug: card.board.slug, keyId: card.id});
