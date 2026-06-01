@@ -3,10 +3,11 @@ import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../build_context.dart';
 import '../graphql/fragments/user_fragment.graphql.dart';
 import '../constants.dart';
 import 'current_user.dart';
-import 'login_buttons.dart';
+import 'user_item.dart';
 
 class AccountButton extends StatelessWidget {
   const AccountButton({super.key});
@@ -14,6 +15,7 @@ class AccountButton extends StatelessWidget {
   void _showAccountBottomSheet(BuildContext context, {Fragment$UserFragment? user}) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder: (BuildContext context) {
         return Container(
           width: 480,
@@ -22,13 +24,11 @@ class AccountButton extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             spacing: 12,
             children: [
-              user != null
-                  ? Column(
-                      spacing: 8,
-                      children: [
-                        Center(
-                          child: CircleAvatar(radius: 32, child: Text(user.initials, style: TextStyle(fontSize: 32))),
-                        ),
+              Column(
+                spacing: 8,
+                children: user != null
+                    ? [
+                        Center(child: UserAvatarImage(user: user, size: 32)),
                         Text(
                           '@${user.username}',
                           textAlign: TextAlign.center,
@@ -44,9 +44,26 @@ class AccountButton extends StatelessWidget {
                             label: const Text('Profile'),
                           ),
                         ),
+                      ]
+                    : [
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: () => context.router.goToLogin(),
+                            icon: const Icon(Icons.login_rounded),
+                            label: const Text('Login'),
+                          ),
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: () => context.router.goToRegister(),
+                            icon: const Icon(Icons.person_add_rounded),
+                            label: const Text('Register'),
+                          ),
+                        ),
                       ],
-                    )
-                  : const LoginButtons(),
+              ),
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
@@ -109,7 +126,7 @@ class AccountButton extends StatelessWidget {
         if (user != null) {
           return IconButton(
             onPressed: () => _showAccountBottomSheet(context, user: user),
-            icon: CircleAvatar(child: Text(user.initials)),
+            icon: UserAvatarImage(user: user),
           );
         } else {
           return IconButton.outlined(

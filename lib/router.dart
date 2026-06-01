@@ -143,9 +143,13 @@ class AppRouter {
   void goToEditCard(Fragment$CardFragment card) =>
       context.goNamed(routeNameEditCard, pathParameters: {keySlug: card.board.slug, keyId: card.id});
 
+  void goToLogin() => context.goNamed(routeNameLogin);
+
   void goToNewCard(Fragment$BoardFragment board, Fragment$ListFragment list) => context.goNamed(
     routeNameNewCard,
     pathParameters: {keySlug: board.slug},
     extra: NewCardDialogExtra(list: list),
   );
+
+  void goToRegister() => context.goNamed(routeNameRegister);
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
+import '../build_context.dart';
 import 'boards_grid_view.dart';
 import 'infinite_scroll_view.dart';
-import 'login_buttons.dart';
 import 'query_result_builder.dart';
 import '../session_manager.dart';
 import '../graphql/queries/current_user_boards.graphql.dart';
@@ -89,7 +89,31 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             spacing: 12,
             mainAxisSize: MainAxisSize.min,
-            children: [Text('You must be logged in to view your boards 😏'), LoginButtons()],
+            children: [
+              Text('You must be logged in to view your boards 😏'),
+
+              Column(
+                spacing: 8,
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () => context.router.goToLogin(),
+                      icon: const Icon(Icons.login_rounded),
+                      label: const Text('Login'),
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () => context.router.goToRegister(),
+                      icon: const Icon(Icons.person_add_rounded),
+                      label: const Text('Register'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       );
