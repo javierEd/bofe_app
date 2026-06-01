@@ -64,7 +64,7 @@ type CardObject {
 	id: ID!
 	board: BoardObject!
 	list: ListObject!
-	content: String!
+	content(maxLength: Int, stripMarkdown: Boolean): String!
 	position: Int!
 	isEditable: Boolean!
 	isMovable: Boolean!

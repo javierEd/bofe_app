@@ -1,8 +1,9 @@
-import 'package:bofe/build_context.dart';
-import 'package:bofe/components/card_form.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
+import '../build_context.dart';
+import '../components/card_form.dart';
 import '../components/query_result_builder.dart';
 import '../components/scrollable_dialog.dart';
 import '../components/snackbar_alert.dart';
@@ -48,7 +49,10 @@ class EditCardDialogScreen extends StatelessWidget {
     return ScrollableDialog(
       title: Text('Edit Card'),
       child: Query$Card$Widget(
-        options: Options$Query$Card(variables: Variables$Query$Card(id: id)),
+        options: Options$Query$Card(
+          fetchPolicy: FetchPolicy.noCache,
+          variables: Variables$Query$Card(id: id),
+        ),
         builder: (result, {fetchMore, refetch}) {
           return QueryResultBuilder(
             result: result,

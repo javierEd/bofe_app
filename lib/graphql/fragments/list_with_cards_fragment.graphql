@@ -1,6 +1,6 @@
 fragment ListWithCardsFragment on ListObject {
     ...ListFragment
     allCards {
-        ...CardFragment
+        ...CardItemFragment
     }
 }

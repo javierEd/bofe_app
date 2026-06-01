@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../build_context.dart';
 import '../graphql/fragments/list_fragment.graphql.dart';
-import '../graphql/fragments/card_fragment.graphql.dart';
+import '../graphql/fragments/card_screen_fragment.graphql.dart';
 import '../graphql/queries/board_lists.graphql.dart';
 import '../graphql/schema.graphql.dart';
 import 'dropdown_search_field.dart';
@@ -22,7 +22,7 @@ class CardForm extends StatefulWidget {
   final GlobalKey<FormState> formKey;
   final String boardId;
   final Fragment$ListFragment? initialList;
-  final Fragment$CardFragment? initialValues;
+  final Fragment$CardScreenFragment? initialValues;
   final Future<Map<String, dynamic>?> Function(Input$CardParams params) onSubmit;
 
   @override

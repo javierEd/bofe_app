@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../build_context.dart';
-import '../graphql/fragments/card_fragment.graphql.dart';
+import '../graphql/fragments/card_item_fragment.graphql.dart';
 import '../graphql/mutations/update_card_list.graphql.dart';
 import '../graphql/mutations/update_card_position.graphql.dart';
 import 'card_popup_menu_button.dart';
@@ -15,7 +15,7 @@ import '../constants.dart';
 class DraggableCardItem extends StatefulWidget {
   const DraggableCardItem({super.key, required this.card, required this.onDragOutside, required this.onDragEnded});
 
-  final Fragment$CardFragment card;
+  final Fragment$CardItemFragment card;
   final Function() onDragOutside;
   final Function() onDragEnded;
 
@@ -98,7 +98,7 @@ class _DraggableCardItemState extends State<DraggableCardItem> {
 class CardItem extends StatelessWidget {
   const CardItem({super.key, required this.card});
 
-  final Fragment$CardFragment card;
+  final Fragment$CardItemFragment card;
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +141,7 @@ class CardItemDragTarget extends StatelessWidget {
   final int position;
   final bool isVisible;
 
-  Future<void> _attemptToUpdateCardPosition(BuildContext context, Fragment$CardFragment card, int position) async {
+  Future<void> _attemptToUpdateCardPosition(BuildContext context, Fragment$CardItemFragment card, int position) async {
     int newPosition = position;
 
     if (card.position < position) {
@@ -169,7 +169,7 @@ class CardItemDragTarget extends StatelessWidget {
 
   Future<void> _attemptToUpdateCardList(
     BuildContext context,
-    Fragment$CardFragment card,
+    Fragment$CardItemFragment card,
     String listId,
     int position,
   ) async {
@@ -192,7 +192,7 @@ class CardItemDragTarget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Visibility(
       visible: isVisible,
-      child: DragTarget<Fragment$CardFragment>(
+      child: DragTarget<Fragment$CardItemFragment>(
         builder: (context, accepted, rejected) {
           return AnimatedContainer(
             duration: const Duration(milliseconds: 250),

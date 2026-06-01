@@ -1,0 +1,4 @@
+fragment CardItemFragment on CardObject {
+    ...CardFragment
+    content(maxLength: 255, stripMarkdown: true)
+}

@@ -1,5 +1,5 @@
 query Card($id: ID!) {
     card(id: $id) {
-        ...CardFragment
+        ...CardScreenFragment
     }
 }
