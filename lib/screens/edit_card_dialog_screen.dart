@@ -7,14 +7,15 @@ import '../components/card_form.dart';
 import '../components/query_result_builder.dart';
 import '../components/scrollable_dialog.dart';
 import '../components/snackbar_alert.dart';
+import '../graphql/fragments/board_fragment.graphql.dart';
 import '../graphql/queries/card.graphql.dart';
 import '../graphql/schema.graphql.dart';
 import '../graphql/mutations/update_card.graphql.dart';
 
 class EditCardDialogScreen extends StatelessWidget {
-  EditCardDialogScreen({super.key, required this.boardSlug, required this.id});
+  EditCardDialogScreen({super.key, required this.board, required this.id});
 
-  final String boardSlug;
+  final Fragment$BoardFragment board;
   final String id;
 
   final _formEditCard = GlobalKey<FormState>();
@@ -57,7 +58,7 @@ class EditCardDialogScreen extends StatelessWidget {
           return QueryResultBuilder(
             result: result,
             refetch: refetch,
-            buildIf: (parsedData) => parsedData?.card?.board.slug == boardSlug && parsedData?.card?.isEditable == true,
+            buildIf: (parsedData) => parsedData?.card?.board.id == board.id && parsedData?.card?.isEditable == true,
             builder: (parsedData) {
               final card = parsedData.card!;
 

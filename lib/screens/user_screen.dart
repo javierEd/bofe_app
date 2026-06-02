@@ -12,16 +12,16 @@ import '../graphql/queries/user.graphql.dart';
 import '../graphql/queries/user_boards.graphql.dart';
 import '../screens/not_found_screen.dart';
 
-class ShowUserScreen extends StatefulWidget {
-  const ShowUserScreen({super.key, required this.username});
+class UserScreen extends StatefulWidget {
+  const UserScreen({super.key, required this.username});
 
   final String username;
 
   @override
-  State<ShowUserScreen> createState() => _ShowUserScreenState();
+  State<UserScreen> createState() => _UserScreenState();
 }
 
-class _ShowUserScreenState extends State<ShowUserScreen> {
+class _UserScreenState extends State<UserScreen> {
   String? _endCursor;
   bool _hasNextPage = false;
   FetchMore<Query$UserBoards>? _fetchMore;
