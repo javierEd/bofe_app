@@ -351,11 +351,10 @@ class _ListItemState extends State<ListItem> {
 }
 
 class ListItemDragTarget extends StatelessWidget {
-  const ListItemDragTarget({super.key, required this.position, required this.isVisible, required this.onAccept});
+  const ListItemDragTarget({super.key, required this.position, required this.isVisible});
 
   final int position;
   final bool isVisible;
-  final FutureOr<void> Function() onAccept;
 
   @override
   Widget build(BuildContext context) {
@@ -396,8 +395,6 @@ class ListItemDragTarget extends StatelessWidget {
           if (result.parsedData?.updateListPosition == null && context.mounted) {
             showSnackBarAlert(context, 'Failed to update list position');
           }
-
-          await onAccept();
 
           loadingOverlay.hide();
         },

@@ -19,12 +19,12 @@ const routeNameChangePassword = 'change_password';
 const routeNameEditCard = 'edit_card';
 const routeNameHome = 'home';
 const routeNameLogin = 'login';
+const routeNameMembers = 'members';
 const routeNameNewBoard = 'new_board';
 const routeNameNewCard = 'new_card';
 const routeNameRegister = 'register';
 const routeNameSettings = 'settings';
-const routeNameBoardMembers = 'board_members';
-const routeNameShowUser = 'show_user';
+const routeNameUser = 'show_user';
 
 const urlPrivacy = 'https://about.bofe.app/privacy';
 const urlTerms = 'https://about.bofe.app/terms';

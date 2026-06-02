@@ -6,6 +6,9 @@ fragment CardFragment on CardObject {
     board {
         id
         slug
+        user {
+            ...UserFragment
+        }
     }
     list {
         ...ListFragment

@@ -26,7 +26,7 @@ class BoardItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(12),
-      onTap: () => context.router.goToBoard(board),
+      onTap: () => context.router.pushToBoard(board),
       child: Ink(
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: colorBoardItemBackground),
         child: Stack(

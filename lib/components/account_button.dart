@@ -36,8 +36,7 @@ class AccountButton extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: OutlinedButton.icon(
-                          onPressed: () =>
-                              context.goNamed(routeNameShowUser, pathParameters: {keyUsername: user.username}),
+                          onPressed: () => context.router.pushToUser(user),
                           icon: const Icon(Icons.person_rounded),
                           label: const Text('Profile'),
                         ),

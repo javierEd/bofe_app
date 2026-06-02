@@ -1,35 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../build_context.dart';
+import '../components/board_context.dart';
 import '../components/edit_board_dialog.dart';
 import '../components/list_item.dart';
 import '../components/loading_overlay.dart';
 import '../components/new_list_dialog.dart';
 import '../components/screen_title.dart';
 import '../components/snackbar_alert.dart';
-import '../constants.dart';
 import '../graphql/fragments/board_fragment.graphql.dart';
 import '../graphql/mutations/delete_board.graphql.dart';
 import '../graphql/subscriptions/board.graphql.dart';
-import '../graphql/queries/board_by_slug.graphql.dart';
-import '../router.dart';
 import '../screens/not_found_screen.dart';
 
 class BoardScreen extends StatefulWidget {
-  const BoardScreen({super.key, required this.slug});
+  const BoardScreen({super.key, required this.username, required this.slug});
 
+  final String username;
   final String slug;
 
   @override
   State<BoardScreen> createState() => _BoardScreenState();
 }
 
-class _BoardScreenState extends State<BoardScreen> with RouteAware {
+class _BoardScreenState extends State<BoardScreen> {
   String? _draggingListId;
   bool _isDraggingCard = false;
-  Refetch<Query$BoardBySlug>? _refetch;
   final _scrollController = ScrollController();
   bool _isAnimating = false;
   final _pixelsPerSecond = 250.0;
@@ -71,7 +68,7 @@ class _BoardScreenState extends State<BoardScreen> with RouteAware {
 
     actions.add(
       IconButton(
-        onPressed: () => context.goNamed(routeNameBoardMembers, pathParameters: {keySlug: board.slug}),
+        onPressed: () => context.router.goToMembers(board),
         tooltip: 'Members',
         icon: Icon(Icons.groups_3_rounded),
       ),
@@ -161,47 +158,13 @@ class _BoardScreenState extends State<BoardScreen> with RouteAware {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    final currentRoute = ModalRoute.of(context);
-
-    if (currentRoute != null) {
-      routeObserver.subscribe(this, currentRoute);
-    }
-  }
-
-  @override
-  void didPopNext() {
-    _refetch?.call();
-  }
-
-  @override
-  void dispose() {
-    routeObserver.unsubscribe(this);
-
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Query$BoardBySlug$Widget(
-      options: Options$Query$BoardBySlug(variables: Variables$Query$BoardBySlug(slug: widget.slug)),
-      builder: (result, {fetchMore, refetch}) {
-        _refetch ??= refetch;
-
-        final boardBySlug = result.parsedData?.boardBySlug;
-
-        if (boardBySlug == null) {
-          if (result.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else {
-            return const NotFoundScreen();
-          }
-        }
-
+    return BoardContext(
+      username: widget.username,
+      slug: widget.slug,
+      builder: (board) {
         return Subscription$Board$Widget(
-          options: Options$Subscription$Board(variables: Variables$Subscription$Board(id: boardBySlug.id)),
+          options: Options$Subscription$Board(variables: Variables$Subscription$Board(id: board.id)),
           builder: (result) {
             final board = result.parsedData?.board;
 
@@ -225,7 +188,6 @@ class _BoardScreenState extends State<BoardScreen> with RouteAware {
                     ],
                   ),
                   actions: _getActions(board),
-                  leading: BackButton(onPressed: () => context.goNamed(routeNameHome)),
                 ),
                 body: Listener(
                   onPointerMove: _onPointerMove,
@@ -257,9 +219,6 @@ class _BoardScreenState extends State<BoardScreen> with RouteAware {
                                           ListItemDragTarget(
                                             position: list.position,
                                             isVisible: _draggingListId != null && _draggingListId != list.id,
-                                            onAccept: () async {
-                                              await refetch?.call();
-                                            },
                                           ),
                                           DraggableListItem(
                                             board: board,
@@ -315,16 +274,12 @@ class _BoardScreenState extends State<BoardScreen> with RouteAware {
                                       ? board.allLists.lastOrNull!.position + 1
                                       : 0,
                                   isVisible: _draggingListId != null,
-                                  onAccept: () async {
-                                    await refetch?.call();
-                                  },
                                 ),
                               if (board.canCreateList)
                                 SizedBox(
                                   width: 320,
                                   child: OutlinedButton(
-                                    onPressed: () =>
-                                        showNewListDialog(context, boardId: board.id).then((_) => refetch?.call()),
+                                    onPressed: () => showNewListDialog(context, boardId: board.id),
                                     child: Text('NEW LIST'),
                                   ),
                                 ),
