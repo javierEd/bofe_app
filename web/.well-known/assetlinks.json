@@ -1,0 +1,12 @@
+[
+    {
+        "relation": ["delegate_permission/common.handle_all_urls", "delegate_permission/common.get_login_creds"],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "app.bofe",
+            "sha256_cert_fingerprints": [
+                "AD:70:8B:6B:58:10:ED:A5:31:60:D3:3D:79:22:CC:9A:9E:B3:08:13:6B:2D:D8:F7:15:94:51:BF:74:1D:66:1D"
+            ]
+        }
+    }
+]
