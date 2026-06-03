@@ -17,6 +17,7 @@ const routeNameBoard = 'board';
 const routeNameCard = 'card';
 const routeNameChangePassword = 'change_password';
 const routeNameEditCard = 'edit_card';
+const routeNameEditProfile = 'edit_profile';
 const routeNameHome = 'home';
 const routeNameLogin = 'login';
 const routeNameMembers = 'members';

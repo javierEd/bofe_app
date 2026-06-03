@@ -1,0 +1,8 @@
+query CurrentUserProfile {
+    currentUser {
+        ...UserFragment
+        fullName
+        birthdate
+        countryCode
+    }
+}

@@ -91,7 +91,7 @@ class _NewMemberFormState extends State<_NewMemberForm> {
           compareFn: (item1, item2) => item1.id == item2.id,
           itemAsString: (item) => '${item.displayName} @${item.username}',
           dropdownBuilder: (context, item) => item != null ? UserItem(user: item) : SizedBox(),
-          onSelected: (item) {
+          onSaved: (item) {
             setState(() {
               _userId = item?.id;
             });
