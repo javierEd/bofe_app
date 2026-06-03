@@ -57,6 +57,11 @@ class SettingsScreen extends StatelessWidget {
               tiles: SessionManager.hasToken
                   ? [
                       SettingsTile.navigation(
+                        leading: const Icon(Icons.person_rounded),
+                        title: const Text('Edit Profile'),
+                        onPressed: (context) => context.router.goToEditProfile(),
+                      ),
+                      SettingsTile.navigation(
                         leading: const Icon(Icons.password_rounded),
                         title: const Text('Change Password'),
                         onPressed: (context) => context.router.goToChangePassword(),

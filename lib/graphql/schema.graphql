@@ -591,6 +591,9 @@ type UserObject {
 	username: String!
 	initials: String!
 	displayName: String!
+	fullName: String!
+	birthdate: NaiveDate!
+	countryCode: CountryCode!
 	avatarImageUrl: Url!
 	boards(after: UUID, first: Int): BoardObjectConnection!
 	createdAt: DateTime!

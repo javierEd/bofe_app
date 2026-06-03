@@ -9,6 +9,7 @@ import 'graphql/fragments/card_fragment.graphql.dart';
 import 'graphql/fragments/list_fragment.graphql.dart';
 import 'graphql/fragments/user_fragment.graphql.dart';
 import 'screens/card_dialog_screen.dart';
+import 'screens/edit_profile_screen.dart';
 import 'screens/members_screen.dart';
 import 'screens/board_screen.dart';
 import 'screens/change_password_screen.dart';
@@ -62,6 +63,12 @@ GoRouter getGoRouter() => GoRouter(
           path: 'settings',
           builder: (context, state) => SettingsScreen(),
           routes: [
+            GoRoute(
+              name: routeNameEditProfile,
+              path: 'edit-profile',
+              redirect: _requireToken,
+              builder: (context, state) => EditProfileScreen(),
+            ),
             GoRoute(
               name: routeNameChangePassword,
               path: 'change-password',
@@ -161,6 +168,8 @@ class AppRouter {
     routeNameEditCard,
     pathParameters: {keyUsername: card.board.user.username, keySlug: card.board.slug, keyId: card.id},
   );
+
+  void goToEditProfile() => context.goNamed(routeNameEditProfile);
 
   void goToLogin() => context.goNamed(routeNameLogin);
 

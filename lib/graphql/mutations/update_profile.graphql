@@ -1,0 +1,5 @@
+mutation UpdateProfile($params: UpdateProfileParams!) {
+    updateProfile(params: $params) {
+        id
+    }
+}

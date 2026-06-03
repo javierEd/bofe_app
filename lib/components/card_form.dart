@@ -65,6 +65,7 @@ class _CardFormState extends State<CardForm> {
           errorText: _errorList,
           initialValue: _list,
           required: true,
+          searchDelay: Duration.zero,
           compareFn: (item1, item2) => item1.id == item2.id,
           itemAsString: (item) => item.name,
           items: (filter, loadProps) async {
@@ -74,7 +75,7 @@ class _CardFormState extends State<CardForm> {
 
             return result.parsedData?.board?.allLists ?? [];
           },
-          onSelected: (list) {
+          onSaved: (list) {
             setState(() {
               _list = list;
             });

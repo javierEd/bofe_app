@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:world_info_plus/world_info_plus.dart';
 
 import '../build_context.dart';
+import '../components/country_dropdown_field.dart';
 import '../components/date_field.dart';
-import '../components/dropdown_field.dart';
 import '../components/form_container.dart';
 import '../components/password_input_field.dart';
 import '../components/screen_title.dart';
@@ -140,23 +139,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   labelText: 'Birthdate',
                   errorText: _errorBirthdate,
                   required: true,
-                  onChanged: (value) {
+                  onSaved: (value) {
                     _birthdate = value;
                   },
                 ),
-                DropdownField(
-                  labelText: 'Country',
+                CountryDropdownField(
                   errorText: _errorCountryCode,
-                  items: Enum$CountryCode.values.map((countryCode) {
-                    return DropdownMenuItem(
-                      value: countryCode,
-                      child: Text(WorldInfoPlus.getCountryByAlpha2(countryCode.name)?.name ?? ''),
-                    );
-                  }).toList(),
                   required: true,
-                  onChanged: (value) {
-                    _countryCode = value;
-                  },
+                  onSaved: (value) => _countryCode = value,
                 ),
               ],
             ),
