@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 import 'constants.dart';
@@ -9,6 +10,8 @@ import 'session_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  GoRouter.optionURLReflectsImperativeAPIs = true;
 
   await initHiveForFlutter();
 
