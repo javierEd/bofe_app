@@ -24,6 +24,14 @@ class QueryResultBuilder<T> extends StatefulWidget {
 }
 
 class _QueryResultBuilderState<T> extends State<QueryResultBuilder<T>> with RouteAware {
+  Widget _wrapInMaterial(Widget child) {
+    if (context.findAncestorWidgetOfExactType<Material>() != null) {
+      return child;
+    } else {
+      return Material(child: child);
+    }
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -52,26 +60,28 @@ class _QueryResultBuilderState<T> extends State<QueryResultBuilder<T>> with Rout
     if (widget.buildIf(widget.result.parsedData)) {
       return widget.builder(widget.result.parsedData as T);
     } else if (widget.result.isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return _wrapInMaterial(Center(child: CircularProgressIndicator()));
     } else if (widget.result.hasException) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          spacing: 14,
-          children: [
-            Text('Something went wrong 🫠'),
-            OutlinedButton(
-              onPressed: () {
-                widget.refetch?.call();
-              },
-              child: const Text('Retry'),
-            ),
-          ],
+      return _wrapInMaterial(
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            spacing: 14,
+            children: [
+              Text('Something went wrong 🫠'),
+              OutlinedButton(
+                onPressed: () {
+                  widget.refetch?.call();
+                },
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
         ),
       );
     } else {
-      return widget.noResultWidget ?? Center(child: Text('No results found 👀'));
+      return widget.noResultWidget ?? _wrapInMaterial(Center(child: Text('No results found 👀')));
     }
   }
 }

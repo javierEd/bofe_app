@@ -17,6 +17,7 @@ class BoardContext extends Query$BoardBySlug$Widget {
          options: Options$Query$BoardBySlug(variables: Variables$Query$BoardBySlug(slug: slug)),
          builder: (result, {fetchMore, refetch}) => QueryResultBuilder(
            result: result,
+           refetch: refetch,
            buildIf: (parsedData) =>
                parsedData?.boardBySlug != null &&
                parsedData?.boardBySlug?.user.username.toLowerCase() == username.toLowerCase(),

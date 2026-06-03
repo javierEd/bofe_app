@@ -163,33 +163,33 @@ class _BoardScreenState extends State<BoardScreen> {
       username: widget.username,
       slug: widget.slug,
       builder: (board) {
-        return Subscription$Board$Widget(
-          options: Options$Subscription$Board(variables: Variables$Subscription$Board(id: board.id)),
-          builder: (result) {
-            final board = result.parsedData?.board;
+        return ScreenTitle(
+          title: '${board.name} by @${board.user.username}',
+          child: Scaffold(
+            appBar: AppBar(
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(board.name),
+                  Text('by @${board.user.username}', style: TextStyle(fontSize: 12)),
+                ],
+              ),
+              actions: _getActions(board),
+            ),
+            body: Subscription$Board$Widget(
+              options: Options$Subscription$Board(variables: Variables$Subscription$Board(id: board.id)),
+              builder: (result) {
+                final board = result.parsedData?.board;
 
-            if (board == null) {
-              if (result.isLoading) {
-                return const Center(child: CircularProgressIndicator());
-              } else {
-                return const NotFoundScreen();
-              }
-            }
+                if (board == null) {
+                  if (result.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else {
+                    return const NotFoundScreen();
+                  }
+                }
 
-            return ScreenTitle(
-              title: '${board.name} by @${board.user.username}',
-              child: Scaffold(
-                appBar: AppBar(
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(board.name),
-                      Text('by @${board.user.username}', style: TextStyle(fontSize: 12)),
-                    ],
-                  ),
-                  actions: _getActions(board),
-                ),
-                body: Listener(
+                return Listener(
                   onPointerMove: _onPointerMove,
                   onPointerUp: (event) {
                     setState(() {
@@ -287,10 +287,10 @@ class _BoardScreenState extends State<BoardScreen> {
                       ),
                     ),
                   ),
-                ),
-              ),
-            );
-          },
+                );
+              },
+            ),
+          ),
         );
       },
     );
