@@ -10,7 +10,6 @@ import 'card_popup_menu_button.dart';
 import 'loading_overlay.dart';
 import 'snackbar_alert.dart';
 import 'user_item.dart';
-import '../constants.dart';
 
 class DraggableCardItem extends StatefulWidget {
   const DraggableCardItem({super.key, required this.card, required this.onDragOutside, required this.onDragEnded});
@@ -102,32 +101,32 @@ class CardItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return InkWell(
       borderRadius: BorderRadius.circular(16),
       onTap: () => context.router.goToCard(card),
-      child: Ink(
-        child: Container(
-          width: 296,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-            color: colorCardBackground,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            spacing: 6,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  UserItem(user: card.user),
-                  CardPopupMenuButton(card: card, iconSize: 20),
-                ],
-              ),
-              Text(card.content, maxLines: 3, overflow: TextOverflow.fade, style: TextStyle(fontSize: 16)),
-            ],
-          ),
+      child: Container(
+        width: 296,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          color: colorScheme.onInverseSurface,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          spacing: 6,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                UserItem(user: card.user),
+                CardPopupMenuButton(card: card, iconSize: 20),
+              ],
+            ),
+            Text(card.content, maxLines: 3, overflow: TextOverflow.fade, style: TextStyle(fontSize: 16)),
+          ],
         ),
       ),
     );

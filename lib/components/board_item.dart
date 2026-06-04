@@ -1,7 +1,6 @@
 import 'package:bofe/build_context.dart';
 import 'package:flutter/material.dart';
 
-import '../constants.dart';
 import '../graphql/schema.graphql.dart';
 import '../graphql/fragments/board_fragment.graphql.dart';
 import 'user_item.dart';
@@ -24,11 +23,13 @@ class BoardItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: () => context.router.pushToBoard(board),
       child: Ink(
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: colorBoardItemBackground),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: colorScheme.onInverseSurface),
         child: Stack(
           alignment: Alignment.center,
           clipBehavior: Clip.hardEdge,
@@ -60,11 +61,11 @@ class BoardItem extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      colorBoardItemBackground.withValues(alpha: 0),
-                      colorBoardItemBackground.withValues(alpha: 0.25),
-                      colorBoardItemBackground.withValues(alpha: 0.5),
-                      colorBoardItemBackground.withValues(alpha: 0.75),
-                      colorBoardItemBackground.withValues(alpha: 1),
+                      colorScheme.onInverseSurface.withValues(alpha: 0),
+                      colorScheme.onInverseSurface.withValues(alpha: 0.25),
+                      colorScheme.onInverseSurface.withValues(alpha: 0.5),
+                      colorScheme.onInverseSurface.withValues(alpha: 0.75),
+                      colorScheme.onInverseSurface.withValues(alpha: 1),
                     ],
                   ),
                 ),

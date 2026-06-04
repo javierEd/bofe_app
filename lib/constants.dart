@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
-const colorBoardItemBackground = Color(0xFF303037);
-const colorCardBackground = Color(0xFF101010);
 const colorChip = Color(0xFFDBFCFF);
-const colorPrimary = Color(0xFF1997a2);
+const colorSeed = Color(0xFF1997a2);
 const colorTranslucent = Color(0x22000000);
 
 const headerXAppToken = 'X-App-Token';
@@ -11,6 +9,7 @@ const headerXAppToken = 'X-App-Token';
 const keyId = 'id';
 const keySession = 'session';
 const keySlug = 'slug';
+const keyThemeMode = 'theme_mode';
 const keyUsername = 'username';
 
 const routeNameBoard = 'board';
@@ -29,3 +28,5 @@ const routeNameUser = 'show_user';
 
 const urlPrivacy = 'https://about.bofe.app/privacy';
 const urlTerms = 'https://about.bofe.app/terms';
+
+const themeModeLabels = {ThemeMode.system: 'System', ThemeMode.light: 'Light', ThemeMode.dark: 'Dark'};
