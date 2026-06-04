@@ -17,7 +17,7 @@ class ScreenTitle extends StatefulWidget {
 class _ScreenTitleState extends State<ScreenTitle> with RouteAware {
   void _setPageTitle() {
     SystemChrome.setApplicationSwitcherDescription(
-      ApplicationSwitcherDescription(label: '${widget.title} | Bofe', primaryColor: colorPrimary.toARGB32()),
+      ApplicationSwitcherDescription(label: '${widget.title} | Bofe', primaryColor: colorSeed.toARGB32()),
     );
   }
 

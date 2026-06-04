@@ -44,6 +44,7 @@ dependencies:
     package_info_plus: ^10.1.0
     restart_app: ^1.8.3
     settings_ui: ^3.0.1
+    shared_preferences: ^2.5.5
     url_launcher: ^6.3.2
     world_info_plus: ^1.0.1
 

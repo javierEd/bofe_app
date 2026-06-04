@@ -6,6 +6,8 @@ import '../build_context.dart';
 import '../components/loading_overlay.dart';
 import '../components/screen_title.dart';
 import '../components/snackbar_alert.dart';
+import '../constants.dart';
+import '../preferences.dart';
 import '../session_manager.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -44,6 +46,29 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
+  void _showThemeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Select Theme'),
+        content: RadioGroup(
+          groupValue: Preferences.themeMode,
+          onChanged: (value) {
+            Preferences.themeMode = value!;
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: ThemeMode.values
+                .map<RadioListTile<ThemeMode>>(
+                  (themeMode) => RadioListTile(title: Text(themeModeLabels[themeMode]!), value: themeMode),
+                )
+                .toList(),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScreenTitle(
@@ -52,6 +77,19 @@ class SettingsScreen extends StatelessWidget {
         appBar: AppBar(title: const Text('Settings')),
         body: SettingsList(
           sections: [
+            SettingsSection(
+              title: Text('General'),
+              tiles: [
+                SettingsTile(
+                  leading: const Icon(Icons.brightness_6_rounded),
+                  title: const Text('Theme'),
+                  value: Preferences.themeModeListenableBuilder(
+                    builder: (context, value) => Text(themeModeLabels[value]!),
+                  ),
+                  onPressed: _showThemeDialog,
+                ),
+              ],
+            ),
             SettingsSection(
               title: Text('Account'),
               tiles: SessionManager.hasToken

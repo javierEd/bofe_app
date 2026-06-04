@@ -30,7 +30,7 @@ class AccountButton extends StatelessWidget {
                       Text(
                         '@${user.username}',
                         textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white),
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                       ),
                       SizedBox(height: 6),
                       SizedBox(
@@ -96,12 +96,7 @@ class AccountButton extends StatelessWidget {
               future: PackageInfo.fromPlatform(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  return Center(
-                    child: Text(
-                      'Version ${snapshot.data!.version}',
-                      style: TextStyle(fontSize: 13, color: Colors.white70),
-                    ),
-                  );
+                  return Center(child: Text('Version ${snapshot.data!.version}', style: TextStyle(fontSize: 13)));
                 }
 
                 return SizedBox();
@@ -125,7 +120,7 @@ class AccountButton extends StatelessWidget {
         } else {
           return IconButton.outlined(
             onPressed: () => _showAccountDialog(context),
-            icon: const Icon(Icons.account_circle_rounded, color: Colors.white),
+            icon: const Icon(Icons.account_circle_rounded),
           );
         }
       },

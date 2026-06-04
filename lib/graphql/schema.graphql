@@ -5,6 +5,7 @@ type BoardObject {
 	slug: String!
 	description: String!
 	visibility: BoardVisibility!
+	labels(after: UUID, first: Int): LabelObjectConnection!
 	lists(after: UUID, first: Int): ListObjectConnection!
 	allLists: [ListObject!]!
 	members(after: UUID, first: Int): MemberObjectConnection!
@@ -371,6 +372,50 @@ type InfoObject {
 	version: String!
 }
 
+type LabelObject {
+	id: ID!
+	name: String!
+	colorCode: String!
+	isEditable: Boolean!
+	createdAt: DateTime!
+	updatedAt: DateTime
+}
+
+type LabelObjectConnection {
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+	"""
+	A list of edges.
+	"""
+	edges: [LabelObjectEdge!]!
+	"""
+	A list of nodes.
+	"""
+	nodes: [LabelObject!]!
+}
+
+"""
+An edge in a connection.
+"""
+type LabelObjectEdge {
+	"""
+	The item at the end of the edge
+	"""
+	node: LabelObject!
+	"""
+	A cursor for use in pagination
+	"""
+	cursor: String!
+}
+
+input LabelParams {
+	boardId: UUID!
+	name: String!
+	colorCode: String!
+}
+
 type ListObject {
 	id: ID!
 	name: String!
@@ -466,12 +511,14 @@ input MemberParams {
 type MutationRoot {
 	createBoard(params: BoardParams!): BoardObject!
 	createCard(params: CardParams!): CardObject!
+	createLabel(params: LabelParams!): LabelObject!
 	createList(params: ListParams!): ListObject!
 	createMember(params: MemberParams!): MemberObject!
 	createSession(params: SessionParams!): SessionObject!
 	createUser(params: UserParams!): UserObject!
 	deleteBoard(id: UUID!): Boolean!
 	deleteCard(id: UUID!): Boolean!
+	deleteLabel(id: UUID!): Boolean!
 	deleteList(id: UUID!): Boolean!
 	deleteMember(id: UUID!): Boolean!
 	finishSession: Boolean!
@@ -480,6 +527,7 @@ type MutationRoot {
 	updateCard(id: UUID!, params: CardParams!): CardObject!
 	updateCardList(id: UUID!, listId: UUID!, position: Int!): CardObject!
 	updateCardPosition(id: UUID!, position: Int!): CardObject!
+	updateLabel(id: UUID!, params: UpdateLabelParams!): LabelObject!
 	updateList(id: UUID!, params: UpdateListParams!): ListObject!
 	updateListPosition(id: UUID!, position: Int!): ListObject!
 	updateMember(id: UUID!, params: UpdateMemberParams!): MemberObject!
@@ -527,6 +575,7 @@ type QueryRoot {
 	card(id: ID!): CardObject
 	currentUser: UserObject
 	info: InfoObject!
+	label(id: ID!): LabelObject
 	list(id: ID!): ListObject
 	user(username: String!): UserObject
 	users(query: String!, after: UUID, first: Int): UserObjectConnection!
@@ -560,6 +609,11 @@ entities without requiring a central allocating authority.
 * [RFC4122: A Universally Unique Identifier (UUID) URN Namespace](http://tools.ietf.org/html/rfc4122)
 """
 scalar UUID
+
+input UpdateLabelParams {
+	name: String!
+	colorCode: String!
+}
 
 input UpdateListParams {
 	name: String!
