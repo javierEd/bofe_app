@@ -4,18 +4,37 @@
 
 <p align="center">
   <a href="https://github.com/javierEd/bofe_app/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/javierEd/bofe_app?style=flat-square" alt="license"/></a>
+    <img
+      src="https://img.shields.io/github/license/javierEd/bofe_app?logo=open-source-initiative&logoColor=white&style=flat-square"
+      alt="license"
+    /></a>
   <a href="https://github.com/javierEd/bofe_app/commits/main">
-    <img src="https://img.shields.io/github/last-commit/javierEd/bofe_app?style=flat-square" alt="last commit"/></a>
+    <img
+      src="https://img.shields.io/github/last-commit/javierEd/bofe_app?logo=git&logoColor=white&style=flat-square"
+      alt="last commit"
+    /></a>
   <a href="https://github.com/javierEd/bofe_app/actions/workflows/ci.yaml">
-    <img src="https://img.shields.io/github/actions/workflow/status/javierEd/bofe_app/ci.yaml?style=flat-square&label=CI" alt="CI"/></a>
+    <img
+      src="https://img.shields.io/github/actions/workflow/status/javierEd/bofe_app/ci.yaml?label=CI&logo=github&style=flat-square"
+      alt="CI"
+    /></a>
   <a href="https://github.com/javierEd/bofe_app/actions/workflows/cd.yaml">
-    <img src="https://img.shields.io/github/actions/workflow/status/javierEd/bofe_app/cd.yaml?style=flat-square&label=CD" alt="CD"/></a>
+    <img
+      src="https://img.shields.io/github/actions/workflow/status/javierEd/bofe_app/cd.yaml?label=CD&logo=github&style=flat-square"
+      alt="CD"
+    /></a>
   <a href="https://github.com/javierEd/bofe_app/releases/latest">
-    <img src="https://img.shields.io/github/v/release/javierEd/bofe_app?style=flat-square&include_prereleases" alt="release"/></a>
+    <img
+      src="https://img.shields.io/github/v/release/javierEd/bofe_app?include_prereleases&logo=rocket&logoColor=white&style=flat-square"
+      alt="release"
+    /></a>
 </p>
 
 Bofe is the perfect solution to create and manage Kanban boards.
+
+> [!NOTE]
+> This repository contains the frontend (mobile/web) application of the project.
+> - To see the backend, go to [github.com/javierEd/bofe](https://github.com/javierEd/bofe).
 
 ## Features
 
@@ -39,4 +58,4 @@ Bofe is the perfect solution to create and manage Kanban boards.
 
 ## License
 
-This project is open-source and available under the GNU Affero General Public License v3.0 (AGPL v3). Please see the [license file](https://github.com/javierEd/bofe_app/blob/main/LICENSE) for more information.
+This project is open-source and available under the GNU Affero General Public License v3.0 (AGPL v3). Please see the [LICENSE](https://github.com/javierEd/bofe_app/blob/main/LICENSE) file for more details.
