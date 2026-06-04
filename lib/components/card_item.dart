@@ -54,7 +54,7 @@ class _DraggableCardItemState extends State<DraggableCardItem> {
       childWhenDragging: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         height: _isOutside ? 0 : _cardItemSize?.height,
-        decoration: BoxDecoration(color: Colors.white30, borderRadius: BorderRadius.circular(16)),
+        decoration: BoxDecoration(color: Colors.grey.withAlpha(128), borderRadius: BorderRadius.circular(16)),
       ),
       onDragUpdate: (details) {
         final currentOffset = details.globalPosition;
@@ -198,7 +198,7 @@ class CardItemDragTarget extends StatelessWidget {
             margin: const EdgeInsets.symmetric(vertical: 6),
             height: accepted.isNotEmpty ? 92 : 12,
             decoration: BoxDecoration(
-              color: accepted.isNotEmpty ? Colors.white30 : Colors.white24,
+              color: accepted.isNotEmpty ? Colors.grey.withAlpha(128) : Colors.grey.withAlpha(64),
               borderRadius: BorderRadius.circular(16),
             ),
           );
