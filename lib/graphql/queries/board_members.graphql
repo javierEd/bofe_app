@@ -6,6 +6,7 @@ query BoardMembers($id: ID!, $first: Int, $after: UUID) {
                 id
                 isAdmin
                 isEditable
+                isRemovable
                 user {
                     ...UserFragment
                 }

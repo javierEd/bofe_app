@@ -1,12 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class ScrollableDialog extends StatelessWidget {
-  const ScrollableDialog({super.key, required this.child, this.title, this.width = 640});
+class ScrollableDialog extends StatefulWidget {
+  const ScrollableDialog({
+    super.key,
+    this.title,
+    this.actions = const [],
+    required this.child,
+    this.width = 640,
+    this.hasMore = false,
+    this.onScrollAtBottom,
+  });
 
   final Widget? title;
+  final List<Widget> actions;
   final Widget child;
   final double width;
+  final bool hasMore;
+  final Future<void> Function()? onScrollAtBottom;
+
+  @override
+  State<ScrollableDialog> createState() => _ScrollableDialogState();
+}
+
+class _ScrollableDialogState extends State<ScrollableDialog> {
+  final _controller = ScrollController();
+  bool _isLoading = false;
+
+  Future<void> _scrollListener() async {
+    if (widget.hasMore &&
+        widget.onScrollAtBottom != null &&
+        _controller.offset >= _controller.position.maxScrollExtent &&
+        !_controller.position.outOfRange) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      await widget.onScrollAtBottom?.call();
+
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_scrollListener);
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,19 +73,28 @@ class ScrollableDialog extends StatelessWidget {
               onTap: () {},
               child: Dialog(
                 child: Container(
-                  width: width,
+                  width: widget.width,
                   padding: const EdgeInsets.all(16),
-                  child: title != null
-                      ? Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          spacing: 16,
-                          children: [
-                            DefaultTextStyle(style: dialogTheme, child: title!),
-                            child,
-                          ],
-                        )
-                      : child,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 8,
+                    children: [
+                      if (widget.title != null || widget.actions.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              if (widget.title != null) DefaultTextStyle(style: dialogTheme, child: widget.title!),
+                              if (widget.actions.isNotEmpty) ...[Spacer(), ...widget.actions],
+                            ],
+                          ),
+                        ),
+                      widget.child,
+                      if (_isLoading) const Center(child: CircularProgressIndicator()),
+                    ],
+                  ),
                 ),
               ),
             ),
