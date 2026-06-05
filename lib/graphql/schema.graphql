@@ -469,6 +469,7 @@ type MemberObject {
 	user: UserObject!
 	isAdmin: Boolean!
 	isEditable: Boolean!
+	isRemovable: Boolean!
 	createdAt: DateTime!
 	updatedAt: DateTime
 }

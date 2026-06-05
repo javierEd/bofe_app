@@ -111,7 +111,7 @@ class AccountButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CurrentUser(
-      builder: (user, {refetch}) {
+      builder: (user) {
         if (user != null) {
           return IconButton(
             onPressed: () => _showAccountDialog(context, user: user),

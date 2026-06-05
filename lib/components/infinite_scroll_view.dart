@@ -51,7 +51,7 @@ class _InfiniteScrollViewState extends State<InfiniteScrollView> {
       controller: _controller,
       padding: EdgeInsets.all(16),
       child: Column(
-        spacing: 6,
+        spacing: 8,
         children: [
           widget.child,
           if (_isLoading) const Center(child: CircularProgressIndicator()),

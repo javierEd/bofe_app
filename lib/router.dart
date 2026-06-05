@@ -10,7 +10,7 @@ import 'graphql/fragments/list_fragment.graphql.dart';
 import 'graphql/fragments/user_fragment.graphql.dart';
 import 'screens/card_dialog_screen.dart';
 import 'screens/edit_profile_screen.dart';
-import 'screens/members_screen.dart';
+import 'screens/members_dialog_screen.dart';
 import 'screens/board_screen.dart';
 import 'screens/change_password_screen.dart';
 import 'screens/edit_card_dialog_screen.dart';
@@ -136,10 +136,13 @@ GoRouter getGoRouter() => GoRouter(
             GoRoute(
               name: routeNameMembers,
               path: 'members',
-              builder: (context, state) {
+              pageBuilder: (context, state) {
                 final username = state.pathParameters[keyUsername]!;
                 final slug = state.pathParameters[keySlug]!;
-                return MembersScreen(key: ValueKeys.members(username, slug), username: username, slug: slug);
+                return BoardContextDialogPage(
+                  pathParameters: state.pathParameters,
+                  builder: (board) => MembersDialogScreen(key: ValueKeys.members(username, slug), board: board),
+                );
               },
             ),
           ],
@@ -170,6 +173,8 @@ class AppRouter {
   );
 
   void goToEditProfile() => context.goNamed(routeNameEditProfile);
+
+  void goToHome() => context.goNamed(routeNameHome);
 
   void goToLogin() => context.goNamed(routeNameLogin);
 
