@@ -148,11 +148,6 @@ class AppRouter {
   void goToBoard(Fragment$BoardFragment board) =>
       context.goNamed(routeNameBoard, pathParameters: {keyUsername: board.user.username, keySlug: board.slug});
 
-  void goToCard(Fragment$CardFragment card) => context.goNamed(
-    routeNameCard,
-    pathParameters: {keyUsername: card.board.user.username, keySlug: card.board.slug, keyId: card.id},
-  );
-
   void goToChangePassword() => context.goNamed(routeNameChangePassword);
 
   void goToEditProfile() => context.goNamed(routeNameEditProfile);
@@ -164,9 +159,6 @@ class AppRouter {
 
   void goToLogin() => context.goNamed(routeNameLogin);
 
-  void goToMembers(Fragment$BoardFragment board) =>
-      context.goNamed(routeNameMembers, pathParameters: {keyUsername: board.user.username, keySlug: board.slug});
-
   void goToRegister() => context.goNamed(routeNameRegister);
 
   void goToUser(Fragment$UserFragment user) =>
@@ -174,6 +166,14 @@ class AppRouter {
 
   void pushToBoard(Fragment$BoardFragment board) =>
       context.pushNamed(routeNameBoard, pathParameters: {keyUsername: board.user.username, keySlug: board.slug});
+
+  void pushToCard(Fragment$CardFragment card) => context.pushNamed(
+    routeNameCard,
+    pathParameters: {keyUsername: card.board.user.username, keySlug: card.board.slug, keyId: card.id},
+  );
+
+  void pushToMembers(Fragment$BoardFragment board) =>
+      context.pushNamed(routeNameMembers, pathParameters: {keyUsername: board.user.username, keySlug: board.slug});
 
   void pushToUser(Fragment$UserFragment user) =>
       context.pushNamed(routeNameUser, pathParameters: {keyUsername: user.username});
