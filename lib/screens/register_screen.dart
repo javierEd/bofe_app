@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../build_context.dart';
-import '../components/country_dropdown_field.dart';
+import '../components.dart';
 import '../components/date_field.dart';
 import '../components/form_container.dart';
 import '../components/password_input_field.dart';
@@ -143,11 +143,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     _birthdate = value;
                   },
                 ),
-                CountryDropdownField(
-                  errorText: _errorCountryCode,
-                  required: true,
-                  onSaved: (value) => _countryCode = value,
-                ),
+                CountryField(errorText: _errorCountryCode, required: true, onSaved: (value) => _countryCode = value),
               ],
             ),
           ),
