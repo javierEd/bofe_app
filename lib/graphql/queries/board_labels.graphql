@@ -1,0 +1,8 @@
+query BoardLabels($id: ID!) {
+    board(id: $id) {
+        id
+        allLabels {
+            ...LabelFragment
+        }
+    }
+}

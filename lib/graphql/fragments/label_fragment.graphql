@@ -1,0 +1,11 @@
+fragment LabelFragment on LabelObject {
+    id
+    board {
+        id
+    }
+    name
+    colorCode
+    isEditable
+    createdAt
+    updatedAt
+}

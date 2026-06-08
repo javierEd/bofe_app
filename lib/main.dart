@@ -37,30 +37,28 @@ class MobileLikeScrollBehavior extends MaterialScrollBehavior {
 }
 
 class App extends StatelessWidget {
-  App({super.key, required this.graphQLClient, required this.goRouter});
+  const App({super.key, required this.graphQLClient, required this.goRouter});
 
   final GraphQLClient graphQLClient;
   final GoRouter goRouter;
 
-  final _roundedRectangleBorder = RoundedRectangleBorder(borderRadius: BorderRadius.circular(16));
-
   ThemeData _getThemeData(Brightness brightness) => ThemeData(
     colorScheme: ColorScheme.fromSeed(seedColor: colorSeed, brightness: brightness),
     useMaterial3: true,
-    dialogTheme: DialogThemeData(shape: _roundedRectangleBorder),
+    dialogTheme: const DialogThemeData(shape: roundedRectangleBorder),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
         padding: const EdgeInsets.all(20),
         textStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
         backgroundColor: colorSeed,
-        shape: _roundedRectangleBorder,
+        shape: roundedRectangleBorder,
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         padding: const EdgeInsets.all(20),
         textStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-        shape: _roundedRectangleBorder,
+        shape: roundedRectangleBorder,
       ),
     ),
     textButtonTheme: TextButtonThemeData(
@@ -68,29 +66,17 @@ class App extends StatelessWidget {
         iconAlignment: IconAlignment.start,
         padding: const EdgeInsets.all(20),
         textStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-        shape: _roundedRectangleBorder,
+        shape: roundedRectangleBorder,
       ),
     ),
     chipTheme: ChipThemeData(
-      shape: _roundedRectangleBorder,
-      labelPadding: const EdgeInsets.all(4),
-      side: BorderSide(color: colorChip),
-      brightness: Brightness.dark,
-      selectedColor: colorChip,
+      shape: roundedRectangleBorder,
+      labelPadding: const EdgeInsets.all(0),
       backgroundColor: Colors.transparent,
       checkmarkColor: Colors.black,
       deleteIconColor: Colors.black,
-      labelStyle: TextStyle(
-        fontSize: 13,
-        fontWeight: FontWeight.w600,
-        color: WidgetStateColor.resolveWith((state) {
-          return state.contains(WidgetState.selected) ? Colors.black : colorChip;
-        }),
-      ),
     ),
-    inputDecorationTheme: InputDecorationTheme(
-      border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
-    ),
+    inputDecorationTheme: const InputDecorationTheme(border: OutlineInputBorder(borderRadius: borderRadius)),
   );
 
   // This widget is the root of your application.

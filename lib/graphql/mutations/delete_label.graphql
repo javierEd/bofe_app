@@ -1,0 +1,3 @@
+mutation DeleteLabel($id: UUID!) {
+    deleteLabel(id: $id)
+}

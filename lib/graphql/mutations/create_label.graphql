@@ -1,0 +1,5 @@
+mutation CreateLabel($params: LabelParams!) {
+    createLabel(params: $params) {
+        id
+    }
+}

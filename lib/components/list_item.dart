@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bofe/components/dialogs/new_card_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -339,7 +340,7 @@ class _ListItemState extends State<ListItem> {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () {
-                  context.router.goToNewCard(widget.board, widget.list);
+                  showNewCardDialog(context, board: widget.board, list: widget.list);
                 },
                 child: Text('NEW CARD'),
               ),

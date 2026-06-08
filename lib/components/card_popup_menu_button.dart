@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../build_context.dart';
 import '../graphql/fragments/card_fragment.graphql.dart';
 import '../graphql/mutations/delete_card.graphql.dart';
+import '../components.dart';
 import 'loading_overlay.dart';
 import 'snackbar_alert.dart';
 
@@ -41,7 +42,7 @@ class CardPopupMenuButton extends StatelessWidget {
           switch (value) {
             case 1:
               beforeEdit?.call();
-              context.router.goToEditCard(card);
+              showEditCardDialog(context, card: card);
               break;
             case 2:
               showDialog(

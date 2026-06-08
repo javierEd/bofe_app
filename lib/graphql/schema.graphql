@@ -6,10 +6,12 @@ type BoardObject {
 	description: String!
 	visibility: BoardVisibility!
 	labels(after: UUID, first: Int): LabelObjectConnection!
+	allLabels: [LabelObject!]!
 	lists(after: UUID, first: Int): ListObjectConnection!
 	allLists: [ListObject!]!
 	members(after: UUID, first: Int): MemberObjectConnection!
 	canCreateCard: Boolean!
+	canCreateLabel: Boolean!
 	canCreateList: Boolean!
 	canCreateMember: Boolean!
 	canMoveCard: Boolean!
@@ -66,6 +68,7 @@ type CardObject {
 	board: BoardObject!
 	list: ListObject!
 	content(maxLength: Int, stripMarkdown: Boolean): String!
+	allLabels: [LabelObject!]!
 	position: Int!
 	isEditable: Boolean!
 	isMovable: Boolean!
@@ -106,7 +109,10 @@ type CardObjectEdge {
 input CardParams {
 	listId: UUID!
 	content: String!
+	labelIds: [UUID!]!
 }
+
+scalar ColorCode
 
 enum CountryCode {
 	AF
@@ -374,8 +380,9 @@ type InfoObject {
 
 type LabelObject {
 	id: ID!
+	board: BoardObject!
 	name: String!
-	colorCode: String!
+	colorCode: ColorCode!
 	isEditable: Boolean!
 	createdAt: DateTime!
 	updatedAt: DateTime
@@ -413,7 +420,7 @@ type LabelObjectEdge {
 input LabelParams {
 	boardId: UUID!
 	name: String!
-	colorCode: String!
+	colorCode: ColorCode!
 }
 
 type ListObject {
@@ -613,7 +620,7 @@ scalar UUID
 
 input UpdateLabelParams {
 	name: String!
-	colorCode: String!
+	colorCode: ColorCode!
 }
 
 input UpdateListParams {

@@ -1,0 +1,5 @@
+mutation UpdateLabel($id: UUID!, $params: UpdateLabelParams!) {
+    updateLabel(id: $id, params: $params) {
+        id
+    }
+}
