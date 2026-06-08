@@ -7,6 +7,7 @@ import '../graphql/fragments/card_item_fragment.graphql.dart';
 import '../graphql/mutations/update_card_list.graphql.dart';
 import '../graphql/mutations/update_card_position.graphql.dart';
 import 'card_popup_menu_button.dart';
+import 'label_chip.dart';
 import 'loading_overlay.dart';
 import 'snackbar_alert.dart';
 import 'user_item.dart';
@@ -126,6 +127,7 @@ class CardItem extends StatelessWidget {
               ],
             ),
             Text(card.content, maxLines: 3, overflow: TextOverflow.fade, style: TextStyle(fontSize: 16)),
+            Wrap(spacing: 4, runSpacing: 4, children: card.allLabels.map((label) => LabelChip(label: label)).toList()),
           ],
         ),
       ),

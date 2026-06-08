@@ -6,18 +6,16 @@ import 'components/board_context.dart';
 import 'constants.dart';
 import 'graphql/fragments/board_fragment.graphql.dart';
 import 'graphql/fragments/card_fragment.graphql.dart';
-import 'graphql/fragments/list_fragment.graphql.dart';
 import 'graphql/fragments/user_fragment.graphql.dart';
 import 'screens/card_dialog_screen.dart';
 import 'screens/edit_profile_screen.dart';
+import 'screens/labels_dialog_screen.dart';
 import 'screens/members_dialog_screen.dart';
 import 'screens/board_screen.dart';
 import 'screens/change_password_screen.dart';
-import 'screens/edit_card_dialog_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/new_board_screen.dart';
-import 'screens/new_card_dialog_screen.dart';
 import 'screens/not_found_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/settings_screen.dart';
@@ -101,17 +99,6 @@ GoRouter getGoRouter() => GoRouter(
           },
           routes: [
             GoRoute(
-              name: routeNameNewCard,
-              path: 'cards/new',
-              pageBuilder: (BuildContext context, GoRouterState state) {
-                final extra = state.extra as NewCardDialogExtra?;
-                return BoardContextDialogPage(
-                  pathParameters: state.pathParameters,
-                  builder: (board) => NewCardDialogScreen(board: board, extra: extra),
-                );
-              },
-            ),
-            GoRoute(
               name: routeNameCard,
               path: 'cards/:id',
               pageBuilder: (BuildContext context, GoRouterState state) {
@@ -123,13 +110,14 @@ GoRouter getGoRouter() => GoRouter(
               },
             ),
             GoRoute(
-              name: routeNameEditCard,
-              path: 'cards/:id/edit',
-              pageBuilder: (BuildContext context, GoRouterState state) {
-                final id = state.pathParameters[keyId]!;
+              name: routeNameLabels,
+              path: 'labels',
+              pageBuilder: (context, state) {
+                final username = state.pathParameters[keyUsername]!;
+                final slug = state.pathParameters[keySlug]!;
                 return BoardContextDialogPage(
                   pathParameters: state.pathParameters,
-                  builder: (board) => EditCardDialogScreen(key: ValueKeys.editCard(id), board: board, id: id),
+                  builder: (board) => LabelsDialogScreen(key: ValueKeys.labels(username, slug), board: board),
                 );
               },
             ),
@@ -167,25 +155,17 @@ class AppRouter {
 
   void goToChangePassword() => context.goNamed(routeNameChangePassword);
 
-  void goToEditCard(Fragment$CardFragment card) => context.goNamed(
-    routeNameEditCard,
-    pathParameters: {keyUsername: card.board.user.username, keySlug: card.board.slug, keyId: card.id},
-  );
-
   void goToEditProfile() => context.goNamed(routeNameEditProfile);
 
   void goToHome() => context.goNamed(routeNameHome);
+
+  void goToLabels(Fragment$BoardFragment board) =>
+      context.goNamed(routeNameLabels, pathParameters: {keyUsername: board.user.username, keySlug: board.slug});
 
   void goToLogin() => context.goNamed(routeNameLogin);
 
   void goToMembers(Fragment$BoardFragment board) =>
       context.goNamed(routeNameMembers, pathParameters: {keyUsername: board.user.username, keySlug: board.slug});
-
-  void goToNewCard(Fragment$BoardFragment board, Fragment$ListFragment list) => context.goNamed(
-    routeNameNewCard,
-    pathParameters: {keyUsername: board.user.username, keySlug: board.slug},
-    extra: NewCardDialogExtra(list: list),
-  );
 
   void goToRegister() => context.goNamed(routeNameRegister);
 

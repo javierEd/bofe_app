@@ -1,3 +1,15 @@
+import 'dart:ui' show Color;
+
+export 'dart:ui' show Color;
+
+dynamic colorToJson(Color data) {
+  return '#${data.toARGB32().toRadixString(16).substring(2)}';
+}
+
+Color jsonToColor(dynamic data) {
+  return Color(int.parse(data.replaceFirst('#', '0xff')));
+}
+
 dynamic dateToJson(DateTime data) {
   return data.toString().split(' ').first;
 }

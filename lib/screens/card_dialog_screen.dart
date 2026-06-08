@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import '../build_context.dart';
 import '../components/card_popup_menu_button.dart';
+import '../components/label_chip.dart';
 import '../components/query_result_builder.dart';
 import '../components/scrollable_dialog.dart';
 import '../components/user_item.dart';
@@ -64,6 +65,11 @@ class CardDialogScreen extends StatelessWidget {
                         launchUrlString(href, mode: LaunchMode.inAppBrowserView);
                       }
                     },
+                  ),
+                  Wrap(
+                    spacing: 4,
+                    runSpacing: 4,
+                    children: card.allLabels.map((label) => LabelChip(label: label)).toList(),
                   ),
                 ],
               );

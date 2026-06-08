@@ -2,28 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
-import '../build_context.dart';
-import '../components/card_form.dart';
-import '../components/query_result_builder.dart';
-import '../components/scrollable_dialog.dart';
-import '../components/snackbar_alert.dart';
-import '../graphql/fragments/board_fragment.graphql.dart';
-import '../graphql/queries/card.graphql.dart';
-import '../graphql/schema.graphql.dart';
-import '../graphql/mutations/update_card.graphql.dart';
+import '../../build_context.dart';
+import '../forms/card_form.dart';
+import '../query_result_builder.dart';
+import '../scrollable_dialog.dart';
+import '../snackbar_alert.dart';
+import '../../graphql/fragments/card_fragment.graphql.dart';
+import '../../graphql/queries/card.graphql.dart';
+import '../../graphql/schema.graphql.dart';
+import '../../graphql/mutations/update_card.graphql.dart';
 
-class EditCardDialogScreen extends StatelessWidget {
-  EditCardDialogScreen({super.key, required this.board, required this.id});
+Future<dynamic> showEditCardDialog(BuildContext context, {required Fragment$CardFragment card}) {
+  return showDialog(
+    context: context,
+    builder: (context) => _EditCardDialog(card: card),
+  );
+}
 
-  final Fragment$BoardFragment board;
-  final String id;
+class _EditCardDialog extends StatelessWidget {
+  _EditCardDialog({required this.card});
+
+  final Fragment$CardFragment card;
 
   final _formEditCard = GlobalKey<FormState>();
 
   Future<Map<String, dynamic>?> _attemptToUpdateCard(BuildContext context, Input$CardParams params) async {
     final result = await context.graphQLClient.mutate$UpdateCard(
       Options$Mutation$UpdateCard(
-        variables: Variables$Mutation$UpdateCard(id: id, params: params),
+        variables: Variables$Mutation$UpdateCard(id: card.id, params: params),
       ),
     );
 
@@ -52,13 +58,13 @@ class EditCardDialogScreen extends StatelessWidget {
       child: Query$Card$Widget(
         options: Options$Query$Card(
           fetchPolicy: FetchPolicy.noCache,
-          variables: Variables$Query$Card(id: id),
+          variables: Variables$Query$Card(id: card.id),
         ),
         builder: (result, {fetchMore, refetch}) {
           return QueryResultBuilder(
             result: result,
             refetch: refetch,
-            buildIf: (parsedData) => parsedData?.card?.board.id == board.id && parsedData?.card?.isEditable == true,
+            buildIf: (parsedData) => parsedData?.card?.isEditable == true,
             builder: (parsedData) {
               final card = parsedData.card!;
 

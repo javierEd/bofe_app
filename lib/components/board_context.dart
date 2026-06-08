@@ -5,6 +5,7 @@ import '../constants.dart';
 import '../graphql/fragments/board_fragment.graphql.dart';
 import '../graphql/queries/board_by_slug.graphql.dart';
 import '../screens/not_found_screen.dart';
+import '../value_keys.dart';
 import 'dialog_page.dart';
 
 class BoardContext extends Query$BoardBySlug$Widget {
@@ -33,7 +34,11 @@ class BoardContextDialogPage extends DialogPage {
     required Widget Function(Fragment$BoardFragment board) builder,
   }) : super(
          barrierDismissible: false,
-         builder: (context) =>
-             BoardContext(username: pathParameters[keyUsername]!, slug: pathParameters[keySlug]!, builder: builder),
+         builder: (context) => BoardContext(
+           key: ValueKeys.boardContext(pathParameters[keyUsername]!, pathParameters[keySlug]!),
+           username: pathParameters[keyUsername]!,
+           slug: pathParameters[keySlug]!,
+           builder: builder,
+         ),
        );
 }

@@ -4,6 +4,7 @@ fragment BoardFragment on BoardObject {
     slug
     description
     visibility
+    canCreateLabel
     canCreateList
     canCreateMember
     canMoveList

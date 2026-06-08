@@ -9,6 +9,11 @@ targets:
                     addTypenameExcludedPaths:
                         - subscription
                     scalars:
+                        ColorCode:
+                            type: Color
+                            fromJsonFunctionName: jsonToColor
+                            toJsonFunctionName: colorToJson
+                            import: package:bofe/graphql/scalars.dart
                         JSONObject:
                             type: Map<String, dynamic>
                         DateTime:

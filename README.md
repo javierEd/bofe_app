@@ -30,7 +30,7 @@
     /></a>
 </p>
 
-Bofe is the perfect solution to create and manage Kanban boards.
+With **Bofe** you can easily build kanban style boards for your projects, personal workflows, or just for fun.
 
 > [!NOTE]
 > This repository contains the frontend (mobile/web) application of the project.
@@ -38,9 +38,9 @@ Bofe is the perfect solution to create and manage Kanban boards.
 
 ## Features
 
-* Boards: Create boards and manage for projects, personal workflows, or just for fun.
-* Lists: Add, rename and reorder lists to match any process (like To-Do, Doing, Done).
-* Cards: Write cards and move then between lists with smooth drag-and-drop gestures.
+* Create, manage and share **Boards**.
+* Add, rename and reorder **Lists** to match any process (like To-Do, Doing, Done).
+* Write **Cards** and move then between lists with smooth drag-and-drop gestures.
 
 ### Build Requirements
 

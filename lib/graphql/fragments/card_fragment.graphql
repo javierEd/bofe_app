@@ -10,6 +10,9 @@ fragment CardFragment on CardObject {
             ...UserFragment
         }
     }
+    allLabels {
+        ...LabelFragment
+    }
     list {
         ...ListFragment
     }

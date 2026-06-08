@@ -2,19 +2,30 @@ import 'package:bofe/graphql/fragments/list_fragment.graphql.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../build_context.dart';
-import '../components/card_form.dart';
-import '../components/scrollable_dialog.dart';
-import '../components/snackbar_alert.dart';
-import '../graphql/fragments/board_fragment.graphql.dart';
-import '../graphql/schema.graphql.dart';
-import '../graphql/mutations/create_card.graphql.dart';
+import '../../build_context.dart';
+import '../forms/card_form.dart';
+import '../scrollable_dialog.dart';
+import '../snackbar_alert.dart';
+import '../../graphql/fragments/board_fragment.graphql.dart';
+import '../../graphql/schema.graphql.dart';
+import '../../graphql/mutations/create_card.graphql.dart';
 
-class NewCardDialogScreen extends StatelessWidget {
-  NewCardDialogScreen({super.key, required this.board, required this.extra});
+Future<dynamic> showNewCardDialog(
+  BuildContext context, {
+  required Fragment$BoardFragment board,
+  required Fragment$ListFragment list,
+}) {
+  return showDialog(
+    context: context,
+    builder: (context) => _NewCardDialog(board: board, list: list),
+  );
+}
+
+class _NewCardDialog extends StatelessWidget {
+  _NewCardDialog({required this.board, required this.list});
 
   final Fragment$BoardFragment board;
-  final NewCardDialogExtra? extra;
+  final Fragment$ListFragment list;
   final _formNewCard = GlobalKey<FormState>();
 
   Future<Map<String, dynamic>?> _attemptToCreateCard(BuildContext context, Input$CardParams params) async {
@@ -47,7 +58,7 @@ class NewCardDialogScreen extends StatelessWidget {
       child: CardForm(
         formKey: _formNewCard,
         boardId: board.id,
-        initialList: extra?.list,
+        initialList: list,
         onSubmit: (params) => _attemptToCreateCard(context, params),
       ),
     );

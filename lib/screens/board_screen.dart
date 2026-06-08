@@ -13,6 +13,7 @@ import '../graphql/fragments/board_fragment.graphql.dart';
 import '../graphql/mutations/delete_board.graphql.dart';
 import '../graphql/subscriptions/board.graphql.dart';
 import '../screens/not_found_screen.dart';
+import '../value_keys.dart';
 
 class BoardScreen extends StatefulWidget {
   const BoardScreen({super.key, required this.username, required this.slug});
@@ -54,62 +55,63 @@ class _BoardScreenState extends State<BoardScreen> {
   }
 
   List<Widget> _getActions(Fragment$BoardFragment board) {
-    List<Widget> actions = [];
-
-    if (board.isEditable) {
-      actions.add(
-        IconButton(
-          onPressed: () => showEditBoardDialog(context, board: board),
-          tooltip: 'Edit',
-          icon: Icon(Icons.edit_rounded),
-        ),
-      );
-    }
-
-    actions.add(
+    return [
       IconButton(
         onPressed: () => context.router.goToMembers(board),
         tooltip: 'Members',
         icon: Icon(Icons.groups_3_rounded),
       ),
-    );
 
-    if (board.isEditable) {
-      actions.add(
+      if (board.isEditable)
         PopupMenuButton(
           icon: Icon(Icons.more_vert_rounded),
           tooltip: 'More',
           position: PopupMenuPosition.under,
           onSelected: (value) {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: const Text('Confirm your action'),
-                content: const Text('Are you sure you want to delete this board?'),
-                actions: [
-                  OutlinedButton(child: const Text('Cancel'), onPressed: () => context.pop()),
-                  FilledButton(
-                    child: const Text('Confirm'),
-                    onPressed: () {
-                      context.pop();
-                      _attemptToDeleteBoard(board.id);
-                    },
+            switch (value) {
+              case 1:
+                showEditBoardDialog(context, board: board);
+                break;
+              case 2:
+                context.router.goToLabels(board);
+                break;
+              case 3:
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Confirm your action'),
+                    content: const Text('Are you sure you want to delete this board?'),
+                    actions: [
+                      OutlinedButton(child: const Text('Cancel'), onPressed: () => context.pop()),
+                      FilledButton(
+                        child: const Text('Confirm'),
+                        onPressed: () {
+                          context.pop();
+                          _attemptToDeleteBoard(board.id);
+                        },
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            );
+                );
+                break;
+            }
           },
           itemBuilder: (context) => [
             PopupMenuItem(
               value: 1,
+              child: ListTile(leading: Icon(Icons.edit_rounded), title: Text('Edit')),
+            ),
+            PopupMenuItem(
+              value: 2,
+              child: ListTile(leading: Icon(Icons.label_rounded), title: Text('Labels')),
+            ),
+            PopupMenuItem(
+              value: 3,
               child: ListTile(leading: Icon(Icons.delete_rounded), title: Text('Delete')),
             ),
           ],
         ),
-      );
-    }
-
-    return actions;
+    ];
   }
 
   void _onPointerMove(PointerMoveEvent event) {
@@ -160,6 +162,7 @@ class _BoardScreenState extends State<BoardScreen> {
   @override
   Widget build(BuildContext context) {
     return BoardContext(
+      key: ValueKeys.boardContext(widget.username, widget.slug),
       username: widget.username,
       slug: widget.slug,
       builder: (board) {
