@@ -90,7 +90,7 @@ class SelectField<T> extends StatelessWidget {
       builder: (state) => InkWell(
         borderRadius: borderRadius,
         onTap: () async {
-          final selected = await _showDialog(context, state);
+          final selected = await _showDialog(context, state) ?? state.value;
 
           if (context.mounted) {
             state.didChange(selected);
@@ -166,11 +166,8 @@ class _SelectDialogState<T> extends State<_SelectDialog<T>> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       widget.optionBuilder(option),
-                      Checkbox(
-                        onChanged: (_) {
-                          _toggleSelected(option);
-                        },
-                        value: _selected.contains(option),
+                      IgnorePointer(
+                        child: Checkbox(onChanged: (_) {}, value: _selected.contains(option)),
                       ),
                     ],
                   ),
@@ -197,7 +194,7 @@ class _SelectDialogState<T> extends State<_SelectDialog<T>> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         widget.optionBuilder(option),
-                        Radio(value: option),
+                        IgnorePointer(child: Radio(value: option)),
                       ],
                     ),
                   ),

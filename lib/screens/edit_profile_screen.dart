@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../build_context.dart';
-import '../components/country_dropdown_field.dart';
+import '../components.dart';
 import '../components/date_field.dart';
 import '../components/form_container.dart';
 import '../components/query_result_builder.dart';
@@ -129,7 +129,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         _birthdate = value;
                       },
                     ),
-                    CountryDropdownField(
+                    CountryField(
                       errorText: _errorCountryCode,
                       required: true,
                       initialValue: parsedData.currentUser?.countryCode,
