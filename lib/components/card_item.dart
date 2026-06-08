@@ -106,7 +106,7 @@ class CardItem extends StatelessWidget {
 
     return InkWell(
       borderRadius: BorderRadius.circular(16),
-      onTap: () => context.router.goToCard(card),
+      onTap: () => context.router.pushToCard(card),
       child: Container(
         width: 296,
         padding: const EdgeInsets.all(12),

@@ -57,7 +57,7 @@ class _BoardScreenState extends State<BoardScreen> {
   List<Widget> _getActions(Fragment$BoardFragment board) {
     return [
       IconButton(
-        onPressed: () => context.router.goToMembers(board),
+        onPressed: () => context.router.pushToMembers(board),
         tooltip: 'Members',
         icon: Icon(Icons.groups_3_rounded),
       ),
