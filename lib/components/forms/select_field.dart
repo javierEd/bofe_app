@@ -53,11 +53,11 @@ class SelectField<T> extends StatelessWidget {
   }
 
   static FormFieldSetter<List<T>>? _onSavedToMulti<T>(FormFieldSetter<T>? onSaved) {
-    return (value) => onSaved?.call(value?.first);
+    return (value) => onSaved?.call(value?.firstOrNull);
   }
 
   static FormFieldValidator<List<T>>? _validatorToMulti<T>(FormFieldValidator<T>? validator) {
-    return (value) => validator?.call(value?.first);
+    return (value) => validator?.call(value?.firstOrNull);
   }
 
   Future<List<T>?> _showDialog(BuildContext context, FormFieldState<List<T>> state) async {
@@ -179,7 +179,7 @@ class _SelectDialogState<T> extends State<_SelectDialog<T>> {
     } else {
       return RadioGroup(
         onChanged: (_) {},
-        groupValue: _selected.first,
+        groupValue: _selected.firstOrNull,
         child: Column(
           spacing: 4,
           crossAxisAlignment: CrossAxisAlignment.start,
