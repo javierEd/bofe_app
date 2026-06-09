@@ -3,6 +3,7 @@ query CurrentUserProfile {
         ...UserFragment
         fullName
         birthdate
+        languageCode
         countryCode
     }
 }

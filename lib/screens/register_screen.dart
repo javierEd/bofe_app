@@ -10,6 +10,7 @@ import '../components/snackbar_alert.dart';
 import '../components/text_input_field.dart';
 import '../graphql/schema.graphql.dart';
 import '../graphql/mutations/create_user.graphql.dart';
+import '../preferences.dart';
 import '../session_manager.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -47,6 +48,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (_formRegister.currentState?.validate() == true) {
       _formRegister.currentState?.save();
+
+      final languageCode = Enum$LanguageCode.fromJson(Preferences.language.languageCode.toUpperCase());
+
       final result = await context.graphQLClient.mutate$CreateUser(
         Options$Mutation$CreateUser(
           variables: Variables$Mutation$CreateUser(
@@ -55,7 +59,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               email: _email,
               password: _password,
               fullName: _fullName,
-              birthdate: _birthdate,
+              birthdate: _birthdate!,
+              languageCode: languageCode,
               countryCode: _countryCode!,
             ),
           ),

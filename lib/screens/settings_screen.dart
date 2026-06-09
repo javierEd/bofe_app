@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:settings_ui/settings_ui.dart';
 
+import '../l10n/app_localizations.g.dart';
 import '../build_context.dart';
 import '../components/loading_overlay.dart';
 import '../components/screen_title.dart';
 import '../components/snackbar_alert.dart';
-import '../constants.dart';
 import '../preferences.dart';
 import '../session_manager.dart';
 
@@ -20,7 +20,7 @@ class SettingsScreen extends StatelessWidget {
     if (context.mounted && result.parsedData?.finishSession != true) {
       final errors = result.exception?.graphqlErrors.first;
 
-      showSnackBarAlert(context, errors?.message ?? 'Failed to logout');
+      showSnackBarAlert(context, errors?.message ?? context.l10n.failedToLogout);
     }
 
     loadingOverlay.hide();
@@ -30,12 +30,12 @@ class SettingsScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirm your action'),
-        content: const Text('Are you sure you want to logout?'),
+        title: Text(context.l10n.confirm),
+        content: Text(context.l10n.areYouSureYouWantToLogout),
         actions: [
-          OutlinedButton(child: const Text('Cancel'), onPressed: () => context.pop()),
+          OutlinedButton(child: Text(context.l10n.cancel), onPressed: () => context.pop()),
           FilledButton(
-            child: const Text('Confirm'),
+            child: Text(context.l10n.ok),
             onPressed: () {
               context.pop();
               _attemptToLogout(context);
@@ -46,11 +46,34 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
+  void _showLanguageDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.l10n.selectLanguage),
+        content: RadioGroup(
+          groupValue: Preferences.language,
+          onChanged: (value) {
+            Preferences.language = value!;
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: AppLocalizations.supportedLocales
+                .map<RadioListTile<Locale>>(
+                  (locale) => RadioListTile(title: Text(context.l10n.languages(locale.languageCode)), value: locale),
+                )
+                .toList(),
+          ),
+        ),
+      ),
+    );
+  }
+
   void _showThemeDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Select Theme'),
+        title: Text(context.l10n.selectTheme),
         content: RadioGroup(
           groupValue: Preferences.themeMode,
           onChanged: (value) {
@@ -60,7 +83,7 @@ class SettingsScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: ThemeMode.values
                 .map<RadioListTile<ThemeMode>>(
-                  (themeMode) => RadioListTile(title: Text(themeModeLabels[themeMode]!), value: themeMode),
+                  (themeMode) => RadioListTile(title: Text(context.l10n.themes(themeMode.name)), value: themeMode),
                 )
                 .toList(),
           ),
@@ -71,54 +94,64 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final title = context.l10n.settings;
+
     return ScreenTitle(
-      title: 'Settings',
+      title: title,
       child: Scaffold(
-        appBar: AppBar(title: const Text('Settings')),
+        appBar: AppBar(title: Text(title)),
         body: SettingsList(
           sections: [
             SettingsSection(
-              title: Text('General'),
+              title: Text(context.l10n.general),
               tiles: [
                 SettingsTile(
                   leading: const Icon(Icons.brightness_6_rounded),
-                  title: const Text('Theme'),
-                  value: Preferences.themeModeListenableBuilder(
-                    builder: (context, value) => Text(themeModeLabels[value]!),
+                  title: Text(context.l10n.theme),
+                  value: Preferences.listenableBuilder(
+                    builder: (context, data) => Text(context.l10n.themes(data.themeMode.name)),
                   ),
                   onPressed: _showThemeDialog,
+                ),
+                SettingsTile(
+                  leading: const Icon(Icons.language_rounded),
+                  title: Text(context.l10n.language),
+                  value: Preferences.listenableBuilder(
+                    builder: (context, data) => Text(context.l10n.languages(data.language.languageCode)),
+                  ),
+                  onPressed: _showLanguageDialog,
                 ),
               ],
             ),
             SettingsSection(
-              title: Text('Account'),
+              title: Text(context.l10n.account),
               tiles: SessionManager.hasToken
                   ? [
                       SettingsTile.navigation(
                         leading: const Icon(Icons.person_rounded),
-                        title: const Text('Edit Profile'),
+                        title: Text(context.l10n.editProfile),
                         onPressed: (context) => context.router.goToEditProfile(),
                       ),
                       SettingsTile.navigation(
                         leading: const Icon(Icons.password_rounded),
-                        title: const Text('Change Password'),
+                        title: Text(context.l10n.changePassword),
                         onPressed: (context) => context.router.goToChangePassword(),
                       ),
                       SettingsTile(
                         leading: const Icon(Icons.logout_rounded),
-                        title: const Text('Logout'),
+                        title: Text(context.l10n.logout),
                         onPressed: _showLogoutDialog,
                       ),
                     ]
                   : [
                       SettingsTile.navigation(
                         leading: const Icon(Icons.login_rounded),
-                        title: const Text('Login'),
+                        title: Text(context.l10n.login),
                         onPressed: (context) => context.router.goToLogin(),
                       ),
                       SettingsTile.navigation(
                         leading: const Icon(Icons.person_add_rounded),
-                        title: const Text('Register'),
+                        title: Text(context.l10n.register),
                         onPressed: (context) => context.router.goToRegister(),
                       ),
                     ],

@@ -1,0 +1,22 @@
+{
+    "account": "Account",
+    "cancel": "Cancel",
+    "changePassword": "Change Password",
+    "confirm": "Confirm",
+    "areYouSureYouWantToLogout": "Are you sure you want to logout?",
+    "editProfile": "Edit Profile",
+    "failedToLogout": "Failed to logout",
+    "general": "General",
+    "language": "Language",
+    "languages": "{value, select, es{Español} other{English}}",
+    "logout": "Logout",
+    "login": "Login",
+    "ok": "OK",
+    "preferredLanguage": "Preferred language",
+    "register": "Register",
+    "selectLanguage": "Select Language",
+    "selectTheme": "Select Theme",
+    "settings": "Settings",
+    "theme": "Theme",
+    "themes": "{value, select, light{Light} dark{Dark} other{System}}"
+}

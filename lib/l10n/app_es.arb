@@ -1,0 +1,22 @@
+{
+    "account": "Cuenta",
+    "cancel": "Cancelar",
+    "changePassword": "Cambiar Contraseña",
+    "confirm": "Confirmar",
+    "areYouSureYouWantToLogout": "¿Estás seguro de que quieres cerrar sesión?",
+    "editProfile": "Editar Perfil",
+    "failedToLogout": "Error al cerrar sesión",
+    "general": "General",
+    "language": "Idioma",
+    "languages": "{value, select, es{Español} other{English}}",
+    "logout": "Cerrar Sesión",
+    "login": "Iniciar Sesión",
+    "ok": "OK",
+    "preferredLanguage": "Idioma preferido",
+    "register": "Registrarse",
+    "selectLanguage": "Seleccionar Idioma",
+    "selectTheme": "Seleccionar Tema",
+    "settings": "Ajustes",
+    "theme": "Tema",
+    "themes": "{value, select, light{Claro} dark{Oscuro} other{Sistema}}"
+}

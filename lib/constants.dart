@@ -11,6 +11,7 @@ const headerXAppToken = 'X-App-Token';
 
 /// Path parameters & Map keys
 const keyId = 'id';
+const keyLanguage = 'language';
 const keySession = 'session';
 const keySlug = 'slug';
 const keyThemeMode = 'theme_mode';
@@ -46,5 +47,3 @@ const labelColors = [
 
 const urlPrivacy = 'https://about.bofe.app/privacy';
 const urlTerms = 'https://about.bofe.app/terms';
-
-const themeModeLabels = {ThemeMode.system: 'System', ThemeMode.light: 'Light', ThemeMode.dark: 'Dark'};

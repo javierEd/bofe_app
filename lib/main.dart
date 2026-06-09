@@ -6,6 +6,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 
 import 'constants.dart';
 import 'graphql_client.dart';
+import 'l10n/app_localizations.g.dart';
 import 'router.dart';
 import 'session_manager.dart';
 
@@ -84,13 +85,16 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return GraphQLProvider(
       client: ValueNotifier(graphQLClient),
-      child: Preferences.themeModeListenableBuilder(
-        builder: (context, themeMode) => MaterialApp.router(
+      child: Preferences.listenableBuilder(
+        builder: (context, data) => MaterialApp.router(
           title: 'Bofe',
           scrollBehavior: const MobileLikeScrollBehavior(),
-          themeMode: themeMode,
+          themeMode: data.themeMode,
           theme: _getThemeData(Brightness.light),
           darkTheme: _getThemeData(Brightness.dark),
+          locale: data.language,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           routerConfig: goRouter,
         ),
       ),
