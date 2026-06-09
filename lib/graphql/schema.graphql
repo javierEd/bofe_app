@@ -423,6 +423,11 @@ input LabelParams {
 	colorCode: ColorCode!
 }
 
+enum LanguageCode {
+	EN
+	ES
+}
+
 type ListObject {
 	id: ID!
 	name: String!
@@ -639,7 +644,8 @@ input UpdatePasswordParams {
 input UpdateProfileParams {
 	displayName: String!
 	fullName: String!
-	birthdate: NaiveDate
+	birthdate: NaiveDate!
+	languageCode: LanguageCode
 	countryCode: CountryCode!
 }
 
@@ -655,6 +661,7 @@ type UserObject {
 	displayName: String!
 	fullName: String!
 	birthdate: NaiveDate!
+	languageCode: LanguageCode!
 	countryCode: CountryCode!
 	avatarImageUrl: Url!
 	boards(after: UUID, first: Int): BoardObjectConnection!
@@ -696,7 +703,8 @@ input UserParams {
 	email: String!
 	password: String!
 	fullName: String!
-	birthdate: NaiveDate
+	birthdate: NaiveDate!
+	languageCode: LanguageCode
 	countryCode: CountryCode!
 }
 

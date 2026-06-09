@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../build_context.dart';
 import '../components.dart';
@@ -27,10 +28,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String _displayName = '';
   String _fullName = '';
   DateTime? _birthdate;
+  Enum$LanguageCode? _languageCode;
   Enum$CountryCode? _countryCode;
   String? _errorDisplayName;
   String? _errorFullName;
   String? _errorBirthdate;
+  String? _errorLanguage;
   String? _errorCountryCode;
 
   Future<void> _attemptToUpdateProfile() async {
@@ -38,6 +41,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _errorDisplayName = null;
       _errorFullName = null;
       _errorBirthdate = null;
+      _errorLanguage = null;
       _errorCountryCode = null;
     });
 
@@ -50,7 +54,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             params: Input$UpdateProfileParams(
               displayName: _displayName,
               fullName: _fullName,
-              birthdate: _birthdate,
+              birthdate: _birthdate!,
+              languageCode: _languageCode,
               countryCode: _countryCode!,
             ),
           ),
@@ -73,6 +78,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           _errorDisplayName = errors?.extensions?['params']['displayName']?['message'];
           _errorFullName = errors?.extensions?['params']['fullName']?['message'];
           _errorBirthdate = errors?.extensions?['params']['birthdate']?['message'];
+          _errorLanguage = errors?.extensions?['params']['languageCode']?['message'];
           _errorCountryCode = errors?.extensions?['params']['countryCode']?['message'];
         });
       }
@@ -83,16 +89,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final title = context.l10n.editProfile;
+
     return Query$CurrentUserProfile$Widget(
+      options: Options$Query$CurrentUserProfile(fetchPolicy: FetchPolicy.noCache),
       builder: (result, {fetchMore, refetch}) => QueryResultBuilder(
         result: result,
         refetch: refetch,
         noResultWidget: const NotFoundScreen(),
         buildIf: (parsedData) => parsedData?.currentUser != null,
         builder: (parsedData) => ScreenTitle(
-          title: 'Edit Profile',
+          title: title,
           child: Scaffold(
-            appBar: AppBar(title: const Text('Edit Profile')),
+            appBar: AppBar(title: Text(title)),
             body: SingleChildScrollView(
               padding: const EdgeInsets.all(12),
               child: Center(
@@ -128,6 +137,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       onSaved: (value) {
                         _birthdate = value;
                       },
+                    ),
+                    SelectField(
+                      labelText: context.l10n.preferredLanguage,
+                      errorText: _errorLanguage,
+                      required: true,
+                      initialValue: parsedData.currentUser?.languageCode,
+                      options: Enum$LanguageCode.values.where((code) => code != Enum$LanguageCode.$unknown).toList(),
+                      optionBuilder: (code) => Text(context.l10n.languages(code.name.toLowerCase())),
+                      onSaved: (value) => _languageCode = value,
                     ),
                     CountryField(
                       errorText: _errorCountryCode,

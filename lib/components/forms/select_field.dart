@@ -12,7 +12,7 @@ class SelectField<T> extends StatelessWidget {
     this.errorText,
     T? initialValue,
     this.required = false,
-    required this.filterFn,
+    this.filterFn,
     required this.options,
     required this.optionBuilder,
     FormFieldSetter<T>? onSaved,
@@ -29,7 +29,7 @@ class SelectField<T> extends StatelessWidget {
     this.errorText,
     this.initialValue = const [],
     this.required = false,
-    required this.filterFn,
+    this.filterFn,
     required this.options,
     required this.optionBuilder,
     this.onSaved,
@@ -41,7 +41,7 @@ class SelectField<T> extends StatelessWidget {
   final String? errorText;
   final List<T> initialValue;
   final bool required;
-  final bool Function(T, String) filterFn;
+  final bool Function(T, String)? filterFn;
   final List<T> options;
   final Widget Function(T) optionBuilder;
   final FormFieldSetter<List<T>>? onSaved;
@@ -117,14 +117,14 @@ class _SelectDialog<T> extends StatefulWidget {
   const _SelectDialog({
     required this.options,
     required this.selected,
-    required this.filterFn,
+    this.filterFn,
     required this.optionBuilder,
     required this.isMulti,
   });
 
   final List<T> options;
   final List<T>? selected;
-  final bool Function(T option, String filter) filterFn;
+  final bool Function(T option, String filter)? filterFn;
   final Widget Function(T option) optionBuilder;
   final bool isMulti;
 
@@ -147,13 +147,17 @@ class _SelectDialogState<T> extends State<_SelectDialog<T>> {
   }
 
   Widget _getOptions() {
-    final filteredOptions = widget.options.where((option) => widget.filterFn(option, _filter));
+    List<T> options = widget.options;
+
+    if (widget.filterFn != null) {
+      options = widget.options.where((option) => widget.filterFn!.call(option, _filter)).toList();
+    }
 
     if (widget.isMulti) {
       return Column(
         spacing: 4,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: filteredOptions
+        children: options
             .map(
               (option) => InkWell(
                 onTap: () {
@@ -183,7 +187,7 @@ class _SelectDialogState<T> extends State<_SelectDialog<T>> {
         child: Column(
           spacing: 4,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: filteredOptions
+          children: options
               .map(
                 (option) => InkWell(
                   onTap: () => context.pop([option]),
@@ -221,15 +225,16 @@ class _SelectDialogState<T> extends State<_SelectDialog<T>> {
       child: Column(
         spacing: 8,
         children: [
-          TextField(
-            autofocus: true,
-            decoration: InputDecoration(hintText: 'Search...', suffixIcon: Icon(Icons.search_rounded)),
-            onChanged: (value) {
-              setState(() {
-                _filter = value;
-              });
-            },
-          ),
+          if (widget.filterFn != null)
+            TextField(
+              autofocus: true,
+              decoration: InputDecoration(hintText: 'Search...', suffixIcon: Icon(Icons.search_rounded)),
+              onChanged: (value) {
+                setState(() {
+                  _filter = value;
+                });
+              },
+            ),
           _getOptions(),
           if (widget.isMulti)
             Align(
