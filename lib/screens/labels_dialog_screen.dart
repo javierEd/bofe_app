@@ -5,7 +5,6 @@ import '../build_context.dart';
 import '../components.dart';
 import '../components/label_chip.dart';
 import '../components/loading_overlay.dart';
-import '../components/query_result_builder.dart';
 import '../components/scrollable_dialog.dart';
 import '../components/snackbar_alert.dart';
 import '../graphql/fragments/board_fragment.graphql.dart';

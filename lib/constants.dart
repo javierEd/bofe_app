@@ -6,8 +6,9 @@ const colorTranslucent = Color(0x22000000);
 const borderRadius = BorderRadius.all(Radius.circular(16));
 const roundedRectangleBorder = RoundedRectangleBorder(borderRadius: borderRadius);
 
-/// Custom HTTP Headers
+/// HTTP Headers
 const headerXAppToken = 'X-App-Token';
+const headerAcceptLanguage = 'Accept-Language';
 
 /// Path parameters & Map keys
 const keyId = 'id';
