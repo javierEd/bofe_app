@@ -18,6 +18,7 @@ import 'screens/login_screen.dart';
 import 'screens/new_board_screen.dart';
 import 'screens/not_found_screen.dart';
 import 'screens/register_screen.dart';
+import 'screens/settings/email_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/user_screen.dart';
 import 'session_manager.dart';
@@ -66,6 +67,12 @@ GoRouter getGoRouter() => GoRouter(
               path: 'edit-profile',
               redirect: _requireToken,
               builder: (context, state) => EditProfileScreen(),
+            ),
+            GoRoute(
+              name: routeNameSettingsEmail,
+              path: 'email',
+              redirect: _requireToken,
+              builder: (context, state) => EmailScreen(),
             ),
             GoRoute(
               name: routeNameChangePassword,
@@ -151,6 +158,8 @@ class AppRouter {
   void goToChangePassword() => context.goNamed(routeNameChangePassword);
 
   void goToEditProfile() => context.goNamed(routeNameEditProfile);
+
+  void goToSettingsEmail() => context.goNamed(routeNameSettingsEmail);
 
   void goToHome() => context.goNamed(routeNameHome);
 

@@ -1,0 +1,5 @@
+mutation ConfirmEmail($confirmationParams: ConfirmationParams!) {
+    confirmEmail(confirmationParams: $confirmationParams) {
+        id
+    }
+}

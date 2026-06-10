@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 class ScrollableDialog extends StatefulWidget {
   const ScrollableDialog({
     super.key,
+    this.barrierDismissible = true,
     this.title,
     this.actions = const [],
     required this.child,
@@ -12,6 +13,7 @@ class ScrollableDialog extends StatefulWidget {
     this.onScrollAtBottom,
   });
 
+  final bool barrierDismissible;
   final Widget? title;
   final List<Widget> actions;
   final Widget child;
@@ -64,7 +66,11 @@ class _ScrollableDialogState extends State<ScrollableDialog> {
     final dialogTheme = DialogTheme.of(context).titleTextStyle ?? TextTheme.of(context).titleLarge!;
 
     return GestureDetector(
-      onTap: () => context.pop(),
+      onTap: () {
+        if (widget.barrierDismissible) {
+          context.pop();
+        }
+      },
       child: SingleChildScrollView(
         child: Container(
           constraints: BoxConstraints(minHeight: screenSize.height),
