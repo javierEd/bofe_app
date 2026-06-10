@@ -11,7 +11,7 @@ import '../graphql/fragments/list_with_cards_fragment.graphql.dart';
 import '../graphql/mutations/delete_list.graphql.dart';
 import '../graphql/mutations/update_list_position.graphql.dart';
 import 'card_item.dart';
-import 'edit_list_dialog.dart';
+import 'dialogs/edit_list_dialog.dart';
 import 'snackbar_alert.dart';
 
 class DraggableListItem extends StatefulWidget {

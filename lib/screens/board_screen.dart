@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../build_context.dart';
+import '../components.dart';
 import '../components/board_context.dart';
-import '../components/edit_board_dialog.dart';
 import '../components/list_item.dart';
 import '../components/loading_overlay.dart';
 import '../components/new_list_dialog.dart';

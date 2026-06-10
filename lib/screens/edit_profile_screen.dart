@@ -4,12 +4,10 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../build_context.dart';
 import '../components.dart';
-import '../components/date_field.dart';
 import '../components/form_container.dart';
 import '../components/query_result_builder.dart';
 import '../components/screen_title.dart';
 import '../components/snackbar_alert.dart';
-import '../components/text_input_field.dart';
 import '../graphql/mutations/update_profile.graphql.dart';
 import '../graphql/queries/current_user_profile.graphql.dart';
 import '../graphql/schema.graphql.dart';

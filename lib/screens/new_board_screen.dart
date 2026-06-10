@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../build_context.dart';
-import '../components/board_form.dart';
+import '../components.dart';
 import '../components/screen_title.dart';
 import '../components/snackbar_alert.dart';
 import '../graphql/schema.graphql.dart';

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../build_context.dart';
-import '../graphql/schema.graphql.dart';
-import '../graphql/fragments/list_fragment.graphql.dart';
-import '../graphql/mutations/update_list.graphql.dart';
-import 'list_form.dart';
-import 'snackbar_alert.dart';
+import '../../build_context.dart';
+import '../../graphql/schema.graphql.dart';
+import '../../graphql/fragments/list_fragment.graphql.dart';
+import '../../graphql/mutations/update_list.graphql.dart';
+import '../forms/list_form.dart';
+import '../snackbar_alert.dart';
 
 Future<dynamic> showEditListDialog(BuildContext context, {required Fragment$ListFragment list}) {
   return showDialog(

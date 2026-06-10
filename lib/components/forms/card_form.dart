@@ -9,7 +9,7 @@ import '../../graphql/queries/board_lists.graphql.dart';
 import '../../graphql/schema.graphql.dart';
 import '../form_container.dart';
 import 'select_field.dart';
-import '../text_input_field.dart';
+import 'text_input_field.dart';
 
 class CardForm extends StatefulWidget {
   const CardForm({
