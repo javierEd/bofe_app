@@ -5,7 +5,6 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import '../build_context.dart';
 import '../components.dart';
 import '../components/form_container.dart';
-import '../components/query_result_builder.dart';
 import '../components/screen_title.dart';
 import '../components/snackbar_alert.dart';
 import '../graphql/mutations/update_profile.graphql.dart';
