@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../build_context.dart';
-import '../constants.dart';
-import '../graphql/schema.graphql.dart';
-import '../graphql/fragments/board_fragment.graphql.dart';
-import '../graphql/mutations/update_board.graphql.dart';
-import 'board_form.dart';
-import 'snackbar_alert.dart';
+import '../../build_context.dart';
+import '../../constants.dart';
+import '../../graphql/schema.graphql.dart';
+import '../../graphql/fragments/board_fragment.graphql.dart';
+import '../../graphql/mutations/update_board.graphql.dart';
+import '../forms/board_form.dart';
+import '../snackbar_alert.dart';
 
 Future<dynamic> showEditBoardDialog(BuildContext context, {required Fragment$BoardFragment board}) {
   return showDialog(

@@ -10,6 +10,7 @@ class PasswordInputField extends StatefulWidget {
     this.labelText,
     this.errorText,
     this.prefixIcon,
+    this.autofillHints,
   });
 
   final String? labelText;
@@ -17,6 +18,7 @@ class PasswordInputField extends StatefulWidget {
   final bool required;
   final String? errorText;
   final Widget? prefixIcon;
+  final Iterable<String>? autofillHints;
 
   @override
   createState() => _PasswordInputFieldState();
@@ -43,6 +45,7 @@ class _PasswordInputFieldState extends State<PasswordInputField> {
       ),
     ),
     errorText: widget.errorText,
+    autofillHints: widget.autofillHints,
     keyboardType: TextInputType.visiblePassword,
     maxLines: 1,
     obscureText: _passwordIsHidden,

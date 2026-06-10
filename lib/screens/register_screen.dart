@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../build_context.dart';
 import '../components.dart';
-import '../components/date_field.dart';
 import '../components/form_container.dart';
-import '../components/password_input_field.dart';
 import '../components/screen_title.dart';
 import '../components/snackbar_alert.dart';
-import '../components/text_input_field.dart';
 import '../graphql/schema.graphql.dart';
 import '../graphql/mutations/create_user.graphql.dart';
 import '../preferences.dart';
@@ -109,6 +106,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   labelText: 'Username',
                   errorText: _errorUsername,
                   required: true,
+                  autofillHints: const [AutofillHints.username],
                   maxLines: 1,
                   onSaved: (value) {
                     _username = value ?? '';
@@ -118,6 +116,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   labelText: 'Email',
                   errorText: _errorEmail,
                   required: true,
+                  autofillHints: const [AutofillHints.email],
                   maxLines: 1,
                   keyboardType: TextInputType.emailAddress,
                   onSaved: (value) {
@@ -127,6 +126,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 PasswordInputField(
                   errorText: _errorPassword,
                   required: true,
+                  autofillHints: const [AutofillHints.newPassword],
                   onSaved: (value) {
                     _password = value ?? '';
                   },

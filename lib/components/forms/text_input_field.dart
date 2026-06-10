@@ -11,6 +11,7 @@ class TextInputField extends StatelessWidget {
     this.onTap,
     this.onChanged,
     this.initialValue,
+    this.autofillHints,
     this.keyboardType,
     this.minLines,
     this.maxLines,
@@ -33,6 +34,7 @@ class TextInputField extends StatelessWidget {
   final void Function()? onTap;
   final void Function(String?)? onChanged;
   final String? initialValue;
+  final Iterable<String>? autofillHints;
   final TextInputType? keyboardType;
   final int? minLines;
   final int? maxLines;
@@ -66,6 +68,7 @@ class TextInputField extends StatelessWidget {
       errorText: errorText,
       alignLabelWithHint: true,
     ),
+    autofillHints: autofillHints,
     keyboardType: keyboardType,
     minLines: minLines ?? (keyboardType == TextInputType.multiline ? 2 : null),
     maxLines: maxLines ?? (keyboardType == TextInputType.multiline ? 2 : null),

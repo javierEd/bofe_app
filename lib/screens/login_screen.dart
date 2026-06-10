@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../components.dart';
 import '../components/form_container.dart';
-import '../components/password_input_field.dart';
 import '../components/screen_title.dart';
 import '../components/snackbar_alert.dart';
-import '../components/text_input_field.dart';
 import '../session_manager.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -72,6 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   labelText: 'Username or email',
                   errorText: _errorUsernameOrEmail,
                   required: true,
+                  autofillHints: const [AutofillHints.username],
                   maxLines: 1,
                   onSaved: (value) {
                     _usernameOrEmail = value ?? '';
@@ -80,6 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 PasswordInputField(
                   errorText: _errorPassword,
                   required: true,
+                  autofillHints: const [AutofillHints.password],
                   onSaved: (value) {
                     _password = value ?? '';
                   },

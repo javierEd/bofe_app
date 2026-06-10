@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../build_context.dart';
 import '../graphql/schema.graphql.dart';
 import '../graphql/mutations/create_list.graphql.dart';
-import 'list_form.dart';
+import 'forms/list_form.dart';
 import 'snackbar_alert.dart';
 
 Future<dynamic> showNewListDialog(BuildContext context, {required boardId}) {
