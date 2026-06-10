@@ -72,23 +72,27 @@ class AccountButton extends StatelessWidget {
             SizedBox(height: 6),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 8,
+              spacing: 4,
               children: [
-                TextButton(
-                  onPressed: () async {
-                    if (await canLaunchUrlString(urlPrivacy)) {
-                      await launchUrlString(urlPrivacy, mode: LaunchMode.inAppBrowserView);
-                    }
-                  },
-                  child: Text(context.l10n.privacyPolicy),
+                Expanded(
+                  child: TextButton(
+                    onPressed: () async {
+                      if (await canLaunchUrlString(urlPrivacy)) {
+                        await launchUrlString(urlPrivacy, mode: LaunchMode.inAppBrowserView);
+                      }
+                    },
+                    child: Text(context.l10n.privacyPolicy, maxLines: 1, overflow: TextOverflow.ellipsis),
+                  ),
                 ),
-                TextButton(
-                  onPressed: () async {
-                    if (await canLaunchUrlString(urlTerms)) {
-                      await launchUrlString(urlTerms, mode: LaunchMode.inAppBrowserView);
-                    }
-                  },
-                  child: Text(context.l10n.termsOfService),
+                Expanded(
+                  child: TextButton(
+                    onPressed: () async {
+                      if (await canLaunchUrlString(urlTerms)) {
+                        await launchUrlString(urlTerms, mode: LaunchMode.inAppBrowserView);
+                      }
+                    },
+                    child: Text(context.l10n.termsOfService, maxLines: 1, overflow: TextOverflow.ellipsis),
+                  ),
                 ),
               ],
             ),
