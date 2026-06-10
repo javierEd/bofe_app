@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../build_context.dart';
+import '../components.dart';
 import '../components/form_container.dart';
-import '../components/password_input_field.dart';
 import '../components/screen_title.dart';
 import '../components/snackbar_alert.dart';
 import '../graphql/mutations/update_password.graphql.dart';
@@ -79,6 +79,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   labelText: 'Current password',
                   errorText: _errorCurrentPassword,
                   required: true,
+                  autofillHints: const [AutofillHints.password],
                   onSaved: (value) {
                     _currentPassword = value ?? '';
                   },
@@ -86,6 +87,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 PasswordInputField(
                   errorText: _errorNewPassword,
                   required: true,
+                  autofillHints: const [AutofillHints.newPassword],
                   onSaved: (value) {
                     _newPassword = value ?? '';
                   },
