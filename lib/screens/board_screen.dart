@@ -179,119 +179,121 @@ class _BoardScreenState extends State<BoardScreen> {
               ),
               actions: _getActions(board),
             ),
-            body: Subscription$Board$Widget(
-              options: Options$Subscription$Board(variables: Variables$Subscription$Board(id: board.id)),
-              builder: (result) {
-                final board = result.parsedData?.board;
+            body: SafeArea(
+              child: Subscription$Board$Widget(
+                options: Options$Subscription$Board(variables: Variables$Subscription$Board(id: board.id)),
+                builder: (result) {
+                  final board = result.parsedData?.board;
 
-                if (board == null) {
-                  if (result.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else {
-                    return const NotFoundScreen();
+                  if (board == null) {
+                    if (result.isLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else {
+                      return const NotFoundScreen();
+                    }
                   }
-                }
 
-                return Listener(
-                  onPointerMove: _onPointerMove,
-                  onPointerUp: (event) {
-                    setState(() {
-                      _isAnimating = false;
-                    });
-                  },
-                  onPointerCancel: (event) {
-                    setState(() {
-                      _isAnimating = false;
-                    });
-                  },
-                  child: SizedBox(
-                    height: double.infinity,
-                    width: double.infinity,
-                    child: SingleChildScrollView(
-                      padding: EdgeInsets.all(16),
-                      controller: _scrollController,
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        spacing: _draggingListId == null ? 12 : 0,
-                        children:
-                            board.allLists
-                                .map(
-                                  (list) => board.canMoveList
-                                      ? [
-                                          ListItemDragTarget(
-                                            position: list.position,
-                                            isVisible: _draggingListId != null && _draggingListId != list.id,
-                                          ),
-                                          DraggableListItem(
-                                            board: board,
-                                            list: list,
-                                            isDraggingCard: _isDraggingCard,
-                                            onDragOutside: () {
-                                              setState(() {
-                                                _draggingListId = list.id;
-                                              });
-                                            },
-                                            onDragEnded: () {
-                                              setState(() {
-                                                _draggingListId = null;
-                                              });
-                                            },
-                                            onCardDragOutside: () {
-                                              setState(() {
-                                                _isDraggingCard = true;
-                                              });
-                                            },
-                                            onCardDragEnded: () {
-                                              setState(() {
-                                                _isDraggingCard = false;
-                                              });
-                                            },
-                                          ),
-                                        ]
-                                      : [
-                                          ListItem(
-                                            key: ValueKey(list.id),
-                                            board: board,
-                                            list: list,
-                                            isDraggingCard: _isDraggingCard,
-                                            onCardDragOutside: () {
-                                              setState(() {
-                                                _isDraggingCard = true;
-                                              });
-                                            },
-                                            onCardDragEnded: () {
-                                              setState(() {
-                                                _isDraggingCard = false;
-                                              });
-                                            },
-                                          ),
-                                        ],
-                                )
-                                .expand((item) => item)
-                                .toList() +
-                            [
-                              if (board.canMoveList)
-                                ListItemDragTarget(
-                                  position: board.allLists.lastOrNull?.position != null
-                                      ? board.allLists.lastOrNull!.position + 1
-                                      : 0,
-                                  isVisible: _draggingListId != null,
-                                ),
-                              if (board.canCreateList)
-                                SizedBox(
-                                  width: 320,
-                                  child: OutlinedButton(
-                                    onPressed: () => showNewListDialog(context, boardId: board.id),
-                                    child: Text('NEW LIST'),
+                  return Listener(
+                    onPointerMove: _onPointerMove,
+                    onPointerUp: (event) {
+                      setState(() {
+                        _isAnimating = false;
+                      });
+                    },
+                    onPointerCancel: (event) {
+                      setState(() {
+                        _isAnimating = false;
+                      });
+                    },
+                    child: SizedBox(
+                      height: double.infinity,
+                      width: double.infinity,
+                      child: SingleChildScrollView(
+                        padding: EdgeInsets.all(16),
+                        controller: _scrollController,
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: _draggingListId == null ? 12 : 0,
+                          children:
+                              board.allLists
+                                  .map(
+                                    (list) => board.canMoveList
+                                        ? [
+                                            ListItemDragTarget(
+                                              position: list.position,
+                                              isVisible: _draggingListId != null && _draggingListId != list.id,
+                                            ),
+                                            DraggableListItem(
+                                              board: board,
+                                              list: list,
+                                              isDraggingCard: _isDraggingCard,
+                                              onDragOutside: () {
+                                                setState(() {
+                                                  _draggingListId = list.id;
+                                                });
+                                              },
+                                              onDragEnded: () {
+                                                setState(() {
+                                                  _draggingListId = null;
+                                                });
+                                              },
+                                              onCardDragOutside: () {
+                                                setState(() {
+                                                  _isDraggingCard = true;
+                                                });
+                                              },
+                                              onCardDragEnded: () {
+                                                setState(() {
+                                                  _isDraggingCard = false;
+                                                });
+                                              },
+                                            ),
+                                          ]
+                                        : [
+                                            ListItem(
+                                              key: ValueKey(list.id),
+                                              board: board,
+                                              list: list,
+                                              isDraggingCard: _isDraggingCard,
+                                              onCardDragOutside: () {
+                                                setState(() {
+                                                  _isDraggingCard = true;
+                                                });
+                                              },
+                                              onCardDragEnded: () {
+                                                setState(() {
+                                                  _isDraggingCard = false;
+                                                });
+                                              },
+                                            ),
+                                          ],
+                                  )
+                                  .expand((item) => item)
+                                  .toList() +
+                              [
+                                if (board.canMoveList)
+                                  ListItemDragTarget(
+                                    position: board.allLists.lastOrNull?.position != null
+                                        ? board.allLists.lastOrNull!.position + 1
+                                        : 0,
+                                    isVisible: _draggingListId != null,
                                   ),
-                                ),
-                            ],
+                                if (board.canCreateList)
+                                  SizedBox(
+                                    width: 320,
+                                    child: OutlinedButton(
+                                      onPressed: () => showNewListDialog(context, boardId: board.id),
+                                      child: Text('NEW LIST'),
+                                    ),
+                                  ),
+                              ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         );
