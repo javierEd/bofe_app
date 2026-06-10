@@ -38,7 +38,7 @@ class AccountButton extends StatelessWidget {
                         child: OutlinedButton.icon(
                           onPressed: () => context.router.pushToUser(user),
                           icon: const Icon(Icons.person_rounded),
-                          label: const Text('Profile'),
+                          label: Text(context.l10n.profile),
                         ),
                       ),
                     ]
@@ -48,7 +48,7 @@ class AccountButton extends StatelessWidget {
                         child: OutlinedButton.icon(
                           onPressed: () => context.router.goToLogin(),
                           icon: const Icon(Icons.login_rounded),
-                          label: const Text('Login'),
+                          label: Text(context.l10n.login),
                         ),
                       ),
                       SizedBox(
@@ -56,7 +56,7 @@ class AccountButton extends StatelessWidget {
                         child: OutlinedButton.icon(
                           onPressed: () => context.router.goToRegister(),
                           icon: const Icon(Icons.person_add_rounded),
-                          label: const Text('Register'),
+                          label: Text(context.l10n.register),
                         ),
                       ),
                     ],
@@ -66,7 +66,7 @@ class AccountButton extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: () => context.goNamed(routeNameSettings),
                 icon: Icon(Icons.settings_rounded),
-                label: const Text('Settings'),
+                label: Text(context.l10n.settings),
               ),
             ),
             SizedBox(height: 6),
@@ -80,7 +80,7 @@ class AccountButton extends StatelessWidget {
                       await launchUrlString(urlPrivacy, mode: LaunchMode.inAppBrowserView);
                     }
                   },
-                  child: const Text('Privacy Policy'),
+                  child: Text(context.l10n.privacyPolicy),
                 ),
                 TextButton(
                   onPressed: () async {
@@ -88,7 +88,7 @@ class AccountButton extends StatelessWidget {
                       await launchUrlString(urlTerms, mode: LaunchMode.inAppBrowserView);
                     }
                   },
-                  child: const Text('Terms of Service'),
+                  child: Text(context.l10n.termsOfService),
                 ),
               ],
             ),
@@ -96,7 +96,9 @@ class AccountButton extends StatelessWidget {
               future: PackageInfo.fromPlatform(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  return Center(child: Text('Version ${snapshot.data!.version}', style: TextStyle(fontSize: 13)));
+                  return Center(
+                    child: Text('${context.l10n.version} ${snapshot.data!.version}', style: TextStyle(fontSize: 13)),
+                  );
                 }
 
                 return SizedBox();

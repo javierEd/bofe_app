@@ -2,6 +2,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 
 import 'config.dart';
 import 'constants.dart';
+import 'preferences.dart';
 import 'session_manager.dart';
 
 GraphQLClient getGraphQLClient() {
@@ -22,7 +23,10 @@ GraphQLClient getGraphQLClient() {
       .concat(
         HttpLink(
           Config.apiUrl.replace(path: '/graphql').toString(),
-          defaultHeaders: {headerXAppToken: Config.appToken},
+          defaultHeaders: {
+            headerXAppToken: Config.appToken,
+            headerAcceptedLanguage: Preferences.language.toLanguageTag(),
+          },
         ),
       );
   final webSocketLink = WebSocketLink(
