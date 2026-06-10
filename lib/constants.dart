@@ -8,7 +8,7 @@ const roundedRectangleBorder = RoundedRectangleBorder(borderRadius: borderRadius
 
 /// HTTP Headers
 const headerXAppToken = 'X-App-Token';
-const headerAcceptedLanguage = 'Accept-Language';
+const headerAcceptLanguage = 'Accept-Language';
 
 /// Path parameters & Map keys
 const keyId = 'id';

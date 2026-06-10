@@ -25,7 +25,7 @@ GraphQLClient getGraphQLClient() {
           Config.apiUrl.replace(path: '/graphql').toString(),
           defaultHeaders: {
             headerXAppToken: Config.appToken,
-            headerAcceptedLanguage: Preferences.language.toLanguageTag(),
+            headerAcceptLanguage: Preferences.language.toLanguageTag(),
           },
         ),
       );
