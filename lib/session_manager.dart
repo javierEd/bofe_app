@@ -11,6 +11,7 @@ import 'graphql/fragments/session_fragment.graphql.dart';
 import 'graphql/mutations/create_session.graphql.dart';
 import 'graphql/mutations/finish_session.graphql.dart';
 import 'graphql/mutations/refresh_session.graphql.dart';
+import 'graphql/queries/current_user.graphql.dart';
 import 'graphql/schema.graphql.dart';
 
 class SessionManager {
@@ -88,11 +89,9 @@ class SessionManager {
   }
 
   static Future<void> attemptToRefresh(GraphQLClient graphQLClient) async {
-    final now = DateTime.now();
+    final yesterday = DateTime.now().subtract(Duration(days: 1));
 
-    if (_session == null ||
-        (now.isBefore(_session!.createdAt.add(Duration(days: 1))) &&
-            now.isBefore(_session!.expiresAt.subtract(Duration(hours: 1))))) {
+    if (_session == null || (_session!.refreshedAt ?? _session!.createdAt).isAfter(yesterday)) {
       return;
     }
 
@@ -102,6 +101,16 @@ class SessionManager {
     if (session != null) {
       await _write(session);
     }
+  }
+
+  static Future<Query$CurrentUser$currentUser?>? getUser(GraphQLClient graphQLClient) async {
+    if (!hasToken) {
+      return null;
+    }
+
+    final result = await graphQLClient.query$CurrentUser();
+
+    return result.parsedData?.currentUser;
   }
 
   /// Restore or delete session when there is an unauthorized response.

@@ -8,6 +8,7 @@ import 'constants.dart';
 import 'graphql_client.dart';
 import 'l10n/app_localizations.g.dart';
 import 'router.dart';
+import 'screens/home_screen.dart';
 import 'session_manager.dart';
 
 void main() async {
@@ -22,6 +23,12 @@ void main() async {
   final goRouter = getGoRouter();
 
   await SessionManager.attemptToRefresh(graphQLClient);
+
+  final currentUser = await SessionManager.getUser(graphQLClient);
+
+  if (currentUser != null) {
+    HomeScreen.showEmailConfirmationDialog = !currentUser.emailIsConfirmed;
+  }
 
   runApp(App(graphQLClient: graphQLClient, goRouter: goRouter));
 }

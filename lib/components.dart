@@ -1,6 +1,7 @@
 export 'components/dialogs/edit_board_dialog.dart';
 export 'components/dialogs/edit_card_dialog.dart';
 export 'components/dialogs/edit_label_dialog.dart';
+export 'components/dialogs/email_confirmation_dialog.dart';
 export 'components/dialogs/new_card_dialog.dart';
 export 'components/dialogs/new_label_dialog.dart';
 

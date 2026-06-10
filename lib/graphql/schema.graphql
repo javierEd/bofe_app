@@ -114,6 +114,17 @@ input CardParams {
 
 scalar ColorCode
 
+type ConfirmationObject {
+	id: ID!
+	createdAt: DateTime!
+	updatedAt: DateTime
+}
+
+input ConfirmationParams {
+	id: UUID!
+	code: String!
+}
+
 enum CountryCode {
 	AF
 	AX
@@ -522,6 +533,7 @@ input MemberParams {
 }
 
 type MutationRoot {
+	confirmEmail(confirmationParams: ConfirmationParams!): UserObject!
 	createBoard(params: BoardParams!): BoardObject!
 	createCard(params: CardParams!): CardObject!
 	createLabel(params: LabelParams!): LabelObject!
@@ -536,6 +548,7 @@ type MutationRoot {
 	deleteMember(id: UUID!): Boolean!
 	finishSession: Boolean!
 	refreshSession: SessionObject!
+	sendEmailConfirmation: ConfirmationObject!
 	updateBoard(id: UUID!, params: BoardParams!): BoardObject!
 	updateCard(id: UUID!, params: CardParams!): CardObject!
 	updateCardList(id: UUID!, listId: UUID!, position: Int!): CardObject!
@@ -598,6 +611,7 @@ type SessionObject {
 	id: ID!
 	token: String!
 	expiresAt: DateTime!
+	refreshedAt: DateTime
 	createdAt: DateTime!
 	updatedAt: DateTime
 }
@@ -657,6 +671,8 @@ scalar Url
 type UserObject {
 	id: ID!
 	username: String!
+	email: String!
+	emailIsConfirmed: Boolean!
 	initials: String!
 	displayName: String!
 	fullName: String!

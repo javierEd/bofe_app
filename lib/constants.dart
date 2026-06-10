@@ -30,6 +30,7 @@ const routeNameMembers = 'members';
 const routeNameNewBoard = 'new_board';
 const routeNameRegister = 'register';
 const routeNameSettings = 'settings';
+const routeNameSettingsEmail = 'settings_email';
 const routeNameUser = 'show_user';
 
 const labelColors = [

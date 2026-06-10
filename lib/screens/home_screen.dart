@@ -14,12 +14,27 @@ import '../session_manager.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  static bool showEmailConfirmationDialog = false;
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> with RouteAware {
   int currentIndex = SessionManager.hasToken ? 0 : 1;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (HomeScreen.showEmailConfirmationDialog) {
+        showEmailConfirmationDialog(context, barrierDismissible: false).then((_) {
+          HomeScreen.showEmailConfirmationDialog = false;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

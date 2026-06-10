@@ -133,6 +133,11 @@ class SettingsScreen extends StatelessWidget {
                         onPressed: (context) => context.router.goToEditProfile(),
                       ),
                       SettingsTile.navigation(
+                        leading: const Icon(Icons.email_rounded),
+                        title: Text(context.l10n.emailAddress),
+                        onPressed: (context) => context.router.goToSettingsEmail(),
+                      ),
+                      SettingsTile.navigation(
                         leading: const Icon(Icons.password_rounded),
                         title: Text(context.l10n.changePassword),
                         onPressed: (context) => context.router.goToChangePassword(),
