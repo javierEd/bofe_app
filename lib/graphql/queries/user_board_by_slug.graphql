@@ -1,0 +1,8 @@
+query UserBoardBySlug($username: String!, $slug: String!) {
+    user(username: $username) {
+        id
+        boardBySlug(slug: $slug) {
+            ...BoardFragment
+        }
+    }
+}

@@ -3,27 +3,27 @@ import 'package:flutter/material.dart';
 import '../components/query_result_builder.dart';
 import '../constants.dart';
 import '../graphql/fragments/board_fragment.graphql.dart';
-import '../graphql/queries/board_by_slug.graphql.dart';
+import '../graphql/queries/user_board_by_slug.graphql.dart';
 import '../screens/not_found_screen.dart';
 import '../value_keys.dart';
 import 'dialog_page.dart';
 
-class BoardContext extends Query$BoardBySlug$Widget {
+class BoardContext extends Query$UserBoardBySlug$Widget {
   BoardContext({
     super.key,
     required String username,
     required String slug,
     required Widget Function(Fragment$BoardFragment board) builder,
   }) : super(
-         options: Options$Query$BoardBySlug(variables: Variables$Query$BoardBySlug(slug: slug)),
+         options: Options$Query$UserBoardBySlug(
+           variables: Variables$Query$UserBoardBySlug(username: username, slug: slug),
+         ),
          builder: (result, {fetchMore, refetch}) => QueryResultBuilder(
            result: result,
            refetch: refetch,
-           buildIf: (parsedData) =>
-               parsedData?.boardBySlug != null &&
-               parsedData?.boardBySlug?.user.username.toLowerCase() == username.toLowerCase(),
+           buildIf: (parsedData) => parsedData?.user?.boardBySlug != null,
            noResultWidget: const NotFoundScreen(),
-           builder: (parsedData) => builder(parsedData.boardBySlug!),
+           builder: (parsedData) => builder(parsedData.user!.boardBySlug!),
          ),
        );
 }
