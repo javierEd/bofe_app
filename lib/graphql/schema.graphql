@@ -596,7 +596,7 @@ type PageInfo {
 
 type QueryRoot {
 	board(id: ID!): BoardObject
-	boardBySlug(slug: String!): BoardObject
+	boardBySlug(slug: String!): BoardObject @deprecated
 	boards(after: UUID, first: Int): BoardObjectConnection!
 	card(id: ID!): CardObject
 	currentUser: UserObject
@@ -680,6 +680,7 @@ type UserObject {
 	languageCode: LanguageCode!
 	countryCode: CountryCode!
 	avatarImageUrl: Url!
+	boardBySlug(slug: String!): BoardObject
 	boards(after: UUID, first: Int): BoardObjectConnection!
 	createdAt: DateTime!
 	updatedAt: DateTime
@@ -724,6 +725,10 @@ input UserParams {
 	countryCode: CountryCode!
 }
 
+"""
+Marks an element of a GraphQL schema as no longer supported.
+"""
+directive @deprecated(reason: String = "No longer supported") on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION | ENUM_VALUE
 """
 Directs the executor to include this field or fragment only when the `if` argument is true.
 """
