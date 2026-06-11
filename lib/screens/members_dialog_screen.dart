@@ -7,7 +7,6 @@ import '../build_context.dart';
 import '../components.dart';
 import '../components/current_user.dart';
 import '../components/loading_overlay.dart';
-import '../components/query_result_builder.dart';
 import '../components/scrollable_dialog.dart';
 import '../components/snackbar_alert.dart';
 import '../components/user_item.dart';
