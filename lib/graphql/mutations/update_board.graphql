@@ -1,6 +1,5 @@
 mutation UpdateBoard($id: UUID!, $params: BoardParams!) {
     updateBoard(id: $id, params: $params) {
-        id
-        slug
+        ...BoardFragment
     }
 }

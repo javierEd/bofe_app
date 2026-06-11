@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../build_context.dart';
-import '../../constants.dart';
 import '../../graphql/schema.graphql.dart';
 import '../../graphql/fragments/board_fragment.graphql.dart';
 import '../../graphql/mutations/update_board.graphql.dart';
@@ -49,7 +48,7 @@ class _EditBoardForm extends StatelessWidget {
         context.pop();
       } else {
         context.pop();
-        context.goNamed(routeNameBoard, pathParameters: {keySlug: updatedBoard.slug});
+        context.router.goToBoard(updatedBoard);
       }
 
       return null;

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../build_context.dart';
-import '../graphql/fragments/user_fragment.graphql.dart';
-import '../graphql/queries/users.graphql.dart';
-import '../graphql/schema.graphql.dart';
-import '../graphql/mutations/create_member.graphql.dart';
-import 'dropdown_search_field.dart';
-import 'form_container.dart';
-import 'snackbar_alert.dart';
-import 'user_item.dart';
+import '../../build_context.dart';
+import '../../graphql/fragments/user_fragment.graphql.dart';
+import '../../graphql/queries/users.graphql.dart';
+import '../../graphql/schema.graphql.dart';
+import '../../graphql/mutations/create_member.graphql.dart';
+import '../dropdown_search_field.dart';
+import '../forms/form_container.dart';
+import '../snackbar_alert.dart';
+import '../user_item.dart';
 
 Future<dynamic> showNewMemberDialog(BuildContext context, {required boardId}) {
   return showDialog(

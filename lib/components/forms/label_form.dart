@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../constants.dart';
 import '../../graphql/fragments/label_fragment.graphql.dart';
-import '../form_container.dart';
+import 'form_container.dart';
 import 'text_input_field.dart';
 
 class LabelForm extends StatefulWidget {
