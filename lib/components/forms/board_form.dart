@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../graphql/fragments/board_fragment.graphql.dart';
 import '../../graphql/schema.graphql.dart';
+import 'form_container.dart';
 import 'text_input_field.dart';
 import '../dropdown_field.dart';
-import '../form_container.dart';
 
 class BoardForm extends StatefulWidget {
   const BoardForm({super.key, required this.formKey, this.initialValues, required this.onSubmit});

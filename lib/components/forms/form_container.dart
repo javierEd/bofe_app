@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'loading_overlay.dart';
+import '../loading_overlay.dart';
 
 class FormContainer extends StatelessWidget {
   const FormContainer({
@@ -11,6 +11,7 @@ class FormContainer extends StatelessWidget {
     this.padding,
     this.width,
     required this.fields,
+    this.showLoading = true,
     required this.onSubmit,
   });
 
@@ -18,6 +19,7 @@ class FormContainer extends StatelessWidget {
   final GlobalKey<FormState> formKey;
   final EdgeInsets? padding;
   final double? width;
+  final bool showLoading;
   final FutureOr<void> Function() onSubmit;
 
   @override
@@ -37,11 +39,15 @@ class FormContainer extends StatelessWidget {
                   width: double.infinity,
                   child: FilledButton(
                     onPressed: () async {
-                      final loadingOverlay = showLoadingOverlay(context);
+                      LoadingOverlay? loadingOverlay;
+
+                      if (showLoading) {
+                        loadingOverlay = showLoadingOverlay(context);
+                      }
 
                       await onSubmit();
 
-                      loadingOverlay.hide();
+                      loadingOverlay?.hide();
                     },
                     child: Text('SUBMIT'),
                   ),

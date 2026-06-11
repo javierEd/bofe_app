@@ -5,7 +5,7 @@ import '../../build_context.dart';
 import '../../graphql/mutations/confirm_email.graphql.dart';
 import '../../graphql/mutations/send_email_confirmation.graphql.dart';
 import '../../graphql/schema.graphql.dart';
-import '../form_container.dart';
+import '../forms/form_container.dart';
 import '../forms/text_input_field.dart';
 import '../snackbar_alert.dart';
 import '../scrollable_dialog.dart';

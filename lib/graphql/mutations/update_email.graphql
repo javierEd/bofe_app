@@ -1,0 +1,5 @@
+mutation UpdateEmail($password: String!, $params: UpdateEmailParams!) {
+    updateEmail(password: $password, params: $params) {
+        id
+    }
+}

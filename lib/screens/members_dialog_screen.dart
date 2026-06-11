@@ -4,10 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../build_context.dart';
+import '../components.dart';
 import '../components/current_user.dart';
 import '../components/loading_overlay.dart';
-import '../components/new_member_dialog.dart';
-import '../components/query_result_builder.dart';
 import '../components/scrollable_dialog.dart';
 import '../components/snackbar_alert.dart';
 import '../components/user_item.dart';

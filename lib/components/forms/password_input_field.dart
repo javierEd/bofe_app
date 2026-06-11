@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../build_context.dart';
 import './text_input_field.dart';
 
 class PasswordInputField extends StatefulWidget {
@@ -35,7 +36,7 @@ class _PasswordInputFieldState extends State<PasswordInputField> {
 
   @override
   Widget build(BuildContext context) => TextInputField(
-    labelText: widget.labelText ?? 'Password',
+    labelText: widget.labelText ?? context.l10n.password,
     prefixIcon: widget.prefixIcon,
     suffixIcon: GestureDetector(
       onTap: _togglePasswordVisibility,
