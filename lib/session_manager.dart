@@ -57,7 +57,8 @@ class SessionManager {
     required String usernameOrEmail,
     required String password,
   }) async {
-    final result = await context.graphQLClient.mutate$CreateSession(
+    final graphQLClient = context.graphQLClient;
+    final result = await graphQLClient.mutate$CreateSession(
       Options$Mutation$CreateSession(
         variables: Variables$Mutation$CreateSession(
           params: Input$SessionParams(usernameOrEmail: usernameOrEmail, password: password),
@@ -70,6 +71,8 @@ class SessionManager {
     if (session != null) {
       await _write(session);
 
+      graphQLClient.cache.store.reset();
+
       await Restart.restartApp();
     }
 
@@ -77,10 +80,13 @@ class SessionManager {
   }
 
   static Future<QueryResult<Mutation$FinishSession>> attemptToLogout(BuildContext context) async {
-    final result = await context.graphQLClient.mutate$FinishSession();
+    final graphQLClient = context.graphQLClient;
+    final result = await graphQLClient.mutate$FinishSession();
 
     if (result.parsedData?.finishSession == true) {
       await _delete();
+
+      graphQLClient.cache.store.reset();
 
       await Restart.restartApp();
     }

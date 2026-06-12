@@ -92,7 +92,12 @@ class _ScrollableDialogState extends State<ScrollableDialog> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              if (widget.title != null) DefaultTextStyle(style: dialogTheme, child: widget.title!),
+                              if (widget.title != null)
+                                DefaultTextStyle(
+                                  style: dialogTheme,
+                                  overflow: TextOverflow.ellipsis,
+                                  child: widget.title!,
+                                ),
                               if (widget.actions.isNotEmpty) ...[Spacer(), ...widget.actions],
                             ],
                           ),

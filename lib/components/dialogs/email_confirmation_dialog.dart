@@ -10,7 +10,7 @@ import '../forms/text_input_field.dart';
 import '../snackbar_alert.dart';
 import '../scrollable_dialog.dart';
 
-Future<dynamic> showEmailConfirmationDialog(BuildContext context, {bool barrierDismissible = true}) {
+Future<bool?> showEmailConfirmationDialog(BuildContext context, {bool barrierDismissible = true}) {
   return showDialog(
     context: context,
     barrierDismissible: barrierDismissible,
@@ -52,7 +52,7 @@ class _EmailConfirmationDialogState extends State<_EmailConfirmationDialog> {
       if (emailConfirmed != null) {
         showSnackBarAlert(context, context.l10n.emailConfirmedSuccessfully);
 
-        context.pop();
+        context.pop(true);
       } else {
         final errors = result.exception?.graphqlErrors.first;
 

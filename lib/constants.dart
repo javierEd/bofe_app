@@ -29,6 +29,7 @@ const routeNameLogin = 'login';
 const routeNameMembers = 'members';
 const routeNameNewBoard = 'new_board';
 const routeNameRegister = 'register';
+const routeNameResetPassword = 'reset_password';
 const routeNameSettings = 'settings';
 const routeNameSettingsEmail = 'settings_email';
 const routeNameUser = 'show_user';

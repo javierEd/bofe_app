@@ -42,24 +42,7 @@ class AccountButton extends StatelessWidget {
                         ),
                       ),
                     ]
-                  : [
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          onPressed: () => context.router.goToLogin(),
-                          icon: const Icon(Icons.login_rounded),
-                          label: Text(context.l10n.login),
-                        ),
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          onPressed: () => context.router.goToRegister(),
-                          icon: const Icon(Icons.person_add_rounded),
-                          label: Text(context.l10n.register),
-                        ),
-                      ),
-                    ],
+                  : [LoginButton(), RegisterButton()],
             ),
             SizedBox(
               width: double.infinity,
@@ -130,6 +113,38 @@ class AccountButton extends StatelessWidget {
           );
         }
       },
+    );
+  }
+}
+
+class LoginButton extends StatelessWidget {
+  const LoginButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: () => context.router.goToLogin(),
+        icon: const Icon(Icons.login_rounded),
+        label: Text(context.l10n.login),
+      ),
+    );
+  }
+}
+
+class RegisterButton extends StatelessWidget {
+  const RegisterButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: () => context.router.goToRegister(),
+        icon: const Icon(Icons.person_add_rounded),
+        label: Text(context.l10n.register),
+      ),
     );
   }
 }

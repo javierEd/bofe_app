@@ -90,64 +90,82 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final title = context.l10n.register;
     return ScreenTitle(
-      title: 'Register',
+      title: title,
       child: Scaffold(
-        appBar: AppBar(title: Text('Register')),
+        appBar: AppBar(title: Text(title)),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(12),
           child: Center(
-            child: FormContainer(
-              formKey: _formRegister,
-              onSubmit: _attemptToCreateUser,
-              fields: [
-                TextInputField(
-                  labelText: 'Username',
-                  errorText: _errorUsername,
-                  required: true,
-                  autofillHints: const [AutofillHints.username],
-                  maxLines: 1,
-                  onSaved: (value) {
-                    _username = value ?? '';
-                  },
+            child: Column(
+              spacing: 12,
+              children: [
+                FormContainer(
+                  formKey: _formRegister,
+                  onSubmit: _attemptToCreateUser,
+                  fields: [
+                    TextInputField(
+                      labelText: context.l10n.username,
+                      errorText: _errorUsername,
+                      required: true,
+                      autofillHints: const [AutofillHints.username],
+                      maxLines: 1,
+                      onSaved: (value) {
+                        _username = value ?? '';
+                      },
+                    ),
+                    TextInputField(
+                      labelText: context.l10n.email,
+                      errorText: _errorEmail,
+                      required: true,
+                      autofillHints: const [AutofillHints.email],
+                      maxLines: 1,
+                      keyboardType: TextInputType.emailAddress,
+                      onSaved: (value) {
+                        _email = value ?? '';
+                      },
+                    ),
+                    PasswordInputField(
+                      errorText: _errorPassword,
+                      required: true,
+                      autofillHints: const [AutofillHints.newPassword],
+                      onSaved: (value) {
+                        _password = value ?? '';
+                      },
+                    ),
+                    TextInputField(
+                      labelText: context.l10n.fullName,
+                      errorText: _errorFullName,
+                      required: true,
+                      maxLines: 1,
+                      onSaved: (value) {
+                        _fullName = value ?? '';
+                      },
+                    ),
+                    DateField(
+                      labelText: context.l10n.birthdate,
+                      errorText: _errorBirthdate,
+                      required: true,
+                      onSaved: (value) {
+                        _birthdate = value;
+                      },
+                    ),
+                    CountryField(
+                      errorText: _errorCountryCode,
+                      required: true,
+                      onSaved: (value) => _countryCode = value,
+                    ),
+                  ],
                 ),
-                TextInputField(
-                  labelText: 'Email',
-                  errorText: _errorEmail,
-                  required: true,
-                  autofillHints: const [AutofillHints.email],
-                  maxLines: 1,
-                  keyboardType: TextInputType.emailAddress,
-                  onSaved: (value) {
-                    _email = value ?? '';
-                  },
+                SizedBox(height: 16),
+                SizedBox(
+                  width: 640,
+                  child: TextButton(
+                    onPressed: () => context.router.goToLogin(),
+                    child: Text(context.l10n.iHaveAnAccount),
+                  ),
                 ),
-                PasswordInputField(
-                  errorText: _errorPassword,
-                  required: true,
-                  autofillHints: const [AutofillHints.newPassword],
-                  onSaved: (value) {
-                    _password = value ?? '';
-                  },
-                ),
-                TextInputField(
-                  labelText: 'Full name',
-                  errorText: _errorFullName,
-                  required: true,
-                  maxLines: 1,
-                  onSaved: (value) {
-                    _fullName = value ?? '';
-                  },
-                ),
-                DateField(
-                  labelText: 'Birthdate',
-                  errorText: _errorBirthdate,
-                  required: true,
-                  onSaved: (value) {
-                    _birthdate = value;
-                  },
-                ),
-                CountryField(errorText: _errorCountryCode, required: true, onSaved: (value) => _countryCode = value),
               ],
             ),
           ),
