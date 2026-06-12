@@ -18,6 +18,7 @@ import 'screens/login_screen.dart';
 import 'screens/new_board_screen.dart';
 import 'screens/not_found_screen.dart';
 import 'screens/register_screen.dart';
+import 'screens/reset_password_screen.dart';
 import 'screens/settings/email_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/user_screen.dart';
@@ -56,7 +57,12 @@ GoRouter getGoRouter() => GoRouter(
           redirect: _requireToken,
           builder: (context, state) => NewBoardScreen(),
         ),
-        GoRoute(name: routeNameLogin, path: 'login', builder: (context, state) => LoginScreen()),
+        GoRoute(
+          name: routeNameLogin,
+          path: 'login',
+          redirect: _requireNoToken,
+          builder: (context, state) => LoginScreen(),
+        ),
         GoRoute(
           name: routeNameSettings,
           path: 'settings',
@@ -87,6 +93,12 @@ GoRouter getGoRouter() => GoRouter(
           path: 'register',
           redirect: _requireNoToken,
           builder: (context, state) => RegisterScreen(),
+        ),
+        GoRoute(
+          name: routeNameResetPassword,
+          path: 'reset-password',
+          redirect: _requireNoToken,
+          builder: (context, state) => ResetPasswordScreen(),
         ),
         GoRoute(
           name: routeNameUser,
@@ -169,6 +181,8 @@ class AppRouter {
   void goToLogin() => context.goNamed(routeNameLogin);
 
   void goToRegister() => context.goNamed(routeNameRegister);
+
+  void goToResetPassword() => context.goNamed(routeNameResetPassword);
 
   void goToUser(Fragment$UserFragment user) =>
       context.goNamed(routeNameUser, pathParameters: {keyUsername: user.username});

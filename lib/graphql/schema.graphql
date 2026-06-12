@@ -534,6 +534,7 @@ input MemberParams {
 
 type MutationRoot {
 	confirmEmail(confirmationParams: ConfirmationParams!): UserObject!
+	confirmPasswordReset(confirmationParams: ConfirmationParams!): Boolean!
 	createBoard(params: BoardParams!): BoardObject!
 	createCard(params: CardParams!): CardObject!
 	createLabel(params: LabelParams!): LabelObject!
@@ -549,6 +550,7 @@ type MutationRoot {
 	finishSession: Boolean!
 	refreshSession: SessionObject!
 	sendEmailConfirmation: ConfirmationObject!
+	sendPasswordResetConfirmation(params: ResetPasswordParams!): ConfirmationObject!
 	updateBoard(id: UUID!, params: BoardParams!): BoardObject!
 	updateCard(id: UUID!, params: CardParams!): CardObject!
 	updateCardList(id: UUID!, listId: UUID!, position: Int!): CardObject!
@@ -606,6 +608,10 @@ type QueryRoot {
 	list(id: ID!): ListObject
 	user(username: String!): UserObject
 	users(query: String!, after: UUID, first: Int): UserObjectConnection!
+}
+
+input ResetPasswordParams {
+	usernameOrEmail: String!
 }
 
 type SessionObject {

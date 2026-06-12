@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../build_context.dart';
 import '../components.dart';
 import '../components/screen_title.dart';
 import '../components/snackbar_alert.dart';
@@ -55,34 +56,56 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final title = context.l10n.login;
+
     return ScreenTitle(
-      title: 'Login',
+      title: title,
       child: Scaffold(
-        appBar: AppBar(title: Text('Login')),
+        appBar: AppBar(title: Text(title)),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(12),
           child: Center(
-            child: FormContainer(
-              formKey: _formLogin,
-              onSubmit: _attemptToLogin,
-              fields: [
-                TextInputField(
-                  labelText: 'Username or email',
-                  errorText: _errorUsernameOrEmail,
-                  required: true,
-                  autofillHints: const [AutofillHints.username],
-                  maxLines: 1,
-                  onSaved: (value) {
-                    _usernameOrEmail = value ?? '';
-                  },
+            child: Column(
+              spacing: 12,
+              children: [
+                FormContainer(
+                  formKey: _formLogin,
+                  onSubmit: _attemptToLogin,
+                  fields: [
+                    TextInputField(
+                      labelText: context.l10n.usernameOrEmail,
+                      errorText: _errorUsernameOrEmail,
+                      required: true,
+                      autofillHints: const [AutofillHints.username],
+                      maxLines: 1,
+                      onSaved: (value) {
+                        _usernameOrEmail = value ?? '';
+                      },
+                    ),
+                    PasswordInputField(
+                      errorText: _errorPassword,
+                      required: true,
+                      autofillHints: const [AutofillHints.password],
+                      onSaved: (value) {
+                        _password = value ?? '';
+                      },
+                    ),
+                  ],
                 ),
-                PasswordInputField(
-                  errorText: _errorPassword,
-                  required: true,
-                  autofillHints: const [AutofillHints.password],
-                  onSaved: (value) {
-                    _password = value ?? '';
-                  },
+                SizedBox(height: 16),
+                SizedBox(
+                  width: 640,
+                  child: TextButton(
+                    onPressed: () => context.router.goToRegister(),
+                    child: Text(context.l10n.iDontHaveAnAccount),
+                  ),
+                ),
+                SizedBox(
+                  width: 640,
+                  child: TextButton(
+                    onPressed: () => context.router.goToResetPassword(),
+                    child: Text(context.l10n.iForgotMyPassword),
+                  ),
                 ),
               ],
             ),

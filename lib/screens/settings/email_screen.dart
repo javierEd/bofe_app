@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../build_context.dart';
 import '../../components.dart';
-import '../../components/loading_overlay.dart';
 import '../../components/screen_title.dart';
 import '../../components/scrollable_dialog.dart';
 import '../../components/snackbar_alert.dart';
@@ -84,8 +83,6 @@ class _EditEmailFormState extends State<_EditEmailForm> {
   String? _errorEmail;
 
   Future<void> _onPasswordValidationSubmit() async {
-    final loadingOverlay = showLoadingOverlay(context);
-
     if (_formPasswordValidation.currentState?.validate() == true) {
       _formPasswordValidation.currentState?.save();
       context.pop();
@@ -104,9 +101,11 @@ class _EditEmailFormState extends State<_EditEmailForm> {
       }
 
       if (result.parsedData?.updateEmail != null) {
-        loadingOverlay.hide();
-
-        showEmailConfirmationDialog(context);
+        showEmailConfirmationDialog(context).then((success) {
+          if (success == true) {
+            _formEditEmail.currentState?.reset();
+          }
+        });
       } else {
         final errors = result.exception?.graphqlErrors.first;
 
@@ -121,18 +120,16 @@ class _EditEmailFormState extends State<_EditEmailForm> {
 
       showSnackBarAlert(context, context.l10n.failedToUpdateEmail);
     }
-
-    loadingOverlay.hide();
   }
 
-  Future<dynamic> _onEditEmailSubmit() async {
+  void _onEditEmailSubmit() {
     setState(() {
       _errorEmail = null;
     });
 
     if (_formEditEmail.currentState?.validate() == true) {
       _formEditEmail.currentState?.save();
-      return showDialog(
+      showDialog(
         context: context,
         builder: (context) => ScrollableDialog(
           title: Text(context.l10n.enterYourPassword),
@@ -140,7 +137,6 @@ class _EditEmailFormState extends State<_EditEmailForm> {
           child: FormContainer(
             formKey: _formPasswordValidation,
             onSubmit: _onPasswordValidationSubmit,
-            showLoading: false,
             fields: [
               PasswordInputField(
                 required: true,
@@ -163,7 +159,6 @@ class _EditEmailFormState extends State<_EditEmailForm> {
     return FormContainer(
       onSubmit: _onEditEmailSubmit,
       formKey: _formEditEmail,
-      showLoading: false,
       fields: [
         TextInputField(
           labelText: context.l10n.email,

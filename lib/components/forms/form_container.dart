@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../../build_context.dart';
 import '../loading_overlay.dart';
 
 class FormContainer extends StatelessWidget {
@@ -49,7 +50,7 @@ class FormContainer extends StatelessWidget {
 
                       loadingOverlay?.hide();
                     },
-                    child: Text('SUBMIT'),
+                    child: Text(context.l10n.submit.toUpperCase()),
                   ),
                 ),
               ],

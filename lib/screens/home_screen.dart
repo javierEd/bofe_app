@@ -4,7 +4,6 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../build_context.dart';
 import '../components.dart';
-import '../components/account_button.dart';
 import '../components/screen_title.dart';
 import '../constants.dart';
 import '../graphql/queries/boards.graphql.dart';
@@ -241,27 +240,7 @@ class _HomeState extends State<_Home> {
             children: [
               Text(context.l10n.youMustBeLoggedInToViewYourBoards),
 
-              Column(
-                spacing: 8,
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      onPressed: () => context.router.goToLogin(),
-                      icon: const Icon(Icons.login_rounded),
-                      label: Text(context.l10n.login),
-                    ),
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      onPressed: () => context.router.goToRegister(),
-                      icon: const Icon(Icons.person_add_rounded),
-                      label: Text(context.l10n.register),
-                    ),
-                  ),
-                ],
-              ),
+              Column(spacing: 8, children: [LoginButton(), RegisterButton()]),
             ],
           ),
         ),
