@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../build_context.dart';
 import '../loading_overlay.dart';
+import '../snackbar_alert.dart';
 
 class FormContainer extends StatelessWidget {
   const FormContainer({
@@ -12,7 +13,6 @@ class FormContainer extends StatelessWidget {
     this.padding,
     this.width,
     required this.fields,
-    this.showLoading = true,
     required this.onSubmit,
   });
 
@@ -20,7 +20,6 @@ class FormContainer extends StatelessWidget {
   final GlobalKey<FormState> formKey;
   final EdgeInsets? padding;
   final double? width;
-  final bool showLoading;
   final FutureOr<void> Function() onSubmit;
 
   @override
@@ -40,15 +39,17 @@ class FormContainer extends StatelessWidget {
                   width: double.infinity,
                   child: FilledButton(
                     onPressed: () async {
-                      LoadingOverlay? loadingOverlay;
+                      LoadingOverlay loadingOverlay = showLoadingOverlay(context);
 
-                      if (showLoading) {
-                        loadingOverlay = showLoadingOverlay(context);
+                      try {
+                        await onSubmit();
+                      } catch (e) {
+                        if (context.mounted) {
+                          showSnackBarAlert(context, context.l10n.somethingWentWrong);
+                        }
+                      } finally {
+                        loadingOverlay.hide();
                       }
-
-                      await onSubmit();
-
-                      loadingOverlay?.hide();
                     },
                     child: Text(context.l10n.submit.toUpperCase()),
                   ),

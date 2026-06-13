@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
+import '../build_context.dart';
 import '../router.dart';
 
 class QueryResultBuilder<T> extends StatefulWidget {
@@ -69,7 +70,7 @@ class _QueryResultBuilderState<T> extends State<QueryResultBuilder<T>> with Rout
             mainAxisSize: MainAxisSize.min,
             spacing: 14,
             children: [
-              Text('Something went wrong 🫠'),
+              Text(context.l10n.somethingWentWrong),
               OutlinedButton(
                 onPressed: () {
                   widget.refetch?.call();
