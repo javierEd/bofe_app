@@ -22,11 +22,6 @@ class _LoginScreenState extends State<LoginScreen> {
   String? _errorPassword;
 
   Future<String?> _attemptToLogin() async {
-    setState(() {
-      _errorUsernameOrEmail = null;
-      _errorPassword = null;
-    });
-
     final result = await SessionManager.attemptToLogin(context, usernameOrEmail: _usernameOrEmail, password: _password);
 
     if (!mounted) {

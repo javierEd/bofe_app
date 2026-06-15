@@ -34,6 +34,8 @@ class _FormContainerState extends State<FormContainer> {
     LoadingOverlay loadingOverlay = showLoadingOverlay(context);
     String? errorText;
 
+    widget.formKey.currentState?.clearError();
+
     try {
       if (widget.formKey.currentState?.validate() == true) {
         widget.formKey.currentState?.save();

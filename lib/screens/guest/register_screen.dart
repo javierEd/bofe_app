@@ -33,15 +33,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String? _errorCountryCode;
 
   Future<String?> _attemptToCreateUser() async {
-    setState(() {
-      _errorUsername = null;
-      _errorEmail = null;
-      _errorPassword = null;
-      _errorFullName = null;
-      _errorBirthdate = null;
-      _errorCountryCode = null;
-    });
-
     final languageCode = Enum$LanguageCode.fromJson(Preferences.language.languageCode.toUpperCase());
 
     final result = await context.graphQLClient.mutate$CreateUser(
