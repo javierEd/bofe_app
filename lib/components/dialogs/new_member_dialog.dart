@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../../build_context.dart';
 import '../../graphql/fragments/user_fragment.graphql.dart';
@@ -8,7 +9,6 @@ import '../../graphql/schema.graphql.dart';
 import '../../graphql/mutations/create_member.graphql.dart';
 import '../dropdown_search_field.dart';
 import '../forms/form_container.dart';
-import '../snackbar_alert.dart';
 import '../user_item.dart';
 
 Future<dynamic> showNewMemberDialog(BuildContext context, {required boardId}) {
@@ -39,7 +39,7 @@ class _NewMemberFormState extends State<_NewMemberForm> {
   bool _isAdmin = false;
   String? _errorUserId;
 
-  Future<Map<String, dynamic>?> _attemptToCreateMember() async {
+  Future<GraphQLError?> _attemptToCreateMember() async {
     final result = await context.graphQLClient.mutate$CreateMember(
       Options$Mutation$CreateMember(
         variables: Variables$Mutation$CreateMember(
@@ -52,18 +52,13 @@ class _NewMemberFormState extends State<_NewMemberForm> {
       return null;
     }
 
-    final errors = result.exception?.graphqlErrors.first;
-    final createdMember = result.parsedData?.createMember;
-
-    if (createdMember != null) {
+    if (result.parsedData?.createMember != null) {
       context.pop();
 
       return null;
-    } else {
-      showSnackBarAlert(context, errors?.message ?? 'Failed to create member');
-
-      return errors?.extensions?['params'];
     }
+
+    return result.exception?.graphqlErrors.first;
   }
 
   @override
@@ -71,16 +66,17 @@ class _NewMemberFormState extends State<_NewMemberForm> {
     return FormContainer(
       formKey: _formNewMember,
       onSubmit: () async {
-        if (_formNewMember.currentState?.validate() == true) {
-          _formNewMember.currentState?.save();
-          final errors = await _attemptToCreateMember();
+        final errors = await _attemptToCreateMember();
 
-          if (errors != null) {
-            setState(() {
-              _errorUserId = errors['userId']?['message'];
-            });
-          }
+        if (errors != null) {
+          setState(() {
+            _errorUserId = errors.extensions?['params']?['userId']?['message'];
+          });
+
+          return errors.message;
         }
+
+        return null;
       },
       fields: [
         DropdownSearchField<Fragment$UserFragment>(

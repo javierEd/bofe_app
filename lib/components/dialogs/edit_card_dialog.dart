@@ -6,7 +6,6 @@ import '../../build_context.dart';
 import '../forms/card_form.dart';
 import '../query_result_builder.dart';
 import '../scrollable_dialog.dart';
-import '../snackbar_alert.dart';
 import '../../graphql/fragments/card_fragment.graphql.dart';
 import '../../graphql/queries/card.graphql.dart';
 import '../../graphql/schema.graphql.dart';
@@ -26,7 +25,7 @@ class _EditCardDialog extends StatelessWidget {
 
   final _formEditCard = GlobalKey<FormState>();
 
-  Future<Map<String, dynamic>?> _attemptToUpdateCard(BuildContext context, Input$CardParams params) async {
+  Future<QueryResult<Mutation$UpdateCard>> _attemptToUpdateCard(BuildContext context, Input$CardParams params) async {
     final result = await context.graphQLClient.mutate$UpdateCard(
       Options$Mutation$UpdateCard(
         variables: Variables$Mutation$UpdateCard(id: card.id, params: params),
@@ -34,21 +33,16 @@ class _EditCardDialog extends StatelessWidget {
     );
 
     if (!context.mounted) {
-      return null;
+      return result;
     }
 
-    final errors = result.exception?.graphqlErrors.first;
     final updatedCard = result.parsedData?.updateCard;
 
     if (updatedCard != null) {
       context.pop();
-
-      return null;
-    } else {
-      showSnackBarAlert(context, errors?.message ?? 'Failed to update card');
-
-      return errors?.extensions?['params'];
     }
+
+    return result;
   }
 
   @override

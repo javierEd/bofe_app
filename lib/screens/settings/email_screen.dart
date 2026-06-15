@@ -5,7 +5,6 @@ import '../../build_context.dart';
 import '../../components.dart';
 import '../../components/screen_title.dart';
 import '../../components/scrollable_dialog.dart';
-import '../../components/snackbar_alert.dart';
 import '../../graphql/mutations/update_email.graphql.dart';
 import '../../graphql/queries/current_user_email.graphql.dart';
 import '../../graphql/schema.graphql.dart';
@@ -82,76 +81,68 @@ class _EditEmailFormState extends State<_EditEmailForm> {
   String _email = '';
   String? _errorEmail;
 
-  Future<void> _onPasswordValidationSubmit() async {
-    if (_formPasswordValidation.currentState?.validate() == true) {
-      _formPasswordValidation.currentState?.save();
-      context.pop();
+  Future<String?> _onPasswordValidationSubmit() async {
+    context.pop();
 
-      final result = await context.graphQLClient.mutate$UpdateEmail(
-        Options$Mutation$UpdateEmail(
-          variables: Variables$Mutation$UpdateEmail(
-            password: _password,
-            params: Input$UpdateEmailParams(email: _email),
-          ),
+    final result = await context.graphQLClient.mutate$UpdateEmail(
+      Options$Mutation$UpdateEmail(
+        variables: Variables$Mutation$UpdateEmail(
+          password: _password,
+          params: Input$UpdateEmailParams(email: _email),
         ),
-      );
+      ),
+    );
 
-      if (!mounted) {
-        return;
-      }
-
-      if (result.parsedData?.updateEmail != null) {
-        showEmailConfirmationDialog(context).then((success) {
-          if (success == true) {
-            _formEditEmail.currentState?.reset();
-          }
-        });
-      } else {
-        final errors = result.exception?.graphqlErrors.first;
-
-        showSnackBarAlert(context, errors?.message ?? context.l10n.failedToUpdateEmail);
-
-        setState(() {
-          _errorEmail = errors?.extensions?['params']['email']?['message'];
-        });
-      }
-    } else {
-      context.pop();
-
-      showSnackBarAlert(context, context.l10n.failedToUpdateEmail);
+    if (!mounted) {
+      return null;
     }
+
+    if (result.parsedData?.updateEmail != null) {
+      showEmailConfirmationDialog(context).then((success) {
+        if (success == true) {
+          _formEditEmail.currentState?.reset();
+        }
+      });
+    } else {
+      final errors = result.exception?.graphqlErrors.first;
+
+      setState(() {
+        _errorEmail = errors?.extensions?['params']['email']?['message'];
+      });
+
+      return errors?.message ?? context.l10n.failedToUpdateEmail;
+    }
+
+    return null;
   }
 
-  void _onEditEmailSubmit() {
+  String? _onEditEmailSubmit() {
     setState(() {
       _errorEmail = null;
     });
 
-    if (_formEditEmail.currentState?.validate() == true) {
-      _formEditEmail.currentState?.save();
-      showDialog(
-        context: context,
-        builder: (context) => ScrollableDialog(
-          title: Text(context.l10n.enterYourPassword),
-          width: 480,
-          child: FormContainer(
-            formKey: _formPasswordValidation,
-            onSubmit: _onPasswordValidationSubmit,
-            fields: [
-              PasswordInputField(
-                required: true,
-                autofillHints: const [AutofillHints.password],
-                onSaved: (value) {
-                  _password = value ?? '';
-                },
-              ),
-            ],
-          ),
+    showDialog(
+      context: context,
+      builder: (context) => ScrollableDialog(
+        title: Text(context.l10n.enterYourPassword),
+        width: 480,
+        child: FormContainer(
+          formKey: _formPasswordValidation,
+          onSubmit: _onPasswordValidationSubmit,
+          fields: [
+            PasswordInputField(
+              required: true,
+              autofillHints: const [AutofillHints.password],
+              onSaved: (value) {
+                _password = value ?? '';
+              },
+            ),
+          ],
         ),
-      );
-    } else {
-      showSnackBarAlert(context, context.l10n.failedToUpdateEmail);
-    }
+      ),
+    );
+
+    return null;
   }
 
   @override

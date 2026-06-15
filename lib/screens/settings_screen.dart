@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:settings_ui/settings_ui.dart';
 
+import '../components.dart';
 import '../l10n/app_localizations.g.dart';
 import '../build_context.dart';
 import '../components/loading_overlay.dart';
 import '../components/screen_title.dart';
-import '../components/snackbar_alert.dart';
 import '../preferences.dart';
 import '../session_manager.dart';
 

@@ -3,17 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
-import '../build_context.dart';
-import '../components.dart';
-import '../components/current_user.dart';
-import '../components/loading_overlay.dart';
-import '../components/scrollable_dialog.dart';
-import '../components/snackbar_alert.dart';
-import '../components/user_item.dart';
-import '../graphql/mutations/delete_member.graphql.dart';
-import '../graphql/mutations/update_member.graphql.dart';
-import '../graphql/queries/board_members.graphql.dart';
-import '../graphql/schema.graphql.dart';
+import '../../build_context.dart';
+import '../../components.dart';
+import '../../components/current_user.dart';
+import '../../components/loading_overlay.dart';
+import '../../components/scrollable_dialog.dart';
+import '../../components/user_item.dart';
+import '../../graphql/mutations/delete_member.graphql.dart';
+import '../../graphql/mutations/update_member.graphql.dart';
+import '../../graphql/queries/board_members.graphql.dart';
+import '../../graphql/schema.graphql.dart';
 
 class MembersDialogScreen extends StatefulWidget {
   const MembersDialogScreen({super.key, required this.board});

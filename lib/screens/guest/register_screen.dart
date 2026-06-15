@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../build_context.dart';
-import '../components.dart';
-import '../components/screen_title.dart';
-import '../components/snackbar_alert.dart';
-import '../graphql/schema.graphql.dart';
-import '../graphql/mutations/create_user.graphql.dart';
-import '../preferences.dart';
-import '../session_manager.dart';
+import '../../build_context.dart';
+import '../../components.dart';
+import '../../components/screen_title.dart';
+import '../../graphql/schema.graphql.dart';
+import '../../graphql/mutations/create_user.graphql.dart';
+import '../../graphql_client.dart';
+import '../../preferences.dart';
+import '../../session_manager.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -32,7 +32,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String? _errorBirthdate;
   String? _errorCountryCode;
 
-  void _attemptToCreateUser() async {
+  Future<String?> _attemptToCreateUser() async {
     setState(() {
       _errorUsername = null;
       _errorEmail = null;
@@ -42,50 +42,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _errorCountryCode = null;
     });
 
-    if (_formRegister.currentState?.validate() == true) {
-      _formRegister.currentState?.save();
+    final languageCode = Enum$LanguageCode.fromJson(Preferences.language.languageCode.toUpperCase());
 
-      final languageCode = Enum$LanguageCode.fromJson(Preferences.language.languageCode.toUpperCase());
-
-      final result = await context.graphQLClient.mutate$CreateUser(
-        Options$Mutation$CreateUser(
-          variables: Variables$Mutation$CreateUser(
-            params: Input$UserParams(
-              username: _username,
-              email: _email,
-              password: _password,
-              fullName: _fullName,
-              birthdate: _birthdate!,
-              languageCode: languageCode,
-              countryCode: _countryCode!,
-            ),
+    final result = await context.graphQLClient.mutate$CreateUser(
+      Options$Mutation$CreateUser(
+        variables: Variables$Mutation$CreateUser(
+          params: Input$UserParams(
+            username: _username,
+            email: _email,
+            password: _password,
+            fullName: _fullName,
+            birthdate: _birthdate!,
+            languageCode: languageCode,
+            countryCode: _countryCode!,
           ),
         ),
-      );
+      ),
+    );
 
-      if (!mounted) {
-        return;
-      }
-
-      final errors = result.exception?.graphqlErrors.first;
-
-      if (result.parsedData?.createUser != null) {
-        await SessionManager.attemptToLogin(context, usernameOrEmail: _username, password: _password);
-      } else {
-        showSnackBarAlert(context, errors?.message ?? 'Failed to create user');
-
-        setState(() {
-          _errorUsername = errors?.extensions?['params']['username']?['message'];
-          _errorEmail = errors?.extensions?['params']['email']?['message'];
-          _errorPassword = errors?.extensions?['params']['password']?['message'];
-          _errorFullName = errors?.extensions?['params']['fullName']?['message'];
-          _errorBirthdate = errors?.extensions?['params']['birthdate']?['message'];
-          _errorCountryCode = errors?.extensions?['params']['countryCode']?['message'];
-        });
-      }
-    } else {
-      showSnackBarAlert(context, 'Failed to create user');
+    if (!mounted) {
+      return null;
     }
+
+    if (result.parsedData?.createUser != null) {
+      await SessionManager.attemptToLogin(context, usernameOrEmail: _username, password: _password);
+    } else {
+      setState(() {
+        _errorUsername = result.getParamError('username');
+        _errorEmail = result.getParamError('email');
+        _errorPassword = result.getParamError('password');
+        _errorFullName = result.getParamError('fullName');
+        _errorBirthdate = result.getParamError('birthdate');
+        _errorCountryCode = result.getParamError('countryCode');
+      });
+
+      return result.errorMessage ?? 'Failed to create user';
+    }
+
+    return null;
   }
 
   @override

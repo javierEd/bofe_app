@@ -51,3 +51,15 @@ GraphQLClient getGraphQLClient() {
     queryRequestTimeout: const Duration(minutes: 1),
   );
 }
+
+extension GraphQLMutationExt<T> on QueryResult<T> {
+  GraphQLError? get _mutationError => exception?.graphqlErrors.first;
+
+  String? get errorMessage => _mutationError?.message;
+
+  bool get hasErrors => _mutationError != null;
+
+  String? getParamError(String name) {
+    return _mutationError?.extensions?['params']?[name]?['message'];
+  }
+}

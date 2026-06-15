@@ -7,7 +7,7 @@ import '../../graphql/mutations/send_email_confirmation.graphql.dart';
 import '../../graphql/schema.graphql.dart';
 import '../forms/form_container.dart';
 import '../forms/text_input_field.dart';
-import '../snackbar_alert.dart';
+import '../snack_bar_alert.dart';
 import '../scrollable_dialog.dart';
 
 Future<bool?> showEmailConfirmationDialog(BuildContext context, {bool barrierDismissible = true}) {
@@ -33,32 +33,31 @@ class _EmailConfirmationDialogState extends State<_EmailConfirmationDialog> {
   Mutation$SendEmailConfirmation$sendEmailConfirmation? _emailConfirmation;
   String _code = '';
 
-  void _attemptToConfirmEmail() async {
-    if (_formConfirmEmail.currentState?.validate() == true) {
-      _formConfirmEmail.currentState?.save();
-      final result = await context.graphQLClient.mutate$ConfirmEmail(
-        Options$Mutation$ConfirmEmail(
-          variables: Variables$Mutation$ConfirmEmail(
-            confirmationParams: Input$ConfirmationParams(id: _emailConfirmation!.id, code: _code),
-          ),
+  Future<String?> _attemptToConfirmEmail() async {
+    final result = await context.graphQLClient.mutate$ConfirmEmail(
+      Options$Mutation$ConfirmEmail(
+        variables: Variables$Mutation$ConfirmEmail(
+          confirmationParams: Input$ConfirmationParams(id: _emailConfirmation!.id, code: _code),
         ),
-      );
-      final emailConfirmed = result.parsedData?.confirmEmail;
+      ),
+    );
+    final emailConfirmed = result.parsedData?.confirmEmail;
 
-      if (!mounted) {
-        return;
-      }
-
-      if (emailConfirmed != null) {
-        showSnackBarAlert(context, context.l10n.emailConfirmedSuccessfully);
-
-        context.pop(true);
-      } else {
-        final errors = result.exception?.graphqlErrors.first;
-
-        showSnackBarAlert(context, errors?.message ?? context.l10n.failedToConfirmEmail);
-      }
+    if (!mounted) {
+      return null;
     }
+
+    if (emailConfirmed != null) {
+      showSnackBarAlert(context, context.l10n.emailConfirmedSuccessfully);
+
+      context.pop(true);
+    } else {
+      final errors = result.exception?.graphqlErrors.first;
+
+      return errors?.message ?? context.l10n.failedToConfirmEmail;
+    }
+
+    return null;
   }
 
   @override

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../../build_context.dart';
 import '../../graphql/schema.graphql.dart';
 import '../../graphql/fragments/list_fragment.graphql.dart';
 import '../../graphql/mutations/update_list.graphql.dart';
 import '../forms/list_form.dart';
-import '../snackbar_alert.dart';
 
 Future<dynamic> showEditListDialog(BuildContext context, {required Fragment$ListFragment list}) {
   return showDialog(
@@ -27,7 +27,7 @@ class _EditListForm extends StatelessWidget {
 
   final _formEditList = GlobalKey<FormState>();
 
-  Future<Map<String, dynamic>?> _attemptToUpdateList(BuildContext context, String name) async {
+  Future<QueryResult<Mutation$UpdateList>> _attemptToUpdateList(BuildContext context, String name) async {
     final result = await context.graphQLClient.mutate$UpdateList(
       Options$Mutation$UpdateList(
         variables: Variables$Mutation$UpdateList(
@@ -38,21 +38,14 @@ class _EditListForm extends StatelessWidget {
     );
 
     if (!context.mounted) {
-      return null;
+      return result;
     }
 
-    final errors = result.exception?.graphqlErrors.first;
-    final updatedList = result.parsedData?.updateList;
-
-    if (updatedList != null) {
+    if (result.parsedData?.updateList != null) {
       context.pop();
-
-      return null;
-    } else {
-      showSnackBarAlert(context, errors?.message ?? 'Failed to update list');
-
-      return errors?.extensions?['params'];
     }
+
+    return result;
   }
 
   @override

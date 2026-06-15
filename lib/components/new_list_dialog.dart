@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../build_context.dart';
 import '../graphql/schema.graphql.dart';
 import '../graphql/mutations/create_list.graphql.dart';
 import 'forms/list_form.dart';
-import 'snackbar_alert.dart';
 
 Future<dynamic> showNewListDialog(BuildContext context, {required boardId}) {
   return showDialog(
@@ -31,7 +31,7 @@ class _NewListForm extends StatefulWidget {
 class _NewListFormState extends State<_NewListForm> {
   final _formNewList = GlobalKey<FormState>();
 
-  Future<Map<String, dynamic>?> _attemptToCreateList(BuildContext context, String name) async {
+  Future<QueryResult<Mutation$CreateList>> _attemptToCreateList(BuildContext context, String name) async {
     final result = await context.graphQLClient.mutate$CreateList(
       Options$Mutation$CreateList(
         variables: Variables$Mutation$CreateList(
@@ -41,20 +41,14 @@ class _NewListFormState extends State<_NewListForm> {
     );
 
     if (!context.mounted) {
-      return null;
+      return result;
     }
-
-    final errors = result.exception?.graphqlErrors.first;
 
     if (result.parsedData?.createList != null) {
       context.pop();
-
-      return null;
-    } else {
-      showSnackBarAlert(context, errors?.message ?? 'Failed to create list');
-
-      return errors?.extensions?['params'];
     }
+
+    return result;
   }
 
   @override
