@@ -117,10 +117,6 @@ class _EditEmailFormState extends State<_EditEmailForm> {
   }
 
   String? _onEditEmailSubmit() {
-    setState(() {
-      _errorEmail = null;
-    });
-
     showDialog(
       context: context,
       builder: (context) => ScrollableDialog(

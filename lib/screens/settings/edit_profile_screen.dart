@@ -32,14 +32,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String? _errorCountryCode;
 
   Future<String?> _attemptToUpdateProfile() async {
-    setState(() {
-      _errorDisplayName = null;
-      _errorFullName = null;
-      _errorBirthdate = null;
-      _errorLanguage = null;
-      _errorCountryCode = null;
-    });
-
     final result = await context.graphQLClient.mutate$UpdateProfile(
       Options$Mutation$UpdateProfile(
         variables: Variables$Mutation$UpdateProfile(

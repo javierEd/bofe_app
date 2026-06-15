@@ -23,11 +23,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   String? _errorNewPassword;
 
   Future<String?> _attemptToChangePassword() async {
-    setState(() {
-      _errorCurrentPassword = null;
-      _errorNewPassword = null;
-    });
-
     final result = await context.graphQLClient.mutate$UpdatePassword(
       Options$Mutation$UpdatePassword(
         variables: Variables$Mutation$UpdatePassword(

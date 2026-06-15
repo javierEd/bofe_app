@@ -54,12 +54,6 @@ class _CardFormState<T> extends State<CardForm<T>> {
     return FormContainer(
       formKey: widget.formKey,
       onSubmit: () async {
-        setState(() {
-          _errorList = null;
-          _errorContent = null;
-          _errorLabels = null;
-        });
-
         final result = await widget.onSubmit(
           Input$CardParams(listId: _list!.id, content: _content, labelIds: _labels.map((label) => label.id).toList()),
         );
