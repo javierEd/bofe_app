@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../../build_context.dart';
 import '../forms/label_form.dart';
 import '../scrollable_dialog.dart';
-import '../snackbar_alert.dart';
 import '../../graphql/fragments/board_fragment.graphql.dart';
 import '../../graphql/mutations/create_label.graphql.dart';
 import '../../graphql/schema.graphql.dart';
@@ -22,7 +22,11 @@ class _NewLabelDialog extends StatelessWidget {
   final Fragment$BoardFragment board;
   final _formNewLabel = GlobalKey<FormState>();
 
-  Future<Map<String, dynamic>?> _attemptToCreateLabel(BuildContext context, String name, Color colorCode) async {
+  Future<QueryResult<Mutation$CreateLabel>> _attemptToCreateLabel(
+    BuildContext context,
+    String name,
+    Color colorCode,
+  ) async {
     final result = await context.graphQLClient.mutate$CreateLabel(
       Options$Mutation$CreateLabel(
         variables: Variables$Mutation$CreateLabel(
@@ -32,22 +36,17 @@ class _NewLabelDialog extends StatelessWidget {
     );
 
     if (!context.mounted) {
-      return null;
+      return result;
     }
 
-    final errors = result.exception?.graphqlErrors.first;
     final createdLabel = result.parsedData?.createLabel;
 
     if (createdLabel != null) {
       context.pop();
       context.router.goToLabels(board);
-
-      return null;
-    } else {
-      showSnackBarAlert(context, errors?.message ?? 'Failed to create label');
-
-      return errors?.extensions?['params'];
     }
+
+    return result;
   }
 
   @override

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 LoadingOverlay showLoadingOverlay(BuildContext context) {
-  final loadingOverlay = LoadingOverlay._instance();
+  final loadingOverlay = LoadingOverlay();
 
   loadingOverlay.show(context);
 
@@ -10,8 +10,6 @@ LoadingOverlay showLoadingOverlay(BuildContext context) {
 
 class LoadingOverlay {
   LoadingOverlay();
-
-  factory LoadingOverlay._instance() => LoadingOverlay();
 
   final _overlay = OverlayEntry(
     builder: (context) {

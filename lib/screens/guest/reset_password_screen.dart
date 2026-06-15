@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../build_context.dart';
-import '../components.dart';
-import '../components/screen_title.dart';
-import '../components/scrollable_dialog.dart';
-import '../components/snackbar_alert.dart';
-import '../graphql/mutations/confirm_password_reset.graphql.dart';
-import '../graphql/mutations/send_password_reset_confirmation.graphql.dart';
-import '../graphql/schema.graphql.dart';
+import '../../build_context.dart';
+import '../../components.dart';
+import '../../components/screen_title.dart';
+import '../../components/scrollable_dialog.dart';
+import '../../graphql/mutations/confirm_password_reset.graphql.dart';
+import '../../graphql/mutations/send_password_reset_confirmation.graphql.dart';
+import '../../graphql/schema.graphql.dart';
+import '../../graphql_client.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
@@ -22,41 +22,36 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   String _usernameOrEmail = '';
   String? _errorUsernameOrEmail;
 
-  void _attemptToSendConfirmation() async {
+  Future<String?> _attemptToSendConfirmation() async {
     setState(() {
       _errorUsernameOrEmail = null;
     });
 
-    if (_formResetPassword.currentState?.validate() == true) {
-      _formResetPassword.currentState?.save();
-      final result = await context.graphQLClient.mutate$SendPasswordResetConfirmation(
-        Options$Mutation$SendPasswordResetConfirmation(
-          variables: Variables$Mutation$SendPasswordResetConfirmation(
-            params: Input$ResetPasswordParams(usernameOrEmail: _usernameOrEmail),
-          ),
+    final result = await context.graphQLClient.mutate$SendPasswordResetConfirmation(
+      Options$Mutation$SendPasswordResetConfirmation(
+        variables: Variables$Mutation$SendPasswordResetConfirmation(
+          params: Input$ResetPasswordParams(usernameOrEmail: _usernameOrEmail),
         ),
-      );
+      ),
+    );
 
-      if (!mounted) {
-        return;
-      }
-
-      final confirmationSent = result.parsedData?.sendPasswordResetConfirmation;
-
-      if (confirmationSent != null) {
-        _showConfirmationDialog(confirmationSent.id);
-      } else {
-        final errors = result.exception?.graphqlErrors.first;
-
-        showSnackBarAlert(context, errors?.message ?? context.l10n.failedToSendConfirmation);
-
-        setState(() {
-          _errorUsernameOrEmail = errors?.extensions?['params']['usernameOrEmail']?['message'];
-        });
-      }
-    } else {
-      showSnackBarAlert(context, context.l10n.failedToSendConfirmation);
+    if (!mounted) {
+      return null;
     }
+
+    final confirmationSent = result.parsedData?.sendPasswordResetConfirmation;
+
+    if (confirmationSent != null) {
+      _showConfirmationDialog(confirmationSent.id);
+    } else {
+      setState(() {
+        _errorUsernameOrEmail = result.getParamError('usernameOrEmail');
+      });
+
+      return result.errorMessage ?? context.l10n.failedToSendConfirmation;
+    }
+
+    return null;
   }
 
   Future<dynamic> _showConfirmationDialog(String confirmationId) {
@@ -123,32 +118,29 @@ class _PasswordResetConfirmationDialogState extends State<_PasswordResetConfirma
 
   String _code = '';
 
-  void _attemptToConfirmPasswordReset() async {
-    if (_formConfirmPasswordReset.currentState?.validate() == true) {
-      _formConfirmPasswordReset.currentState?.save();
-      final result = await context.graphQLClient.mutate$ConfirmPasswordReset(
-        Options$Mutation$ConfirmPasswordReset(
-          variables: Variables$Mutation$ConfirmPasswordReset(
-            confirmationParams: Input$ConfirmationParams(id: widget.confirmationId, code: _code),
-          ),
+  Future<String?> _attemptToConfirmPasswordReset() async {
+    final result = await context.graphQLClient.mutate$ConfirmPasswordReset(
+      Options$Mutation$ConfirmPasswordReset(
+        variables: Variables$Mutation$ConfirmPasswordReset(
+          confirmationParams: Input$ConfirmationParams(id: widget.confirmationId, code: _code),
         ),
-      );
-      final confirmed = result.parsedData?.confirmPasswordReset;
+      ),
+    );
+    final confirmed = result.parsedData?.confirmPasswordReset;
 
-      if (!mounted) {
-        return;
-      }
-
-      if (confirmed != null) {
-        showSnackBarAlert(context, context.l10n.passwordResetConfirmedSuccessfully);
-
-        context.router.goToLogin();
-      } else {
-        final errors = result.exception?.graphqlErrors.first;
-
-        showSnackBarAlert(context, errors?.message ?? context.l10n.failedToConfirmPasswordReset);
-      }
+    if (!mounted) {
+      return null;
     }
+
+    if (confirmed != null) {
+      showSnackBarAlert(context, context.l10n.passwordResetConfirmedSuccessfully);
+
+      context.router.goToLogin();
+    } else {
+      return result.errorMessage ?? context.l10n.failedToConfirmPasswordReset;
+    }
+
+    return null;
   }
 
   @override

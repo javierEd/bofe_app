@@ -9,7 +9,7 @@ import '../graphql/mutations/update_card_position.graphql.dart';
 import 'card_popup_menu_button.dart';
 import 'label_chip.dart';
 import 'loading_overlay.dart';
-import 'snackbar_alert.dart';
+import 'snack_bar_alert.dart';
 import 'user_item.dart';
 
 class DraggableCardItem extends StatefulWidget {

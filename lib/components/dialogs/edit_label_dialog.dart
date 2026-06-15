@@ -7,7 +7,6 @@ import '../../graphql/fragments/board_fragment.graphql.dart';
 import '../forms/label_form.dart';
 import '../query_result_builder.dart';
 import '../scrollable_dialog.dart';
-import '../snackbar_alert.dart';
 import '../../graphql/fragments/label_fragment.graphql.dart';
 import '../../graphql/queries/label.graphql.dart';
 import '../../graphql/schema.graphql.dart';
@@ -32,7 +31,11 @@ class _EditLabelDialog extends StatelessWidget {
 
   final _formEditLabel = GlobalKey<FormState>();
 
-  Future<Map<String, dynamic>?> _attemptToUpdateLabel(BuildContext context, String name, Color colorCode) async {
+  Future<QueryResult<Mutation$UpdateLabel>> _attemptToUpdateLabel(
+    BuildContext context,
+    String name,
+    Color colorCode,
+  ) async {
     final result = await context.graphQLClient.mutate$UpdateLabel(
       Options$Mutation$UpdateLabel(
         variables: Variables$Mutation$UpdateLabel(
@@ -43,22 +46,15 @@ class _EditLabelDialog extends StatelessWidget {
     );
 
     if (!context.mounted) {
-      return null;
+      return result;
     }
 
-    final errors = result.exception?.graphqlErrors.first;
-    final updatedLabel = result.parsedData?.updateLabel;
-
-    if (updatedLabel != null) {
+    if (result.parsedData?.updateLabel != null) {
       context.pop();
       context.router.goToLabels(board);
-
-      return null;
-    } else {
-      showSnackBarAlert(context, errors?.message ?? 'Failed to update label');
-
-      return errors?.extensions?['params'];
     }
+
+    return result;
   }
 
   @override

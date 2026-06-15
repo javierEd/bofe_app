@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../../graphql/fragments/list_fragment.graphql.dart';
+import '../../graphql_client.dart';
 import 'form_container.dart';
 import 'text_input_field.dart';
 
-class ListForm extends StatefulWidget {
+class ListForm<T> extends StatefulWidget {
   const ListForm({super.key, required this.formKey, this.initialValues, required this.onSubmit});
 
   final GlobalKey<FormState> formKey;
   final Fragment$ListFragment? initialValues;
-  final Future<Map<String, dynamic>?> Function(String name) onSubmit;
+  final Future<QueryResult<T>> Function(String name) onSubmit;
 
   @override
   State<ListForm> createState() => _ListFormState();
 }
 
-class _ListFormState extends State<ListForm> {
+class _ListFormState<T> extends State<ListForm<T>> {
   String _name = '';
   String? _errorName;
 
@@ -32,16 +34,17 @@ class _ListFormState extends State<ListForm> {
     return FormContainer(
       formKey: widget.formKey,
       onSubmit: () async {
-        if (widget.formKey.currentState?.validate() == true) {
-          widget.formKey.currentState?.save();
-          final errors = await widget.onSubmit(_name);
+        final result = await widget.onSubmit(_name);
 
-          if (errors != null) {
-            setState(() {
-              _errorName = errors['name']?['message'];
-            });
-          }
+        if (result.hasErrors) {
+          setState(() {
+            _errorName = result.getParamError('name');
+          });
+
+          return result.errorMessage;
         }
+
+        return null;
       },
       fields: [
         TextInputField(

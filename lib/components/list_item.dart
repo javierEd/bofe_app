@@ -12,7 +12,7 @@ import '../graphql/mutations/delete_list.graphql.dart';
 import '../graphql/mutations/update_list_position.graphql.dart';
 import 'card_item.dart';
 import 'dialogs/edit_list_dialog.dart';
-import 'snackbar_alert.dart';
+import 'snack_bar_alert.dart';
 
 class DraggableListItem extends StatefulWidget {
   const DraggableListItem({

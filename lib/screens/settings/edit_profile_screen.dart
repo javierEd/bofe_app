@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
-import '../build_context.dart';
-import '../components.dart';
-import '../components/screen_title.dart';
-import '../components/snackbar_alert.dart';
-import '../graphql/mutations/update_profile.graphql.dart';
-import '../graphql/queries/current_user_profile.graphql.dart';
-import '../graphql/schema.graphql.dart';
-import 'not_found_screen.dart';
+import '../../build_context.dart';
+import '../../components.dart';
+import '../../components/screen_title.dart';
+import '../../graphql/mutations/update_profile.graphql.dart';
+import '../../graphql/queries/current_user_profile.graphql.dart';
+import '../../graphql/schema.graphql.dart';
+import '../not_found_screen.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -32,7 +31,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String? _errorLanguage;
   String? _errorCountryCode;
 
-  Future<void> _attemptToUpdateProfile() async {
+  Future<String?> _attemptToUpdateProfile() async {
     setState(() {
       _errorDisplayName = null;
       _errorFullName = null;
@@ -41,46 +40,42 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _errorCountryCode = null;
     });
 
-    if (_formEditProfile.currentState?.validate() == true) {
-      _formEditProfile.currentState?.save();
-
-      final result = await context.graphQLClient.mutate$UpdateProfile(
-        Options$Mutation$UpdateProfile(
-          variables: Variables$Mutation$UpdateProfile(
-            params: Input$UpdateProfileParams(
-              displayName: _displayName,
-              fullName: _fullName,
-              birthdate: _birthdate!,
-              languageCode: _languageCode,
-              countryCode: _countryCode!,
-            ),
+    final result = await context.graphQLClient.mutate$UpdateProfile(
+      Options$Mutation$UpdateProfile(
+        variables: Variables$Mutation$UpdateProfile(
+          params: Input$UpdateProfileParams(
+            displayName: _displayName,
+            fullName: _fullName,
+            birthdate: _birthdate!,
+            languageCode: _languageCode,
+            countryCode: _countryCode!,
           ),
         ),
-      );
+      ),
+    );
 
-      if (!mounted) {
-        return;
-      }
-
-      if (result.parsedData?.updateProfile != null) {
-        showSnackBarAlert(context, 'Profile updated successfully');
-        context.pop();
-      } else {
-        final errors = result.exception?.graphqlErrors.first;
-
-        showSnackBarAlert(context, errors?.message ?? 'Failed to update profile');
-
-        setState(() {
-          _errorDisplayName = errors?.extensions?['params']['displayName']?['message'];
-          _errorFullName = errors?.extensions?['params']['fullName']?['message'];
-          _errorBirthdate = errors?.extensions?['params']['birthdate']?['message'];
-          _errorLanguage = errors?.extensions?['params']['languageCode']?['message'];
-          _errorCountryCode = errors?.extensions?['params']['countryCode']?['message'];
-        });
-      }
-    } else {
-      showSnackBarAlert(context, 'Failed to update profile');
+    if (!mounted) {
+      return null;
     }
+
+    if (result.parsedData?.updateProfile != null) {
+      showSnackBarAlert(context, 'Profile updated successfully');
+      context.pop();
+    } else {
+      final errors = result.exception?.graphqlErrors.first;
+
+      setState(() {
+        _errorDisplayName = errors?.extensions?['params']['displayName']?['message'];
+        _errorFullName = errors?.extensions?['params']['fullName']?['message'];
+        _errorBirthdate = errors?.extensions?['params']['birthdate']?['message'];
+        _errorLanguage = errors?.extensions?['params']['languageCode']?['message'];
+        _errorCountryCode = errors?.extensions?['params']['countryCode']?['message'];
+      });
+
+      return errors?.message ?? 'Failed to update profile';
+    }
+
+    return null;
   }
 
   @override

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../build_context.dart';
-import '../components.dart';
-import '../components/screen_title.dart';
-import '../components/snackbar_alert.dart';
-import '../graphql/mutations/update_password.graphql.dart';
-import '../graphql/schema.graphql.dart';
+import '../../build_context.dart';
+import '../../components.dart';
+import '../../components/screen_title.dart';
+import '../../graphql/mutations/update_password.graphql.dart';
+import '../../graphql/schema.graphql.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -23,42 +22,40 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   String? _errorCurrentPassword;
   String? _errorNewPassword;
 
-  Future<void> _attemptToChangePassword() async {
+  Future<String?> _attemptToChangePassword() async {
     setState(() {
       _errorCurrentPassword = null;
       _errorNewPassword = null;
     });
 
-    if (_formChangePassword.currentState?.validate() == true) {
-      _formChangePassword.currentState?.save();
-      final result = await context.graphQLClient.mutate$UpdatePassword(
-        Options$Mutation$UpdatePassword(
-          variables: Variables$Mutation$UpdatePassword(
-            params: Input$UpdatePasswordParams(currentPassword: _currentPassword, newPassword: _newPassword),
-          ),
+    final result = await context.graphQLClient.mutate$UpdatePassword(
+      Options$Mutation$UpdatePassword(
+        variables: Variables$Mutation$UpdatePassword(
+          params: Input$UpdatePasswordParams(currentPassword: _currentPassword, newPassword: _newPassword),
         ),
-      );
+      ),
+    );
 
-      if (!mounted) {
-        return;
-      }
-
-      if (result.parsedData?.updatePassword != null) {
-        showSnackBarAlert(context, 'Password updated successfully');
-        context.pop();
-      } else {
-        final errors = result.exception?.graphqlErrors.first;
-
-        showSnackBarAlert(context, errors?.message ?? 'Failed to update password');
-
-        setState(() {
-          _errorCurrentPassword = errors?.extensions?['params']['currentPassword']?['message'];
-          _errorNewPassword = errors?.extensions?['params']['newPassword']?['message'];
-        });
-      }
-    } else {
-      showSnackBarAlert(context, 'Failed to update password');
+    if (!mounted) {
+      return null;
     }
+
+    if (result.parsedData?.updatePassword != null) {
+      showSnackBarAlert(context, 'Password updated successfully');
+
+      context.pop();
+    } else {
+      final errors = result.exception?.graphqlErrors.first;
+
+      setState(() {
+        _errorCurrentPassword = errors?.extensions?['params']['currentPassword']?['message'];
+        _errorNewPassword = errors?.extensions?['params']['newPassword']?['message'];
+      });
+
+      return errors?.message ?? 'Failed to update password';
+    }
+
+    return null;
   }
 
   @override

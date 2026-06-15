@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../../graphql/fragments/board_fragment.graphql.dart';
 import '../../graphql/schema.graphql.dart';
+import '../../graphql_client.dart';
 import 'form_container.dart';
 import 'text_input_field.dart';
 import '../dropdown_field.dart';
 
-class BoardForm extends StatefulWidget {
+class BoardForm<T> extends StatefulWidget {
   const BoardForm({super.key, required this.formKey, this.initialValues, required this.onSubmit});
 
   final GlobalKey<FormState> formKey;
   final Fragment$BoardFragment? initialValues;
-  final Future<Map<String, dynamic>?> Function(Input$BoardParams params) onSubmit;
+  final Future<QueryResult<T>> Function(Input$BoardParams params) onSubmit;
 
   @override
   State<BoardForm> createState() => _BoardFormState();
 }
 
-class _BoardFormState extends State<BoardForm> {
+class _BoardFormState<T> extends State<BoardForm<T>> {
   final _slugController = TextEditingController();
 
   String _name = '';
@@ -42,24 +44,25 @@ class _BoardFormState extends State<BoardForm> {
     return FormContainer(
       formKey: widget.formKey,
       onSubmit: () async {
-        if (widget.formKey.currentState?.validate() == true) {
-          widget.formKey.currentState?.save();
-          final errors = await widget.onSubmit(
-            Input$BoardParams(
-              name: _name,
-              slug: _slugController.text,
-              description: _description,
-              visibility: _visibility,
-            ),
-          );
+        final result = await widget.onSubmit(
+          Input$BoardParams(
+            name: _name,
+            slug: _slugController.text,
+            description: _description,
+            visibility: _visibility,
+          ),
+        );
 
-          if (errors != null) {
-            setState(() {
-              _errorName = errors['name']?['message'];
-              _errorSlug = errors['slug']?['message'];
-            });
-          }
+        if (result.hasErrors) {
+          setState(() {
+            _errorName = result.getParamError('name');
+            _errorSlug = result.getParamError('slug');
+          });
+
+          return result.errorMessage;
         }
+
+        return null;
       },
       fields: [
         TextInputField(

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../build_context.dart';
 import '../components.dart';
 import '../components/screen_title.dart';
-import '../components/snackbar_alert.dart';
 import '../graphql/schema.graphql.dart';
 import '../graphql/mutations/create_board.graphql.dart';
 
@@ -12,29 +12,27 @@ class NewBoardScreen extends StatelessWidget {
 
   final _formNewBoard = GlobalKey<FormState>();
 
-  Future<Map<String, dynamic>?> _attemptToCreateBoard(BuildContext context, Input$BoardParams params) async {
+  Future<QueryResult<Mutation$CreateBoard>> _attemptToCreateBoard(
+    BuildContext context,
+    Input$BoardParams params,
+  ) async {
     final result = await context.graphQLClient.mutate$CreateBoard(
       Options$Mutation$CreateBoard(variables: Variables$Mutation$CreateBoard(params: params)),
     );
 
     if (!context.mounted) {
-      return null;
+      return result;
     }
 
-    final errors = result.exception?.graphqlErrors.first;
     final createdBoard = result.parsedData?.createBoard;
 
     if (createdBoard != null) {
       showSnackBarAlert(context, 'Board created successfully');
 
       context.router.goToBoard(createdBoard);
-
-      return null;
-    } else {
-      showSnackBarAlert(context, errors?.message ?? 'Failed to create board');
-
-      return errors?.extensions?['params'];
     }
+
+    return result;
   }
 
   @override

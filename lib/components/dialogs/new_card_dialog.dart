@@ -1,11 +1,11 @@
 import 'package:bofe/graphql/fragments/list_fragment.graphql.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../../build_context.dart';
 import '../forms/card_form.dart';
 import '../scrollable_dialog.dart';
-import '../snackbar_alert.dart';
 import '../../graphql/fragments/board_fragment.graphql.dart';
 import '../../graphql/schema.graphql.dart';
 import '../../graphql/mutations/create_card.graphql.dart';
@@ -28,27 +28,22 @@ class _NewCardDialog extends StatelessWidget {
   final Fragment$ListFragment list;
   final _formNewCard = GlobalKey<FormState>();
 
-  Future<Map<String, dynamic>?> _attemptToCreateCard(BuildContext context, Input$CardParams params) async {
+  Future<QueryResult<Mutation$CreateCard>> _attemptToCreateCard(BuildContext context, Input$CardParams params) async {
     final result = await context.graphQLClient.mutate$CreateCard(
       Options$Mutation$CreateCard(variables: Variables$Mutation$CreateCard(params: params)),
     );
 
     if (!context.mounted) {
-      return null;
+      return result;
     }
 
-    final errors = result.exception?.graphqlErrors.first;
     final createdCard = result.parsedData?.createCard;
 
     if (createdCard != null) {
       context.pop();
-
-      return null;
-    } else {
-      showSnackBarAlert(context, errors?.message ?? 'Failed to create card');
-
-      return errors?.extensions?['params'];
     }
+
+    return result;
   }
 
   @override

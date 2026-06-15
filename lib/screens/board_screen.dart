@@ -8,7 +8,6 @@ import '../components/list_item.dart';
 import '../components/loading_overlay.dart';
 import '../components/new_list_dialog.dart';
 import '../components/screen_title.dart';
-import '../components/snackbar_alert.dart';
 import '../graphql/fragments/board_fragment.graphql.dart';
 import '../graphql/mutations/delete_board.graphql.dart';
 import '../graphql/subscriptions/board.graphql.dart';

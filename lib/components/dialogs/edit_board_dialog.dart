@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../../build_context.dart';
 import '../../graphql/schema.graphql.dart';
 import '../../graphql/fragments/board_fragment.graphql.dart';
 import '../../graphql/mutations/update_board.graphql.dart';
 import '../forms/board_form.dart';
-import '../snackbar_alert.dart';
+import '../snack_bar_alert.dart';
 
 Future<dynamic> showEditBoardDialog(BuildContext context, {required Fragment$BoardFragment board}) {
   return showDialog(
@@ -27,7 +28,10 @@ class _EditBoardForm extends StatelessWidget {
 
   final _formEditBoard = GlobalKey<FormState>();
 
-  Future<Map<String, dynamic>?> _attemptToUpdateBoard(BuildContext context, Input$BoardParams params) async {
+  Future<QueryResult<Mutation$UpdateBoard>> _attemptToUpdateBoard(
+    BuildContext context,
+    Input$BoardParams params,
+  ) async {
     final result = await context.graphQLClient.mutate$UpdateBoard(
       Options$Mutation$UpdateBoard(
         variables: Variables$Mutation$UpdateBoard(id: board.id, params: params),
@@ -35,10 +39,9 @@ class _EditBoardForm extends StatelessWidget {
     );
 
     if (!context.mounted) {
-      return null;
+      return result;
     }
 
-    final errors = result.exception?.graphqlErrors.first;
     final updatedBoard = result.parsedData?.updateBoard;
 
     if (updatedBoard != null) {
@@ -50,13 +53,9 @@ class _EditBoardForm extends StatelessWidget {
         context.pop();
         context.router.goToBoard(updatedBoard);
       }
-
-      return null;
-    } else {
-      showSnackBarAlert(context, errors?.message ?? 'Failed to update board');
-
-      return errors?.extensions?['params'];
     }
+
+    return result;
   }
 
   @override

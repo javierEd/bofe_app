@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../build_context.dart';
-import '../components.dart';
-import '../components/screen_title.dart';
-import '../components/snackbar_alert.dart';
-import '../session_manager.dart';
+import '../../build_context.dart';
+import '../../components.dart';
+import '../../components/screen_title.dart';
+import '../../graphql_client.dart';
+import '../../session_manager.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -21,37 +21,28 @@ class _LoginScreenState extends State<LoginScreen> {
   String? _errorUsernameOrEmail;
   String? _errorPassword;
 
-  void _attemptToLogin() async {
+  Future<String?> _attemptToLogin() async {
     setState(() {
       _errorUsernameOrEmail = null;
       _errorPassword = null;
     });
 
-    if (_formLogin.currentState?.validate() == true) {
-      _formLogin.currentState?.save();
-      final result = await SessionManager.attemptToLogin(
-        context,
-        usernameOrEmail: _usernameOrEmail,
-        password: _password,
-      );
+    final result = await SessionManager.attemptToLogin(context, usernameOrEmail: _usernameOrEmail, password: _password);
 
-      if (!mounted) {
-        return;
-      }
-
-      final errors = result.exception?.graphqlErrors.first;
-
-      if (errors != null) {
-        showSnackBarAlert(context, errors.message);
-
-        setState(() {
-          _errorUsernameOrEmail = errors.extensions?['params']['usernameOrEmail']?['message'];
-          _errorPassword = errors.extensions?['params']['password']?['message'];
-        });
-      }
-    } else {
-      showSnackBarAlert(context, 'Failed to create session');
+    if (!mounted) {
+      return null;
     }
+
+    if (result.hasErrors) {
+      setState(() {
+        _errorUsernameOrEmail = result.getParamError('usernameOrEmail');
+        _errorPassword = result.getParamError('password');
+      });
+
+      return result.errorMessage;
+    }
+
+    return null;
   }
 
   @override

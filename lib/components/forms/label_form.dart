@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../../constants.dart';
 import '../../graphql/fragments/label_fragment.graphql.dart';
+import '../../graphql_client.dart';
 import 'form_container.dart';
 import 'text_input_field.dart';
 
-class LabelForm extends StatefulWidget {
+class LabelForm<T> extends StatefulWidget {
   const LabelForm({super.key, required this.formKey, this.initialValues, required this.onSubmit});
 
   final GlobalKey<FormState> formKey;
   final Fragment$LabelFragment? initialValues;
-  final Future<Map<String, dynamic>?> Function(String name, Color colorCode) onSubmit;
+  final Future<QueryResult<T>> Function(String name, Color colorCode) onSubmit;
 
   @override
   State<LabelForm> createState() => _LabelFormState();
 }
 
-class _LabelFormState extends State<LabelForm> {
+class _LabelFormState<T> extends State<LabelForm<T>> {
   String _name = '';
   Color _colorCode = labelColors.first.$1;
   String? _errorName;
@@ -39,16 +41,17 @@ class _LabelFormState extends State<LabelForm> {
           _errorName = null;
         });
 
-        if (widget.formKey.currentState?.validate() == true) {
-          widget.formKey.currentState?.save();
-          final errors = await widget.onSubmit(_name, _colorCode);
+        final result = await widget.onSubmit(_name, _colorCode);
 
-          if (errors != null) {
-            setState(() {
-              _errorName = errors['name']?['message'];
-            });
-          }
+        if (result.hasErrors) {
+          setState(() {
+            _errorName = result.getParamError('name');
+          });
+
+          return result.errorMessage;
         }
+
+        return null;
       },
       fields: [
         TextInputField(

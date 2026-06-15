@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
+import '../../graphql_client.dart';
 import '../label_chip.dart';
 import '../../graphql/fragments/label_fragment.graphql.dart';
 import '../../graphql/fragments/list_fragment.graphql.dart';
@@ -11,7 +13,7 @@ import 'form_container.dart';
 import 'select_field.dart';
 import 'text_input_field.dart';
 
-class CardForm extends StatefulWidget {
+class CardForm<T> extends StatefulWidget {
   const CardForm({
     super.key,
     required this.formKey,
@@ -25,13 +27,13 @@ class CardForm extends StatefulWidget {
   final String boardId;
   final Fragment$ListFragment? initialList;
   final Fragment$CardScreenFragment? initialValues;
-  final Future<Map<String, dynamic>?> Function(Input$CardParams params) onSubmit;
+  final Future<QueryResult<T>> Function(Input$CardParams params) onSubmit;
 
   @override
   State<CardForm> createState() => _CardFormState();
 }
 
-class _CardFormState extends State<CardForm> {
+class _CardFormState<T> extends State<CardForm<T>> {
   String _content = '';
   Fragment$ListFragment? _list;
   List<Fragment$LabelFragment> _labels = [];
@@ -58,20 +60,21 @@ class _CardFormState extends State<CardForm> {
           _errorLabels = null;
         });
 
-        if (widget.formKey.currentState?.validate() == true) {
-          widget.formKey.currentState?.save();
-          final errors = await widget.onSubmit(
-            Input$CardParams(listId: _list!.id, content: _content, labelIds: _labels.map((label) => label.id).toList()),
-          );
+        final result = await widget.onSubmit(
+          Input$CardParams(listId: _list!.id, content: _content, labelIds: _labels.map((label) => label.id).toList()),
+        );
 
-          if (errors != null) {
-            setState(() {
-              _errorList = errors['listId']?['message'];
-              _errorContent = errors['content']?['message'];
-              _errorLabels = errors['labelIds']?['message'];
-            });
-          }
+        if (result.hasErrors) {
+          setState(() {
+            _errorList = result.getParamError('listId');
+            _errorContent = result.getParamError('content');
+            _errorLabels = result.getParamError('labelIds');
+          });
+
+          return result.errorMessage;
         }
+
+        return null;
       },
       fields: [
         Query$BoardLists$Widget(

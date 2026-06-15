@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../build_context.dart';
-import '../components.dart';
-import '../components/label_chip.dart';
-import '../components/loading_overlay.dart';
-import '../components/scrollable_dialog.dart';
-import '../components/snackbar_alert.dart';
-import '../graphql/fragments/board_fragment.graphql.dart';
-import '../graphql/mutations/delete_label.graphql.dart';
-import '../graphql/queries/board_labels.graphql.dart';
+import '../../build_context.dart';
+import '../../components.dart';
+import '../../components/label_chip.dart';
+import '../../components/loading_overlay.dart';
+import '../../components/scrollable_dialog.dart';
+import '../../graphql/fragments/board_fragment.graphql.dart';
+import '../../graphql/mutations/delete_label.graphql.dart';
+import '../../graphql/queries/board_labels.graphql.dart';
 
 class LabelsDialogScreen extends StatefulWidget {
   const LabelsDialogScreen({super.key, required this.board});
