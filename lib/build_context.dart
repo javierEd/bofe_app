@@ -7,6 +7,8 @@ import 'router.dart';
 extension BuildContextExt on BuildContext {
   GraphQLClient get graphQLClient => GraphQLProvider.of(this).value;
 
+  Locale get locale => Localizations.localeOf(this);
+
   AppLocalizations get l10n => AppLocalizations.of(this)!;
 
   AppRouter get router => AppRouter(this);

@@ -96,9 +96,12 @@ class _DraggableCardItemState extends State<DraggableCardItem> {
 }
 
 class CardItem extends StatelessWidget {
-  const CardItem({super.key, required this.card});
+  const CardItem({super.key, required this.card, this.width = 296, this.showPopupMenu = true, this.onTap});
 
   final Fragment$CardItemFragment card;
+  final bool showPopupMenu;
+  final double width;
+  final Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -106,9 +109,9 @@ class CardItem extends StatelessWidget {
 
     return InkWell(
       borderRadius: BorderRadius.circular(16),
-      onTap: () => context.router.pushToCard(card),
+      onTap: onTap ?? () => context.router.pushToCard(card),
       child: Container(
-        width: 296,
+        width: width,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),
@@ -123,7 +126,7 @@ class CardItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 UserItem(user: card.user),
-                CardPopupMenuButton(card: card, iconSize: 20),
+                if (showPopupMenu && card.isEditable) CardPopupMenuButton(card: card, iconSize: 20),
               ],
             ),
             Text(card.content, maxLines: 3, overflow: TextOverflow.fade, style: TextStyle(fontSize: 16)),

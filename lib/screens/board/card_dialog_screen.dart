@@ -39,14 +39,7 @@ class CardDialogScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      InkWell(
-                        borderRadius: BorderRadius.horizontal(left: Radius.circular(16)),
-                        onTap: () => context.router.pushToUser(card.user),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 2),
-                          child: UserItem(user: card.user),
-                        ),
-                      ),
+                      UserItem(user: card.user, onTap: () => context.router.pushToUser(card.user)),
                       CardPopupMenuButton(
                         card: card,
                         beforeEdit: () {

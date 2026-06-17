@@ -145,14 +145,7 @@ class _MembersDialogScreenState extends State<MembersDialogScreen> {
                             (member) => Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                InkWell(
-                                  borderRadius: BorderRadius.horizontal(left: Radius.circular(16)),
-                                  onTap: () => context.router.pushToUser(member.user),
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 2),
-                                    child: UserItem(user: member.user),
-                                  ),
-                                ),
+                                UserItem(user: member.user, onTap: () => context.router.pushToUser(member.user)),
                                 if (member.isAdmin || member.isEditable)
                                   Row(
                                     spacing: 8,

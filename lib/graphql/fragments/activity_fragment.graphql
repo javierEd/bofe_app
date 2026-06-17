@@ -1,0 +1,20 @@
+fragment ActivityFragment on ActivityObject {
+    id
+    user {
+        ...UserFragment
+    }
+    board {
+        ...BoardFragment
+    }
+    action
+    boardData {
+        ...BoardFragment
+    }
+    cardData {
+        ...CardItemFragment
+    }
+    listData {
+        ...ListFragment
+    }
+    createdAt
+}

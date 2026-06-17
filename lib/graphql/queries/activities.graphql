@@ -1,0 +1,11 @@
+query Activities($after: UUID, $first: Int) {
+    activities(after: $after, first: $first) {
+        nodes {
+            ...ActivityFragment
+        }
+        pageInfo {
+            endCursor
+            hasNextPage
+        }
+    }
+}
