@@ -17,20 +17,39 @@ class UserAvatarImage extends CircleAvatar {
       );
 }
 
-class UserItem extends Row {
-  UserItem({super.key, required Fragment$UserFragment user})
-    : super(
-        spacing: 6,
-        children: [
-          UserAvatarImage(size: 16, user: user),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(user.displayName, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-              Text('@${user.username}', style: TextStyle(fontSize: 12)),
-            ],
-          ),
-        ],
+class UserItem extends StatelessWidget {
+  const UserItem({super.key, required this.user, this.onTap});
+
+  final Fragment$UserFragment user;
+  final Function()? onTap;
+
+  Row _getUserItem() {
+    return Row(
+      spacing: 6,
+      children: [
+        UserAvatarImage(size: 16, user: user),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(user.displayName, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+            Text('@${user.username}', style: TextStyle(fontSize: 12)),
+          ],
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (onTap != null) {
+      return InkWell(
+        borderRadius: BorderRadius.horizontal(left: Radius.circular(16)),
+        onTap: onTap,
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 2), child: _getUserItem()),
       );
+    }
+
+    return _getUserItem();
+  }
 }

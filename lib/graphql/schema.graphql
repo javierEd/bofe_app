@@ -1,6 +1,61 @@
+enum ActivityAction {
+	CREATE_BOARD
+	UPDATE_BOARD
+	CREATE_LIST
+	UPDATE_LIST
+	UPDATE_LIST_POSITION
+	DELETE_LIST
+	CREATE_CARD
+	UPDATE_CARD
+	UPDATE_CARD_LIST
+	UPDATE_CARD_POSITION
+	DELETE_CARD
+}
+
+type ActivityObject {
+	id: ID!
+	user: UserObject!
+	board: BoardObject!
+	action: ActivityAction!
+	boardData: BoardObject
+	cardData: CardObject
+	listData: ListObject
+	createdAt: DateTime!
+}
+
+type ActivityObjectConnection {
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+	"""
+	A list of edges.
+	"""
+	edges: [ActivityObjectEdge!]!
+	"""
+	A list of nodes.
+	"""
+	nodes: [ActivityObject!]!
+}
+
+"""
+An edge in a connection.
+"""
+type ActivityObjectEdge {
+	"""
+	The item at the end of the edge
+	"""
+	node: ActivityObject!
+	"""
+	A cursor for use in pagination
+	"""
+	cursor: String!
+}
+
 type BoardObject {
 	id: ID!
 	user: UserObject!
+	lastActivity: ActivityObject
 	name: String!
 	slug: String!
 	description: String!
@@ -598,6 +653,7 @@ type PageInfo {
 }
 
 type QueryRoot {
+	activities(after: UUID, first: Int): ActivityObjectConnection!
 	board(id: ID!): BoardObject
 	boardBySlug(slug: String!): BoardObject @deprecated
 	boards(after: UUID, first: Int): BoardObjectConnection!
@@ -630,6 +686,7 @@ input SessionParams {
 
 type SubscriptionRoot {
 	board(id: ID!): BoardObject
+	boardActivities(boardId: ID!, afterId: ID): [ActivityObject!]!
 }
 
 """
