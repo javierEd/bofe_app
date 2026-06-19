@@ -22,7 +22,7 @@ jobs:
             name: android-app
         runs-on: ubuntu-24.04
         steps:
-            - uses: actions/checkout@v6
+            - uses: actions/checkout@v7
             - uses: ./.github/actions/setup-flutter
             - name: Decode keystore file
               run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
@@ -58,7 +58,7 @@ jobs:
             name: android-app
         runs-on: ubuntu-24.04
         steps:
-            - uses: actions/checkout@v6
+            - uses: actions/checkout@v7
             - uses: ./.github/actions/setup-flutter
             - name: Decode keystore file
               run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
@@ -85,7 +85,7 @@ jobs:
             name: web-app
         runs-on: ubuntu-24.04
         steps:
-            - uses: actions/checkout@v6
+            - uses: actions/checkout@v7
             - uses: actions/configure-pages@v6
             - uses: ./.github/actions/setup-flutter
             - run: |
@@ -100,7 +100,7 @@ jobs:
         needs: build_android_apk
         runs-on: ubuntu-24.04
         steps:
-            - uses: actions/checkout@v6
+            - uses: actions/checkout@v7
             - uses: actions/download-artifact@v8
               with:
                   name: bofe_android_apk_build
@@ -115,7 +115,7 @@ jobs:
         needs: build_android_aab
         runs-on: ubuntu-24.04
         steps:
-            - uses: actions/checkout@v6
+            - uses: actions/checkout@v7
             - uses: actions/download-artifact@v8
               with:
                   name: bofe_android_aab_build
