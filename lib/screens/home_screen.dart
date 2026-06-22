@@ -13,7 +13,7 @@ import '../graphql/queries/activities.graphql.dart';
 import '../graphql/queries/boards.graphql.dart';
 import '../graphql/queries/current_user_boards.graphql.dart';
 import '../graphql/schema.graphql.dart';
-import '../session_manager.dart';
+import '../sessions_manager.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -25,7 +25,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with RouteAware {
-  int currentIndex = SessionManager.hasToken ? 0 : 1;
+  int currentIndex = SessionsManager.hasToken ? 0 : 1;
 
   @override
   void initState() {
@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
         appBar: AppBar(
           title: Row(spacing: 12, children: [Image.asset('assets/icon.png', height: 32), Text('Bofe')]),
           actions: [
-            if (SessionManager.hasToken)
+            if (SessionsManager.hasToken)
               Padding(
                 padding: EdgeInsets.only(right: 12),
                 child: IconButton.outlined(
@@ -388,7 +388,7 @@ class _HomeState extends State<_Home> {
 
   @override
   Widget build(BuildContext context) {
-    if (SessionManager.hasToken) {
+    if (SessionsManager.hasToken) {
       return InfiniteScrollView(
         hasMore: _hasNextPage,
         onScrollAtBottom: _onScrollAtBottom,

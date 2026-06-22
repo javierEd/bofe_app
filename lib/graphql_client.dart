@@ -3,15 +3,15 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'config.dart';
 import 'constants.dart';
 import 'preferences.dart';
-import 'session_manager.dart';
+import 'sessions_manager.dart';
 
-GraphQLClient getGraphQLClient() {
-  final httpLink = AuthLink(getToken: () => SessionManager.bearer)
+GraphQLClient getGraphQLClient({bool includeToken = true}) {
+  final httpLink = AuthLink(getToken: () => includeToken ? SessionsManager.bearer : null)
       .concat(
         ErrorLink(
           onException: (request, forward, exception) {
             if (exception is ServerException && exception.statusCode == 401) {
-              SessionManager.onUnauthorized();
+              SessionsManager.onUnauthorized();
 
               throw exception;
             }
@@ -36,7 +36,10 @@ GraphQLClient getGraphQLClient() {
       autoReconnect: true,
       inactivityTimeout: const Duration(minutes: 1),
       delayBetweenReconnectionAttempts: const Duration(seconds: 10),
-      initialPayload: () => {'app-token': Config.appToken, 'session-token': SessionManager.token},
+      initialPayload: () => {
+        'app-token': Config.appToken,
+        'session-token': includeToken ? SessionsManager.token : null,
+      },
     ),
   );
 

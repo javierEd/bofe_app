@@ -4,7 +4,7 @@ import '../../build_context.dart';
 import '../../components.dart';
 import '../../components/screen_title.dart';
 import '../../graphql_client.dart';
-import '../../session_manager.dart';
+import '../../sessions_manager.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -22,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String? _errorPassword;
 
   Future<String?> _attemptToLogin() async {
-    final result = await SessionManager.attemptToLogin(context, usernameOrEmail: _usernameOrEmail, password: _password);
+    final result = await SessionsManager.attemptToLogin(usernameOrEmail: _usernameOrEmail, password: _password);
 
     if (!mounted) {
       return null;

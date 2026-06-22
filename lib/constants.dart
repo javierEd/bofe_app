@@ -11,9 +11,11 @@ const headerXAppToken = 'X-App-Token';
 const headerAcceptLanguage = 'Accept-Language';
 
 /// Path parameters & Map keys
+const keyCurrentUserId = 'current_user_id';
 const keyId = 'id';
 const keyLanguage = 'language';
-const keySession = 'session';
+const keyList = 'list';
+const keySessions = 'sessions';
 const keySlug = 'slug';
 const keyThemeMode = 'theme_mode';
 const keyUsername = 'username';
@@ -21,8 +23,6 @@ const keyUsername = 'username';
 /// Route names
 const routeNameBoard = 'board';
 const routeNameCard = 'card';
-const routeNameChangePassword = 'change_password';
-const routeNameEditProfile = 'edit_profile';
 const routeNameHome = 'home';
 const routeNameLabels = 'labels';
 const routeNameLogin = 'login';
@@ -31,7 +31,10 @@ const routeNameNewBoard = 'new_board';
 const routeNameRegister = 'register';
 const routeNameResetPassword = 'reset_password';
 const routeNameSettings = 'settings';
+const routeNameSettingsChangePassword = 'change_password';
+const routeNameSettingsEditProfile = 'edit_profile';
 const routeNameSettingsEmail = 'settings_email';
+const routeNameSettingsSwitchAccount = 'switch_account';
 const routeNameUser = 'show_user';
 
 const labelColors = [

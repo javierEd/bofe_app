@@ -27,7 +27,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       _errorUsernameOrEmail = null;
     });
 
-    final result = await context.graphQLClient.mutate$SendPasswordResetConfirmation(
+    final graphQLClient = getGraphQLClient(includeToken: false);
+    final result = await graphQLClient.mutate$SendPasswordResetConfirmation(
       Options$Mutation$SendPasswordResetConfirmation(
         variables: Variables$Mutation$SendPasswordResetConfirmation(
           params: Input$ResetPasswordParams(usernameOrEmail: _usernameOrEmail),

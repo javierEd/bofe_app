@@ -8,14 +8,14 @@ import '../build_context.dart';
 import '../components/loading_overlay.dart';
 import '../components/screen_title.dart';
 import '../preferences.dart';
-import '../session_manager.dart';
+import '../sessions_manager.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   Future<void> _attemptToLogout(BuildContext context) async {
     final loadingOverlay = showLoadingOverlay(context);
-    final result = await SessionManager.attemptToLogout(context);
+    final result = await SessionsManager.attemptToLogout(context);
 
     if (context.mounted && result.parsedData?.finishSession != true) {
       final errors = result.exception?.graphqlErrors.first;
@@ -125,12 +125,12 @@ class SettingsScreen extends StatelessWidget {
             ),
             SettingsSection(
               title: Text(context.l10n.account),
-              tiles: SessionManager.hasToken
+              tiles: SessionsManager.hasToken
                   ? [
                       SettingsTile.navigation(
                         leading: const Icon(Icons.person_rounded),
                         title: Text(context.l10n.editProfile),
-                        onPressed: (context) => context.router.goToEditProfile(),
+                        onPressed: (context) => context.router.goToSettingsEditProfile(),
                       ),
                       SettingsTile.navigation(
                         leading: const Icon(Icons.email_rounded),
@@ -140,7 +140,12 @@ class SettingsScreen extends StatelessWidget {
                       SettingsTile.navigation(
                         leading: const Icon(Icons.password_rounded),
                         title: Text(context.l10n.changePassword),
-                        onPressed: (context) => context.router.goToChangePassword(),
+                        onPressed: (context) => context.router.goToSettingsChangePassword(),
+                      ),
+                      SettingsTile.navigation(
+                        leading: const Icon(Icons.switch_account_rounded),
+                        title: Text(context.l10n.switchAccount),
+                        onPressed: (context) => context.router.goToSettingsSwitchAccount(),
                       ),
                       SettingsTile(
                         leading: const Icon(Icons.logout_rounded),

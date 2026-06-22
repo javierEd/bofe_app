@@ -672,6 +672,7 @@ input ResetPasswordParams {
 
 type SessionObject {
 	id: ID!
+	user: UserObject!
 	token: String!
 	expiresAt: DateTime!
 	refreshedAt: DateTime

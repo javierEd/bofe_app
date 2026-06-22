@@ -9,22 +9,22 @@ import 'graphql_client.dart';
 import 'l10n/app_localizations.g.dart';
 import 'router.dart';
 import 'screens/home_screen.dart';
-import 'session_manager.dart';
+import 'sessions_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initHiveForFlutter();
   await Preferences.init();
-  await SessionManager.init();
+  await SessionsManager.init();
 
   GoRouter.optionURLReflectsImperativeAPIs = true;
 
   final graphQLClient = getGraphQLClient();
   final goRouter = getGoRouter();
 
-  await SessionManager.attemptToRefresh(graphQLClient);
+  await SessionsManager.attemptToRefresh();
 
-  final currentUser = await SessionManager.getUser(graphQLClient);
+  final currentUser = await SessionsManager.getUser();
 
   if (currentUser != null) {
     HomeScreen.showEmailConfirmationDialog = !currentUser.emailIsConfirmed;

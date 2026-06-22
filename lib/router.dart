@@ -11,6 +11,7 @@ import 'screens/board/card_dialog_screen.dart';
 import 'screens/board/labels_dialog_screen.dart';
 import 'screens/board/members_dialog_screen.dart';
 import 'screens/board_screen.dart';
+import 'screens/settings/switch_account_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/new_board_screen.dart';
 import 'screens/not_found_screen.dart';
@@ -22,21 +23,14 @@ import 'screens/settings/change_password_screen.dart';
 import 'screens/settings/edit_profile_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/user_screen.dart';
-import 'session_manager.dart';
+import 'sessions_manager.dart';
 import 'value_keys.dart';
 
 final routeObserver = RouteObserver<ModalRoute<void>>();
 
 String? _requireToken(BuildContext context, GoRouterState state) {
-  if (!SessionManager.hasToken) {
+  if (!SessionsManager.hasToken) {
     return '/login';
-  }
-  return null;
-}
-
-String? _requireNoToken(BuildContext context, GoRouterState state) {
-  if (SessionManager.hasToken) {
-    return '/';
   }
   return null;
 }
@@ -57,19 +51,14 @@ GoRouter getGoRouter() => GoRouter(
           redirect: _requireToken,
           builder: (context, state) => NewBoardScreen(),
         ),
-        GoRoute(
-          name: routeNameLogin,
-          path: 'login',
-          redirect: _requireNoToken,
-          builder: (context, state) => LoginScreen(),
-        ),
+        GoRoute(name: routeNameLogin, path: 'login', builder: (context, state) => LoginScreen()),
         GoRoute(
           name: routeNameSettings,
           path: 'settings',
           builder: (context, state) => SettingsScreen(),
           routes: [
             GoRoute(
-              name: routeNameEditProfile,
+              name: routeNameSettingsEditProfile,
               path: 'edit-profile',
               redirect: _requireToken,
               builder: (context, state) => EditProfileScreen(),
@@ -81,23 +70,22 @@ GoRouter getGoRouter() => GoRouter(
               builder: (context, state) => EmailScreen(),
             ),
             GoRoute(
-              name: routeNameChangePassword,
+              name: routeNameSettingsChangePassword,
               path: 'change-password',
               redirect: _requireToken,
               builder: (context, state) => ChangePasswordScreen(),
             ),
+            GoRoute(
+              name: routeNameSettingsSwitchAccount,
+              path: 'switch-account',
+              builder: (context, state) => SwitchAccountScreen(),
+            ),
           ],
         ),
-        GoRoute(
-          name: routeNameRegister,
-          path: 'register',
-          redirect: _requireNoToken,
-          builder: (context, state) => RegisterScreen(),
-        ),
+        GoRoute(name: routeNameRegister, path: 'register', builder: (context, state) => RegisterScreen()),
         GoRoute(
           name: routeNameResetPassword,
           path: 'reset-password',
-          redirect: _requireNoToken,
           builder: (context, state) => ResetPasswordScreen(),
         ),
         GoRoute(
@@ -167,11 +155,15 @@ class AppRouter {
   void goToBoard(Fragment$BoardFragment board) =>
       context.goNamed(routeNameBoard, pathParameters: {keyUsername: board.user.username, keySlug: board.slug});
 
-  void goToChangePassword() => context.goNamed(routeNameChangePassword);
+  void goToSettings() => context.goNamed(routeNameSettings);
 
-  void goToEditProfile() => context.goNamed(routeNameEditProfile);
+  void goToSettingsChangePassword() => context.goNamed(routeNameSettingsChangePassword);
+
+  void goToSettingsEditProfile() => context.goNamed(routeNameSettingsEditProfile);
 
   void goToSettingsEmail() => context.goNamed(routeNameSettingsEmail);
+
+  void goToSettingsSwitchAccount() => context.goNamed(routeNameSettingsSwitchAccount);
 
   void goToHome() => context.goNamed(routeNameHome);
 
