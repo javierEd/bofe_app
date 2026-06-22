@@ -9,11 +9,12 @@ import 'loading_overlay.dart';
 import 'snack_bar_alert.dart';
 
 class CardPopupMenuButton extends StatelessWidget {
-  const CardPopupMenuButton({super.key, required this.card, this.iconSize, this.beforeEdit});
+  const CardPopupMenuButton({super.key, required this.card, this.iconSize, this.beforeEdit, this.afterDelete});
 
   final Fragment$CardFragment card;
   final double? iconSize;
   final Function()? beforeEdit;
+  final Function()? afterDelete;
 
   Future<void> _attemptToDeleteCard(BuildContext context) async {
     final loadingOverlay = showLoadingOverlay(context);
@@ -54,9 +55,10 @@ class CardPopupMenuButton extends StatelessWidget {
                     OutlinedButton(child: const Text('Cancel'), onPressed: () => context.pop()),
                     FilledButton(
                       child: const Text('Confirm'),
-                      onPressed: () {
+                      onPressed: () async {
                         context.pop();
-                        _attemptToDeleteCard(context);
+                        await _attemptToDeleteCard(context);
+                        afterDelete?.call();
                       },
                     ),
                   ],

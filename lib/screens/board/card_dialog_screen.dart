@@ -45,6 +45,9 @@ class CardDialogScreen extends StatelessWidget {
                         beforeEdit: () {
                           context.pop();
                         },
+                        afterDelete: () {
+                          context.pop();
+                        },
                       ),
                     ],
                   ),
