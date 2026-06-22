@@ -36,7 +36,10 @@ class AccountButton extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: OutlinedButton.icon(
-                          onPressed: () => context.router.pushToUser(user),
+                          onPressed: () {
+                            context.pop();
+                            context.router.pushToUser(user);
+                          },
                           icon: const Icon(Icons.person_rounded),
                           label: Text(context.l10n.profile),
                         ),
@@ -47,7 +50,10 @@ class AccountButton extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: () => context.goNamed(routeNameSettings),
+                onPressed: () {
+                  context.pop();
+                  context.router.goToSettings();
+                },
                 icon: Icon(Icons.settings_rounded),
                 label: Text(context.l10n.settings),
               ),

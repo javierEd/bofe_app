@@ -7,7 +7,7 @@ import '../../graphql/schema.graphql.dart';
 import '../../graphql/mutations/create_user.graphql.dart';
 import '../../graphql_client.dart';
 import '../../preferences.dart';
-import '../../session_manager.dart';
+import '../../sessions_manager.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -35,7 +35,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<String?> _attemptToCreateUser() async {
     final languageCode = Enum$LanguageCode.fromJson(Preferences.language.languageCode.toUpperCase());
 
-    final result = await context.graphQLClient.mutate$CreateUser(
+    final graphQLClient = getGraphQLClient(includeToken: false);
+    final result = await graphQLClient.mutate$CreateUser(
       Options$Mutation$CreateUser(
         variables: Variables$Mutation$CreateUser(
           params: Input$UserParams(
@@ -56,7 +57,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     if (result.parsedData?.createUser != null) {
-      await SessionManager.attemptToLogin(context, usernameOrEmail: _username, password: _password);
+      await SessionsManager.attemptToLogin(usernameOrEmail: _username, password: _password);
     } else {
       setState(() {
         _errorUsername = result.getParamError('username');

@@ -1,7 +1,11 @@
 fragment SessionFragment on SessionObject {
     id
+    user {
+        ...UserFragment
+    }
     token
     refreshedAt
+    expiresAt
     createdAt
     updatedAt
 }

@@ -1,5 +1,6 @@
 {
     "account": "Account",
+    "addAccount": "Add Account",
     "backToLogin": "Back to Login",
     "birthdate": "Birthdate",
     "cancel": "Cancel",
@@ -66,6 +67,7 @@
     "settings": "Settings",
     "somethingWentWrong": "Something went wrong 🫠",
     "submit": "Submit",
+    "switchAccount": "Switch Account",
     "termsOfService": "Terms of Service",
     "theme": "Theme",
     "themes": "{value, select, light{Light} dark{Dark} other{System}}",

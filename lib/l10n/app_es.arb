@@ -1,5 +1,6 @@
 {
     "account": "Cuenta",
+    "addAccount": "Agregar Cuenta",
     "backToLogin": "Volver al Inicio de Sesión",
     "birthdate": "Fecha de nacimiento",
     "cancel": "Cancelar",
@@ -66,6 +67,7 @@
     "settings": "Ajustes",
     "somethingWentWrong": "Algo salió mal 🫠",
     "submit": "Enviar",
+    "switchAccount": "Cambiar Cuenta",
     "termsOfService": "Términos de Servicio",
     "theme": "Tema",
     "themes": "{value, select, light{Claro} dark{Oscuro} other{Sistema}}",
