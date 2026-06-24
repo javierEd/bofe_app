@@ -1,5 +1,5 @@
-query Activities($after: UUID, $first: Int) {
-    activities(after: $after, first: $first) {
+query Activities($after: UUID, $first: Int, $includeGlobal: Boolean! = true) {
+    activities(after: $after, first: $first, includeGlobal: $includeGlobal) {
         nodes {
             ...ActivityFragment
         }

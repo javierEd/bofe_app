@@ -6,7 +6,7 @@ import '../components.dart';
 import '../components/screen_title.dart';
 import '../constants.dart';
 import '../sessions_manager.dart';
-import 'home/exlore_screen.dart';
+import 'home/explore_screen.dart';
 import 'home/feed_screen.dart';
 import 'home/my_boards_screen.dart';
 

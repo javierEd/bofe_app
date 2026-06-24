@@ -9,16 +9,24 @@ import '../../components/user_item.dart';
 import '../../constants.dart';
 import '../../graphql/queries/activities.graphql.dart';
 import '../../graphql/schema.graphql.dart';
+import '../../sessions_manager.dart';
 
-class FeedScreen extends StatelessWidget {
+class FeedScreen extends StatefulWidget {
   const FeedScreen({super.key});
+
+  @override
+  State<FeedScreen> createState() => _FeedScreenState();
+}
+
+class _FeedScreenState extends State<FeedScreen> {
+  bool _includeGlobal = !SessionsManager.hasToken;
 
   @override
   Widget build(BuildContext context) {
     return Query$Activities$Widget(
       options: Options$Query$Activities(
         cacheRereadPolicy: CacheRereadPolicy.ignoreOptimisitic,
-        variables: Variables$Query$Activities(first: 12),
+        variables: Variables$Query$Activities(first: 12, includeGlobal: _includeGlobal),
       ),
       builder: (result, {fetchMore, refetch}) {
         final hasNextPage = result.parsedData?.activities.pageInfo.hasNextPage ?? false;
@@ -29,7 +37,7 @@ class FeedScreen extends StatelessWidget {
           onScrollAtBottom: () async {
             await fetchMore?.call(
               FetchMoreOptions$Query$Activities(
-                variables: Variables$Query$Activities(after: endCursor),
+                variables: Variables$Query$Activities(after: endCursor, includeGlobal: _includeGlobal),
                 updateQuery: (previousResultData, fetchMoreResultData) {
                   if (fetchMoreResultData == null || fetchMoreResultData['activities']['nodes'].length == 0) {
                     return previousResultData;
@@ -57,7 +65,25 @@ class FeedScreen extends StatelessWidget {
             spacing: 12,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(context.l10n.feed, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(context.l10n.feed, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                  if (SessionsManager.hasToken)
+                    SegmentedButton(
+                      selected: {_includeGlobal},
+                      onSelectionChanged: (Set<bool> selected) {
+                        setState(() {
+                          _includeGlobal = selected.first;
+                        });
+                      },
+                      segments: [
+                        ButtonSegment(icon: Icon(Icons.public_rounded), tooltip: context.l10n.global, value: true),
+                        ButtonSegment(icon: Icon(Icons.person_rounded), tooltip: context.l10n.local, value: false),
+                      ],
+                    ),
+                ],
+              ),
               QueryResultBuilder(
                 result: result,
                 buildIf: (data) => data?.activities.nodes.isNotEmpty == true,

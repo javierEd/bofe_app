@@ -52,6 +52,12 @@ type ActivityObjectEdge {
 	cursor: String!
 }
 
+type AttachmentObject {
+	id: ID!
+	url: Url!
+	createdAt: DateTime!
+}
+
 type BoardObject {
 	id: ID!
 	user: UserObject!
@@ -590,6 +596,7 @@ input MemberParams {
 type MutationRoot {
 	confirmEmail(confirmationParams: ConfirmationParams!): UserObject!
 	confirmPasswordReset(confirmationParams: ConfirmationParams!): Boolean!
+	createAttachment(file: Upload!): AttachmentObject!
 	createBoard(params: BoardParams!): BoardObject!
 	createCard(params: CardParams!): CardObject!
 	createLabel(params: LabelParams!): LabelObject!
@@ -653,7 +660,7 @@ type PageInfo {
 }
 
 type QueryRoot {
-	activities(after: UUID, first: Int): ActivityObjectConnection!
+	activities(after: UUID, first: Int, includeGlobal: Boolean! = true): ActivityObjectConnection!
 	board(id: ID!): BoardObject
 	boardBySlug(slug: String!): BoardObject @deprecated
 	boards(after: UUID, first: Int): BoardObjectConnection!
@@ -731,6 +738,11 @@ input UpdateProfileParams {
 	languageCode: LanguageCode
 	countryCode: CountryCode!
 }
+
+"""
+A multipart file upload
+"""
+scalar Upload
 
 """
 URL is a String implementing the [URL Standard](http://url.spec.whatwg.org/)
