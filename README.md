@@ -38,9 +38,10 @@ With **Bofe** you can easily build kanban style boards for your projects, person
 
 ## Features
 
-* Create, manage and share **Boards**.
-* Add, rename and reorder **Lists** to match any process (like To-Do, Doing, Done).
-* Write **Cards** and move then between lists with smooth drag-and-drop gestures.
+- Create, manage and share **Boards**.
+- Add, rename and reorder **Lists** to match any process (like To-Do, Doing, Done).
+- Write **Cards** and move then between lists with smooth drag-and-drop gestures.
+- Create **Labels** and assign them to your cards.
 
 ### Build Requirements
 
