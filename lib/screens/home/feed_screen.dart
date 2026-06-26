@@ -142,7 +142,10 @@ class _FeedScreenState extends State<FeedScreen> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               spacing: 12,
                               children: [
-                                UserItem(user: activity.user, onTap: () => context.router.pushToUser(activity.user)),
+                                UserItem(
+                                  user: activity.user,
+                                  onTap: () => activity.user != null ? context.router.pushToUser(activity.user!) : null,
+                                ),
                                 Column(
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.start,

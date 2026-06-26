@@ -14,7 +14,7 @@ enum ActivityAction {
 
 type ActivityObject {
 	id: ID!
-	user: UserObject!
+	user: UserObject
 	board: BoardObject!
 	action: ActivityAction!
 	boardData: BoardObject
@@ -126,6 +126,7 @@ enum BoardVisibility {
 
 type CardObject {
 	id: ID!
+	user: UserObject
 	board: BoardObject!
 	list: ListObject!
 	content(maxLength: Int, stripMarkdown: Boolean): String!
@@ -133,7 +134,6 @@ type CardObject {
 	position: Int!
 	isEditable: Boolean!
 	isMovable: Boolean!
-	user: UserObject!
 	createdAt: DateTime!
 	updatedAt: DateTime
 }
@@ -609,6 +609,7 @@ type MutationRoot {
 	deleteLabel(id: UUID!): Boolean!
 	deleteList(id: UUID!): Boolean!
 	deleteMember(id: UUID!): Boolean!
+	deleteUser(password: String!): Boolean!
 	finishSession: Boolean!
 	refreshSession: SessionObject!
 	sendEmailConfirmation: ConfirmationObject!
