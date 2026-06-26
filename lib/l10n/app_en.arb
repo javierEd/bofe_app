@@ -14,6 +14,7 @@
     "country": "Country",
     "currentEmail": "Current Email",
     "areYouSureYouWantToLogout": "Are you sure you want to logout?",
+    "deletedUser": "Deleted User",
     "editEmail": "Edit Email",
     "editProfile": "Edit Profile",
     "email": "Email",
