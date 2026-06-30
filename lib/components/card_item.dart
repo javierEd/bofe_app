@@ -131,7 +131,10 @@ class CardItem extends StatelessWidget {
             ),
             Text(card.content, maxLines: 3, overflow: TextOverflow.fade, style: TextStyle(fontSize: 16)),
             if (card.attachmentsCount > 0)
-              Row(spacing: 2, children: [Text(card.attachmentsCount.toString()), Icon(Icons.attach_file_rounded, size: 16)]),
+              Row(
+                spacing: 2,
+                children: [Text(card.attachmentsCount.toString()), Icon(Icons.attach_file_rounded, size: 16)],
+              ),
             Wrap(spacing: 4, runSpacing: 4, children: card.allLabels.map((label) => LabelChip(label: label)).toList()),
           ],
         ),
