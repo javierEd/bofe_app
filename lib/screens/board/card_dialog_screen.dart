@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../build_context.dart';
@@ -11,6 +12,7 @@ import '../../components/label_chip.dart';
 import '../../components/query_result_builder.dart';
 import '../../components/scrollable_dialog.dart';
 import '../../components/user_item.dart';
+import '../../config.dart';
 import '../../graphql/fragments/board_fragment.graphql.dart';
 import '../../graphql/queries/card.graphql.dart';
 
@@ -44,6 +46,20 @@ class CardDialogScreen extends StatelessWidget {
                       UserItem(
                         user: card.user,
                         onTap: card.user != null ? () => context.router.pushToUser(card.user!) : null,
+                      ),
+                      Spacer(),
+                      IconButton(
+                        onPressed: () {
+                          SharePlus.instance.share(
+                            ShareParams(
+                              uri: Config.appUrl.replace(
+                                path: '/${board.user.username}/${board.slug}/cards/${card.id}',
+                              ),
+                            ),
+                          );
+                        },
+                        tooltip: context.l10n.share,
+                        icon: Icon(Icons.share_rounded),
                       ),
                       CardPopupMenuButton(
                         card: card,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../build_context.dart';
 import '../components.dart';
@@ -8,6 +9,7 @@ import '../components/list_item.dart';
 import '../components/loading_overlay.dart';
 import '../components/new_list_dialog.dart';
 import '../components/screen_title.dart';
+import '../config.dart';
 import '../graphql/fragments/board_fragment.graphql.dart';
 import '../graphql/mutations/delete_board.graphql.dart';
 import '../graphql/subscriptions/board.graphql.dart';
@@ -55,6 +57,13 @@ class _BoardScreenState extends State<BoardScreen> {
 
   List<Widget> _getActions(Fragment$BoardFragment board) {
     return [
+      IconButton(
+        onPressed: () {
+          SharePlus.instance.share(ShareParams(uri: Config.appUrl.replace(path: '/${widget.username}/${widget.slug}')));
+        },
+        tooltip: context.l10n.share,
+        icon: Icon(Icons.share_rounded),
+      ),
       IconButton(
         onPressed: () => context.router.pushToMembers(board),
         tooltip: 'Members',

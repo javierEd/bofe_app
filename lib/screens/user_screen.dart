@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 
+import '../build_context.dart';
 import '../components/boards_grid_view.dart';
 import '../components/infinite_scroll_view.dart';
 import '../components/query_result_builder.dart';
 import '../components/screen_title.dart';
 import '../components/user_item.dart';
+import '../config.dart';
 import '../constants.dart';
 import '../graphql/queries/user.graphql.dart';
 import '../graphql/queries/user_boards.graphql.dart';
@@ -67,7 +70,18 @@ class _UserScreenState extends State<UserScreen> {
             return ScreenTitle(
               title: '@${user!.username}',
               child: Scaffold(
-                appBar: AppBar(leading: BackButton(onPressed: () => context.goNamed(routeNameHome))),
+                appBar: AppBar(
+                  leading: BackButton(onPressed: () => context.goNamed(routeNameHome)),
+                  actions: [
+                    IconButton(
+                      onPressed: () {
+                        SharePlus.instance.share(ShareParams(uri: Config.appUrl.replace(path: '/${user.username}')));
+                      },
+                      tooltip: context.l10n.share,
+                      icon: Icon(Icons.share_rounded),
+                    ),
+                  ],
+                ),
                 body: InfiniteScrollView(
                   hasMore: _hasNextPage,
                   onScrollAtBottom: _onScrollAtBottom,
