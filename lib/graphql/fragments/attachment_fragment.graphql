@@ -1,0 +1,7 @@
+fragment AttachmentFragment on AttachmentObject {
+    id
+    fileName
+    fileType
+    thumbnailUrl
+    createdAt
+}

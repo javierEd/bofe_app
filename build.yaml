@@ -26,6 +26,9 @@ targets:
                             type: Duration
                             fromJsonFunctionName: jsonToDuration
                             import: package:bofe/graphql/scalars.dart
+                        Upload:
+                            type: MultipartFile
+                            import: package:http/http.dart
                         Url:
                             type: Uri
                             fromJsonFunctionName: jsonToUri
