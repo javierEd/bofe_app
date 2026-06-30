@@ -1,4 +1,7 @@
 fragment CardScreenFragment on CardObject {
     ...CardFragment
+    allAttachments {
+        ...AttachmentFragment
+    }
     content
 }

@@ -16,6 +16,6 @@ jobs:
               run: |
                   dart format --set-exit-if-changed lib/components lib/screens lib/build_context.dart \
                   lib/components.dart lib/config.dart lib/constants.dart lib/graphql_client.dart lib/main.dart \
-                  lib/preferences.dart lib/router.dart lib/session_manager.dart lib/value_keys.dart test
+                  lib/preferences.dart lib/router.dart lib/sessions_manager.dart lib/value_keys.dart test
             - name: Check with flutter analyze
               run: flutter analyze

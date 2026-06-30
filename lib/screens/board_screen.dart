@@ -95,7 +95,7 @@ class _BoardScreenState extends State<BoardScreen> {
                 break;
             }
           },
-          itemBuilder: (context) => [
+          itemBuilder: (context) => const [
             PopupMenuItem(
               value: 1,
               child: ListTile(leading: Icon(Icons.edit_rounded), title: Text('Edit')),

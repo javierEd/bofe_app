@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:go_router/go_router.dart';
@@ -11,12 +12,36 @@ import '../../components/scrollable_dialog.dart';
 import '../../components/user_item.dart';
 import '../../graphql/fragments/board_fragment.graphql.dart';
 import '../../graphql/queries/card.graphql.dart';
+import '../../graphql/queries/card_attachment.graphql.dart';
 
 class CardDialogScreen extends StatelessWidget {
   const CardDialogScreen({super.key, required this.board, required this.id});
 
   final Fragment$BoardFragment board;
   final String id;
+
+  void _showAttachmentDialog(BuildContext context, String attachmentId) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => Dialog.fullscreen(
+        child: Query$CardAttachment$Widget(
+          options: Options$Query$CardAttachment(
+            variables: Variables$Query$CardAttachment(cardId: id, id: attachmentId),
+          ),
+          builder: (result, {fetchMore, refetch}) => QueryResultBuilder(
+            result: result,
+            refetch: refetch,
+            buildIf: (parsedData) => parsedData?.card?.attachment != null,
+            builder: (parsedData) => Scaffold(
+              appBar: AppBar(title: Text(parsedData.card!.attachment!.fileName)),
+              body: Center(child: CachedNetworkImage(imageUrl: parsedData.card!.attachment!.url.toString())),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +89,23 @@ class CardDialogScreen extends StatelessWidget {
                         launchUrlString(href, mode: LaunchMode.inAppBrowserView);
                       }
                     },
+                  ),
+                  Wrap(
+                    spacing: 4,
+                    runSpacing: 4,
+                    children: card.allAttachments
+                        .map(
+                          (attachment) => InkWell(
+                            onTap: () => _showAttachmentDialog(context, attachment.id),
+                            child: CachedNetworkImage(
+                              imageUrl: attachment.thumbnailUrl.toString(),
+                              width: 64,
+                              height: 64,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        )
+                        .toList(),
                   ),
                   Wrap(
                     spacing: 4,

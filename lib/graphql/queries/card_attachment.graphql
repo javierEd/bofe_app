@@ -1,0 +1,11 @@
+query CardAttachment($cardId: ID!, $id: ID!) {
+    card(id: $cardId) {
+        id
+        attachment(id: $id) {
+            id
+            fileName
+            url
+            createdAt
+        }
+    }
+}

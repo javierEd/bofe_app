@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
+import '../../build_context.dart';
+import '../../graphql/fragments/attachment_fragment.graphql.dart';
 import '../../graphql_client.dart';
 import '../label_chip.dart';
 import '../../graphql/fragments/label_fragment.graphql.dart';
@@ -10,6 +12,7 @@ import '../../graphql/queries/board_labels.graphql.dart';
 import '../../graphql/queries/board_lists.graphql.dart';
 import '../../graphql/schema.graphql.dart';
 import 'form_container.dart';
+import 'image_picker_field.dart';
 import 'select_field.dart';
 import 'text_input_field.dart';
 
@@ -36,9 +39,11 @@ class CardForm<T> extends StatefulWidget {
 class _CardFormState<T> extends State<CardForm<T>> {
   String _content = '';
   Fragment$ListFragment? _list;
+  List<Fragment$AttachmentFragment> _attachments = [];
   List<Fragment$LabelFragment> _labels = [];
   String? _errorContent;
   String? _errorList;
+  String? _errorAttachments;
   String? _errorLabels;
 
   @override
@@ -46,6 +51,7 @@ class _CardFormState<T> extends State<CardForm<T>> {
     super.initState();
     _content = widget.initialValues?.content ?? '';
     _list = widget.initialValues?.list ?? widget.initialList;
+    _attachments = widget.initialValues?.allAttachments ?? [];
     _labels = widget.initialValues?.allLabels ?? [];
   }
 
@@ -55,13 +61,19 @@ class _CardFormState<T> extends State<CardForm<T>> {
       formKey: widget.formKey,
       onSubmit: () async {
         final result = await widget.onSubmit(
-          Input$CardParams(listId: _list!.id, content: _content, labelIds: _labels.map((label) => label.id).toList()),
+          Input$CardParams(
+            listId: _list!.id,
+            content: _content,
+            attachmentIds: _attachments.map((attachment) => attachment.id).toList(),
+            labelIds: _labels.map((label) => label.id).toList(),
+          ),
         );
 
         if (result.hasErrors) {
           setState(() {
             _errorList = result.getParamError('listId');
             _errorContent = result.getParamError('content');
+            _errorAttachments = result.getParamError('attachmentIds');
             _errorLabels = result.getParamError('labelIds');
           });
 
@@ -98,6 +110,16 @@ class _CardFormState<T> extends State<CardForm<T>> {
           maxLines: 100,
           onSaved: (value) {
             _content = value ?? '';
+          },
+        ),
+        ImagePickerField.multi(
+          labelText: context.l10n.attachedImages,
+          errorText: _errorAttachments,
+          initialValue: _attachments,
+          onSaved: (values) {
+            setState(() {
+              _attachments = values ?? [];
+            });
           },
         ),
         Query$BoardLabels$Widget(

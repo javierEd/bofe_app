@@ -54,8 +54,19 @@ type ActivityObjectEdge {
 
 type AttachmentObject {
 	id: ID!
+	fileName: String!
+	fileType: BlobFileType!
+	size: Int!
+	thumbnailUrl(width: Int! = 256, height: Int! = 256): Url
 	url: Url!
 	createdAt: DateTime!
+}
+
+enum BlobFileType {
+	IMAGE_GIF
+	IMAGE_JPEG
+	IMAGE_PNG
+	IMAGE_WEBP
 }
 
 type BoardObject {
@@ -130,7 +141,10 @@ type CardObject {
 	board: BoardObject!
 	list: ListObject!
 	content(maxLength: Int, stripMarkdown: Boolean): String!
+	attachment(id: ID!): AttachmentObject
+	allAttachments: [AttachmentObject!]!
 	allLabels: [LabelObject!]!
+	attachmentsCount: Int!
 	position: Int!
 	isEditable: Boolean!
 	isMovable: Boolean!
@@ -170,6 +184,7 @@ type CardObjectEdge {
 input CardParams {
 	listId: UUID!
 	content: String!
+	attachmentIds: [UUID!]! = []
 	labelIds: [UUID!]!
 }
 
