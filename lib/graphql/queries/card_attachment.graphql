@@ -7,5 +7,6 @@ query CardAttachment($cardId: ID!, $id: ID!) {
             url
             createdAt
         }
+        createdAt
     }
 }

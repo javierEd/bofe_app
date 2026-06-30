@@ -46,15 +46,12 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
           title: Row(spacing: 12, children: [Image.asset('assets/icon.png', height: 32), Text('Bofe')]),
           actions: [
             if (SessionsManager.hasToken)
-              Padding(
-                padding: EdgeInsets.only(right: 12),
-                child: IconButton.outlined(
-                  tooltip: context.l10n.newBoard,
-                  icon: Icon(Icons.add),
-                  onPressed: () => context.goNamed(routeNameNewBoard),
-                ),
+              IconButton.outlined(
+                tooltip: context.l10n.newBoard,
+                icon: Icon(Icons.add),
+                onPressed: () => context.goNamed(routeNameNewBoard),
               ),
-            Padding(padding: EdgeInsets.only(right: 12), child: AccountButton()),
+            AccountButton(),
           ],
         ),
         body: [MyBoardsScreen(), ExploreScreen(), FeedScreen()][currentIndex],

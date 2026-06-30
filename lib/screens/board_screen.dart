@@ -60,53 +60,44 @@ class _BoardScreenState extends State<BoardScreen> {
         tooltip: 'Members',
         icon: Icon(Icons.groups_3_rounded),
       ),
-
       if (board.isEditable)
-        PopupMenuButton(
-          icon: Icon(Icons.more_vert_rounded),
-          tooltip: 'More',
-          position: PopupMenuPosition.under,
-          onSelected: (value) {
-            switch (value) {
-              case 1:
-                showEditBoardDialog(context, board: board);
-                break;
-              case 2:
-                context.router.goToLabels(board);
-                break;
-              case 3:
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Confirm your action'),
-                    content: const Text('Are you sure you want to delete this board?'),
-                    actions: [
-                      OutlinedButton(child: const Text('Cancel'), onPressed: () => context.pop()),
-                      FilledButton(
-                        child: const Text('Confirm'),
-                        onPressed: () {
-                          context.pop();
-                          _attemptToDeleteBoard(board.id);
-                        },
-                      ),
-                    ],
-                  ),
-                );
-                break;
-            }
-          },
-          itemBuilder: (context) => const [
-            PopupMenuItem(
-              value: 1,
-              child: ListTile(leading: Icon(Icons.edit_rounded), title: Text('Edit')),
+        MenuAnchor(
+          builder: (context, controller, child) => IconButton(
+            onPressed: () => controller.isOpen ? controller.close() : controller.open(),
+            icon: Icon(Icons.more_vert_rounded),
+            tooltip: context.l10n.more,
+          ),
+          menuChildren: [
+            MenuItemButton(
+              onPressed: () => showEditBoardDialog(context, board: board),
+              leadingIcon: const Icon(Icons.edit_rounded),
+              child: Text(context.l10n.edit),
             ),
-            PopupMenuItem(
-              value: 2,
-              child: ListTile(leading: Icon(Icons.label_rounded), title: Text('Labels')),
+            MenuItemButton(
+              onPressed: () => context.router.goToLabels(board),
+              leadingIcon: const Icon(Icons.label_rounded),
+              child: Text(context.l10n.labels),
             ),
-            PopupMenuItem(
-              value: 3,
-              child: ListTile(leading: Icon(Icons.delete_rounded), title: Text('Delete')),
+            MenuItemButton(
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Confirm your action'),
+                  content: const Text('Are you sure you want to delete this board?'),
+                  actions: [
+                    OutlinedButton(child: Text(context.l10n.cancel), onPressed: () => context.pop()),
+                    FilledButton(
+                      child: Text(context.l10n.confirm),
+                      onPressed: () {
+                        context.pop();
+                        _attemptToDeleteBoard(board.id);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              leadingIcon: const Icon(Icons.delete_rounded),
+              child: Text(context.l10n.delete),
             ),
           ],
         ),
@@ -207,86 +198,89 @@ class _BoardScreenState extends State<BoardScreen> {
                     child: SizedBox(
                       height: double.infinity,
                       width: double.infinity,
-                      child: SingleChildScrollView(
-                        padding: EdgeInsets.all(16),
+                      child: Scrollbar(
                         controller: _scrollController,
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          spacing: _draggingListId == null ? 12 : 0,
-                          children:
-                              board.allLists
-                                  .map(
-                                    (list) => board.canMoveList
-                                        ? [
-                                            ListItemDragTarget(
-                                              position: list.position,
-                                              isVisible: _draggingListId != null && _draggingListId != list.id,
-                                            ),
-                                            DraggableListItem(
-                                              board: board,
-                                              list: list,
-                                              isDraggingCard: _isDraggingCard,
-                                              onDragOutside: () {
-                                                setState(() {
-                                                  _draggingListId = list.id;
-                                                });
-                                              },
-                                              onDragEnded: () {
-                                                setState(() {
-                                                  _draggingListId = null;
-                                                });
-                                              },
-                                              onCardDragOutside: () {
-                                                setState(() {
-                                                  _isDraggingCard = true;
-                                                });
-                                              },
-                                              onCardDragEnded: () {
-                                                setState(() {
-                                                  _isDraggingCard = false;
-                                                });
-                                              },
-                                            ),
-                                          ]
-                                        : [
-                                            ListItem(
-                                              key: ValueKey(list.id),
-                                              board: board,
-                                              list: list,
-                                              isDraggingCard: _isDraggingCard,
-                                              onCardDragOutside: () {
-                                                setState(() {
-                                                  _isDraggingCard = true;
-                                                });
-                                              },
-                                              onCardDragEnded: () {
-                                                setState(() {
-                                                  _isDraggingCard = false;
-                                                });
-                                              },
-                                            ),
-                                          ],
-                                  )
-                                  .expand((item) => item)
-                                  .toList() +
-                              [
-                                if (board.canMoveList)
-                                  ListItemDragTarget(
-                                    position: board.allLists.lastOrNull?.position != null
-                                        ? board.allLists.lastOrNull!.position + 1
-                                        : 0,
-                                    isVisible: _draggingListId != null,
-                                  ),
-                                if (board.canCreateList)
-                                  SizedBox(
-                                    width: 320,
-                                    child: OutlinedButton(
-                                      onPressed: () => showNewListDialog(context, boardId: board.id),
-                                      child: Text('NEW LIST'),
+                        child: SingleChildScrollView(
+                          padding: EdgeInsets.all(16),
+                          controller: _scrollController,
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            spacing: _draggingListId == null ? 12 : 0,
+                            children:
+                                board.allLists
+                                    .map(
+                                      (list) => board.canMoveList
+                                          ? [
+                                              ListItemDragTarget(
+                                                position: list.position,
+                                                isVisible: _draggingListId != null && _draggingListId != list.id,
+                                              ),
+                                              DraggableListItem(
+                                                board: board,
+                                                list: list,
+                                                isDraggingCard: _isDraggingCard,
+                                                onDragOutside: () {
+                                                  setState(() {
+                                                    _draggingListId = list.id;
+                                                  });
+                                                },
+                                                onDragEnded: () {
+                                                  setState(() {
+                                                    _draggingListId = null;
+                                                  });
+                                                },
+                                                onCardDragOutside: () {
+                                                  setState(() {
+                                                    _isDraggingCard = true;
+                                                  });
+                                                },
+                                                onCardDragEnded: () {
+                                                  setState(() {
+                                                    _isDraggingCard = false;
+                                                  });
+                                                },
+                                              ),
+                                            ]
+                                          : [
+                                              ListItem(
+                                                key: ValueKey(list.id),
+                                                board: board,
+                                                list: list,
+                                                isDraggingCard: _isDraggingCard,
+                                                onCardDragOutside: () {
+                                                  setState(() {
+                                                    _isDraggingCard = true;
+                                                  });
+                                                },
+                                                onCardDragEnded: () {
+                                                  setState(() {
+                                                    _isDraggingCard = false;
+                                                  });
+                                                },
+                                              ),
+                                            ],
+                                    )
+                                    .expand((item) => item)
+                                    .toList() +
+                                [
+                                  if (board.canMoveList)
+                                    ListItemDragTarget(
+                                      position: board.allLists.lastOrNull?.position != null
+                                          ? board.allLists.lastOrNull!.position + 1
+                                          : 0,
+                                      isVisible: _draggingListId != null,
                                     ),
-                                  ),
-                              ],
+                                  if (board.canCreateList)
+                                    SizedBox(
+                                      width: 320,
+                                      child: OutlinedButton(
+                                        onPressed: () => showNewListDialog(context, boardId: board.id),
+                                        child: Text('NEW LIST'),
+                                      ),
+                                    ),
+                                ],
+                          ),
                         ),
                       ),
                     ),

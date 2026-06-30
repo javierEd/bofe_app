@@ -228,7 +228,14 @@ class _ListItemState extends State<ListItem> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(widget.list.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Expanded(
+                child: Text(
+                  widget.list.name,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
               widget.list.isEditable
                   ? PopupMenuButton(
                       icon: Icon(Icons.more_vert_rounded),
@@ -287,50 +294,53 @@ class _ListItemState extends State<ListItem> {
                   _isAnimating = false;
                 });
               },
-              child: SingleChildScrollView(
+              child: Scrollbar(
                 controller: _scrollController,
-                child: Column(
-                  spacing: 8,
-                  children:
-                      widget.list.allCards
-                          .map(
-                            (card) => widget.list.canMoveCard
-                                ? [
-                                    CardItemDragTarget(
-                                      listId: widget.list.id,
-                                      position: card.position,
-                                      isVisible: widget.isDraggingCard && _draggingCardId != card.id,
-                                    ),
-                                    DraggableCardItem(
-                                      card: card,
-                                      onDragOutside: () {
-                                        setState(() {
-                                          _draggingCardId = card.id;
-                                        });
-                                        widget.onCardDragOutside?.call();
-                                      },
-                                      onDragEnded: () {
-                                        setState(() {
-                                          _draggingCardId = null;
-                                        });
-                                        widget.onCardDragEnded?.call();
-                                      },
-                                    ),
-                                  ]
-                                : [CardItem(key: ValueKey(card.id), card: card)],
-                          )
-                          .expand((item) => item)
-                          .toList() +
-                      [
-                        if (widget.list.canMoveCard)
-                          CardItemDragTarget(
-                            listId: widget.list.id,
-                            position: widget.list.allCards.lastOrNull?.position != null
-                                ? widget.list.allCards.lastOrNull!.position + 1
-                                : 0,
-                            isVisible: widget.isDraggingCard,
-                          ),
-                      ],
+                child: SingleChildScrollView(
+                  controller: _scrollController,
+                  child: Column(
+                    spacing: 8,
+                    children:
+                        widget.list.allCards
+                            .map(
+                              (card) => widget.list.canMoveCard
+                                  ? [
+                                      CardItemDragTarget(
+                                        listId: widget.list.id,
+                                        position: card.position,
+                                        isVisible: widget.isDraggingCard && _draggingCardId != card.id,
+                                      ),
+                                      DraggableCardItem(
+                                        card: card,
+                                        onDragOutside: () {
+                                          setState(() {
+                                            _draggingCardId = card.id;
+                                          });
+                                          widget.onCardDragOutside?.call();
+                                        },
+                                        onDragEnded: () {
+                                          setState(() {
+                                            _draggingCardId = null;
+                                          });
+                                          widget.onCardDragEnded?.call();
+                                        },
+                                      ),
+                                    ]
+                                  : [CardItem(key: ValueKey(card.id), card: card)],
+                            )
+                            .expand((item) => item)
+                            .toList() +
+                        [
+                          if (widget.list.canMoveCard)
+                            CardItemDragTarget(
+                              listId: widget.list.id,
+                              position: widget.list.allCards.lastOrNull?.position != null
+                                  ? widget.list.allCards.lastOrNull!.position + 1
+                                  : 0,
+                              isVisible: widget.isDraggingCard,
+                            ),
+                        ],
+                  ),
                 ),
               ),
             ),

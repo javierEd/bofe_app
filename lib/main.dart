@@ -53,6 +53,7 @@ class App extends StatelessWidget {
   ThemeData _getThemeData(Brightness brightness) => ThemeData(
     colorScheme: ColorScheme.fromSeed(seedColor: colorSeed, brightness: brightness),
     useMaterial3: true,
+    appBarTheme: const AppBarTheme(actionsPadding: EdgeInsets.only(right: 8)),
     dialogTheme: const DialogThemeData(shape: roundedRectangleBorder),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
