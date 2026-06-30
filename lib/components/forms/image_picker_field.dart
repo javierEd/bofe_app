@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' show MultipartFile;
@@ -92,7 +93,7 @@ class ImagePickerField extends StatelessWidget {
       );
       final createdAttachment = result.parsedData?.createAttachment;
 
-      if (createdAttachment != null && state.value?.firstWhere((att) => att.id == createdAttachment.id) == null) {
+      if (createdAttachment != null && state.value?.where((att) => att.id == createdAttachment.id).isNotEmpty != true) {
         state.didChange([if (isMulti) ...state.value ?? [], createdAttachment]);
       }
     }
@@ -122,9 +123,15 @@ class ImagePickerField extends StatelessWidget {
               ...state.value
                       ?.map(
                         (attachment) => Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          spacing: 8,
                           children: [
-                            Text(attachment.fileName),
+                            CachedNetworkImage(
+                              imageUrl: attachment.thumbnailUrl.toString(),
+                              width: 36,
+                              height: 36,
+                              fit: BoxFit.cover,
+                            ),
+                            Expanded(child: Text(attachment.fileName, maxLines: 1, overflow: TextOverflow.ellipsis)),
                             IconButton(
                               icon: Icon(Icons.remove_rounded),
                               tooltip: context.l10n.remove,

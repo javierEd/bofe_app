@@ -11,6 +11,7 @@ class UserAvatarImage extends CircleAvatar {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(size),
           child: CachedNetworkImage(
+            useOldImageOnUrlChange: true,
             imageUrl: user.avatarImageUrl.replace(queryParameters: {'size': '128'}).toString(),
             placeholder: (context, url) => Text(user.initials, style: TextStyle(fontSize: size)),
           ),
