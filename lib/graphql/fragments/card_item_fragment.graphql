@@ -1,4 +1,9 @@
 fragment CardItemFragment on CardObject {
     ...CardFragment
+    coverImageAttachment {
+        id
+        thumbnailUrl(width: 512, height: 512)
+        createdAt
+    }
     content(maxLength: 255, stripMarkdown: true)
 }

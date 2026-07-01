@@ -140,6 +140,7 @@ type CardObject {
 	user: UserObject
 	board: BoardObject!
 	list: ListObject!
+	coverImageAttachment: AttachmentObject
 	content(maxLength: Int, stripMarkdown: Boolean): String!
 	attachment(id: ID!): AttachmentObject
 	allAttachments: [AttachmentObject!]!
@@ -183,6 +184,7 @@ type CardObjectEdge {
 
 input CardParams {
 	listId: UUID!
+	coverImageAttachmentId: UUID
 	content: String!
 	attachmentIds: [UUID!]! = []
 	labelIds: [UUID!]!

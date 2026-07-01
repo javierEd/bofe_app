@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:bofe/constants.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../build_context.dart';
@@ -96,11 +98,10 @@ class _DraggableCardItemState extends State<DraggableCardItem> {
 }
 
 class CardItem extends StatelessWidget {
-  const CardItem({super.key, required this.card, this.width = 296, this.showPopupMenu = true, this.onTap});
+  const CardItem({super.key, required this.card, this.showPopupMenu = true, this.onTap});
 
   final Fragment$CardItemFragment card;
   final bool showPopupMenu;
-  final double width;
   final Function()? onTap;
 
   @override
@@ -108,34 +109,56 @@ class CardItem extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return InkWell(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: borderRadius,
       onTap: onTap ?? () => context.router.pushToCard(card),
       child: Container(
-        width: width,
-        padding: const EdgeInsets.all(12),
+        width: 320,
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),
           color: colorScheme.onInverseSurface,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: borderRadius,
         ),
         child: Column(
           spacing: 6,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                UserItem(user: card.user),
-                if (showPopupMenu && card.isEditable) CardPopupMenuButton(card: card, iconSize: 20),
-              ],
-            ),
-            Text(card.content, maxLines: 3, overflow: TextOverflow.fade, style: TextStyle(fontSize: 16)),
-            if (card.attachmentsCount > 0)
-              Row(
-                spacing: 2,
-                children: [Text(card.attachmentsCount.toString()), Icon(Icons.attach_file_rounded, size: 16)],
+            if (card.coverImageAttachment?.thumbnailUrl != null)
+              ClipRRect(
+                borderRadius: BorderRadius.only(topLeft: borderRadius.topLeft, topRight: borderRadius.topRight),
+                child: CachedNetworkImage(
+                  useOldImageOnUrlChange: true,
+                  imageUrl: card.coverImageAttachment!.thumbnailUrl.toString(),
+                  width: 320,
+                  height: 100,
+                  fit: BoxFit.cover,
+                ),
               ),
-            Wrap(spacing: 4, runSpacing: 4, children: card.allLabels.map((label) => LabelChip(label: label)).toList()),
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                spacing: 6,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      UserItem(user: card.user),
+                      if (showPopupMenu && card.isEditable) CardPopupMenuButton(card: card, iconSize: 20),
+                    ],
+                  ),
+                  Text(card.content, maxLines: 3, overflow: TextOverflow.fade, style: TextStyle(fontSize: 16)),
+                  if (card.attachmentsCount > 0)
+                    Row(
+                      spacing: 2,
+                      children: [Text(card.attachmentsCount.toString()), Icon(Icons.attach_file_rounded, size: 16)],
+                    ),
+                  Wrap(
+                    spacing: 4,
+                    runSpacing: 4,
+                    children: card.allLabels.map((label) => LabelChip(label: label)).toList(),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

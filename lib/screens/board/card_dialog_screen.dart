@@ -13,6 +13,7 @@ import '../../components/query_result_builder.dart';
 import '../../components/scrollable_dialog.dart';
 import '../../components/user_item.dart';
 import '../../config.dart';
+import '../../constants.dart';
 import '../../graphql/fragments/board_fragment.graphql.dart';
 import '../../graphql/queries/card.graphql.dart';
 
@@ -25,6 +26,7 @@ class CardDialogScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScrollableDialog(
+      padding: const EdgeInsets.all(0),
       child: Query$Card$Widget(
         options: Options$Query$Card(variables: Variables$Query$Card(id: id)),
         builder: (result, {fetchMore, refetch}) {
@@ -37,75 +39,94 @@ class CardDialogScreen extends StatelessWidget {
 
               return Column(
                 spacing: 8,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      UserItem(
-                        user: card.user,
-                        onTap: card.user != null ? () => context.router.pushToUser(card.user!) : null,
+                  if (card.coverImageAttachment?.thumbnailUrl != null)
+                    ClipRRect(
+                      borderRadius: BorderRadius.only(topLeft: borderRadius.topLeft, topRight: borderRadius.topRight),
+                      child: CachedNetworkImage(
+                        useOldImageOnUrlChange: true,
+                        imageUrl: card.coverImageAttachment!.thumbnailUrl.toString(),
+                        width: 640,
+                        height: 200,
+                        fit: BoxFit.cover,
                       ),
-                      Spacer(),
-                      IconButton(
-                        onPressed: () {
-                          SharePlus.instance.share(
-                            ShareParams(
-                              uri: Config.appUrl.replace(
-                                path: '/${board.user.username}/${board.slug}/cards/${card.id}',
-                              ),
-                            ),
-                          );
-                        },
-                        tooltip: context.l10n.share,
-                        icon: Icon(Icons.share_rounded),
-                      ),
-                      CardPopupMenuButton(
-                        card: card,
-                        beforeEdit: () {
-                          context.pop();
-                        },
-                        afterDelete: () {
-                          context.pop();
-                        },
-                      ),
-                    ],
-                  ),
-                  MarkdownBody(
-                    data: card.content,
-                    selectable: true,
-                    softLineBreak: true,
-                    styleSheet: MarkdownStyleSheet(textScaler: TextScaler.linear(1.3)),
-                    onTapLink: (text, href, title) async {
-                      if (href != null && await canLaunchUrlString(href)) {
-                        launchUrlString(href, mode: LaunchMode.inAppBrowserView);
-                      }
-                    },
-                  ),
-                  if (card.attachmentsCount > 0)
-                    Wrap(
-                      spacing: 4,
-                      runSpacing: 4,
-                      children: card.allAttachments
-                          .map(
-                            (attachment) => InkWell(
-                              onTap: () => showCardAttachmentDialog(context, cardId: id, id: attachment.id),
-                              child: CachedNetworkImage(
-                                useOldImageOnUrlChange: true,
-                                imageUrl: attachment.thumbnailUrl.toString(),
-                                width: 64,
-                                height: 64,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          )
-                          .toList(),
                     ),
-                  Wrap(
-                    spacing: 4,
-                    runSpacing: 4,
-                    children: card.allLabels.map((label) => LabelChip(label: label)).toList(),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      spacing: 8,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            UserItem(
+                              user: card.user,
+                              onTap: card.user != null ? () => context.router.pushToUser(card.user!) : null,
+                            ),
+                            Spacer(),
+                            IconButton(
+                              onPressed: () {
+                                SharePlus.instance.share(
+                                  ShareParams(
+                                    uri: Config.appUrl.replace(
+                                      path: '/${board.user.username}/${board.slug}/cards/${card.id}',
+                                    ),
+                                  ),
+                                );
+                              },
+                              tooltip: context.l10n.share,
+                              icon: Icon(Icons.share_rounded),
+                            ),
+                            CardPopupMenuButton(
+                              card: card,
+                              beforeEdit: () {
+                                context.pop();
+                              },
+                              afterDelete: () {
+                                context.pop();
+                              },
+                            ),
+                          ],
+                        ),
+                        MarkdownBody(
+                          data: card.content,
+                          selectable: true,
+                          softLineBreak: true,
+                          styleSheet: MarkdownStyleSheet(textScaler: TextScaler.linear(1.3)),
+                          onTapLink: (text, href, title) async {
+                            if (href != null && await canLaunchUrlString(href)) {
+                              launchUrlString(href, mode: LaunchMode.inAppBrowserView);
+                            }
+                          },
+                        ),
+                        if (card.attachmentsCount > 0)
+                          Wrap(
+                            spacing: 4,
+                            runSpacing: 4,
+                            children: card.allAttachments
+                                .map(
+                                  (attachment) => InkWell(
+                                    onTap: () => showCardAttachmentDialog(context, cardId: id, id: attachment.id),
+                                    child: CachedNetworkImage(
+                                      useOldImageOnUrlChange: true,
+                                      imageUrl: attachment.thumbnailUrl.toString(),
+                                      width: 64,
+                                      height: 64,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        Wrap(
+                          spacing: 4,
+                          runSpacing: 4,
+                          children: card.allLabels.map((label) => LabelChip(label: label)).toList(),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               );

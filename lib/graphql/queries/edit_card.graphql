@@ -1,0 +1,5 @@
+query EditCard($id: ID!) {
+    card(id: $id) {
+        ...EditCardFragment
+    }
+}

@@ -7,7 +7,7 @@ import '../forms/card_form.dart';
 import '../query_result_builder.dart';
 import '../scrollable_dialog.dart';
 import '../../graphql/fragments/card_fragment.graphql.dart';
-import '../../graphql/queries/card.graphql.dart';
+import '../../graphql/queries/edit_card.graphql.dart';
 import '../../graphql/schema.graphql.dart';
 import '../../graphql/mutations/update_card.graphql.dart';
 
@@ -49,10 +49,10 @@ class _EditCardDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScrollableDialog(
       title: Text('Edit Card'),
-      child: Query$Card$Widget(
-        options: Options$Query$Card(
+      child: Query$EditCard$Widget(
+        options: Options$Query$EditCard(
           fetchPolicy: FetchPolicy.noCache,
-          variables: Variables$Query$Card(id: card.id),
+          variables: Variables$Query$EditCard(id: card.id),
         ),
         builder: (result, {fetchMore, refetch}) {
           return QueryResultBuilder(
