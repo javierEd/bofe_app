@@ -8,6 +8,7 @@ class ScrollableDialog extends StatefulWidget {
     this.title,
     this.actions = const [],
     required this.child,
+    this.padding = const EdgeInsets.all(16),
     this.width = 640,
     this.hasMore = false,
     this.onScrollAtBottom,
@@ -17,6 +18,7 @@ class ScrollableDialog extends StatefulWidget {
   final Widget? title;
   final List<Widget> actions;
   final Widget child;
+  final EdgeInsetsGeometry? padding;
   final double width;
   final bool hasMore;
   final Future<void> Function()? onScrollAtBottom;
@@ -80,7 +82,7 @@ class _ScrollableDialogState extends State<ScrollableDialog> {
               child: Dialog(
                 child: Container(
                   width: widget.width,
-                  padding: const EdgeInsets.all(16),
+                  padding: widget.padding,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,

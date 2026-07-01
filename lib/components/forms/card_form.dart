@@ -7,7 +7,7 @@ import '../../graphql_client.dart';
 import '../label_chip.dart';
 import '../../graphql/fragments/label_fragment.graphql.dart';
 import '../../graphql/fragments/list_fragment.graphql.dart';
-import '../../graphql/fragments/card_screen_fragment.graphql.dart';
+import '../../graphql/fragments/edit_card_fragment.graphql.dart';
 import '../../graphql/queries/board_labels.graphql.dart';
 import '../../graphql/queries/board_lists.graphql.dart';
 import '../../graphql/schema.graphql.dart';
@@ -29,7 +29,7 @@ class CardForm<T> extends StatefulWidget {
   final GlobalKey<FormState> formKey;
   final String boardId;
   final Fragment$ListFragment? initialList;
-  final Fragment$CardScreenFragment? initialValues;
+  final Fragment$EditCardFragment? initialValues;
   final Future<QueryResult<T>> Function(Input$CardParams params) onSubmit;
 
   @override
@@ -37,18 +37,22 @@ class CardForm<T> extends StatefulWidget {
 }
 
 class _CardFormState<T> extends State<CardForm<T>> {
-  String _content = '';
   Fragment$ListFragment? _list;
+  Fragment$AttachmentFragment? _coverImageAttachment;
+  String _content = '';
   List<Fragment$AttachmentFragment> _attachments = [];
   List<Fragment$LabelFragment> _labels = [];
-  String? _errorContent;
   String? _errorList;
+  String? _errorCoverImageAttachment;
+  String? _errorContent;
   String? _errorAttachments;
   String? _errorLabels;
 
   @override
   void initState() {
     super.initState();
+
+    _coverImageAttachment = widget.initialValues?.coverImageAttachment;
     _content = widget.initialValues?.content ?? '';
     _list = widget.initialValues?.list ?? widget.initialList;
     _attachments = widget.initialValues?.allAttachments ?? [];
@@ -63,6 +67,7 @@ class _CardFormState<T> extends State<CardForm<T>> {
         final result = await widget.onSubmit(
           Input$CardParams(
             listId: _list!.id,
+            coverImageAttachmentId: _coverImageAttachment?.id,
             content: _content,
             attachmentIds: _attachments.map((attachment) => attachment.id).toList(),
             labelIds: _labels.map((label) => label.id).toList(),
@@ -72,6 +77,7 @@ class _CardFormState<T> extends State<CardForm<T>> {
         if (result.hasErrors) {
           setState(() {
             _errorList = result.getParamError('listId');
+            _errorCoverImageAttachment = result.getParamError('coverImageAttachmentId');
             _errorContent = result.getParamError('content');
             _errorAttachments = result.getParamError('attachmentIds');
             _errorLabels = result.getParamError('labelIds');
@@ -99,6 +105,16 @@ class _CardFormState<T> extends State<CardForm<T>> {
               });
             },
           ),
+        ),
+        ImagePickerField(
+          labelText: context.l10n.coverImage,
+          errorText: _errorCoverImageAttachment,
+          initialValue: _coverImageAttachment,
+          onSaved: (value) {
+            setState(() {
+              _coverImageAttachment = value;
+            });
+          },
         ),
         TextInputField(
           labelText: 'Content',

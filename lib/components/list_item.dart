@@ -215,7 +215,7 @@ class _ListItemState extends State<ListItem> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 320,
+      width: 344,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
@@ -376,7 +376,7 @@ class ListItemDragTarget extends StatelessWidget {
           return AnimatedContainer(
             duration: const Duration(milliseconds: 250),
             margin: const EdgeInsets.symmetric(horizontal: 12),
-            width: accepted.isNotEmpty ? 320 : 16,
+            width: accepted.isNotEmpty ? 344 : 16,
             decoration: BoxDecoration(
               color: accepted.isNotEmpty ? Colors.grey.withAlpha(128) : Colors.grey.withAlpha(64),
               borderRadius: BorderRadius.circular(16),
