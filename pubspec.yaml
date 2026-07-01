@@ -45,7 +45,7 @@ dependencies:
     graphql_flutter: ^5.3.0
     http: ^1.6.0
     http_parser: ^4.1.2
-    image_picker: ^1.2.2
+    image_picker: ^1.2.3
     intl: ^0.20.2
     package_info_plus: ^10.2.0
     restart_app: ^1.8.3
